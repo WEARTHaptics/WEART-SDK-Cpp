@@ -3,6 +3,11 @@
 #include "WeArtController.h"
 #include <algorithm>
 
+WeArtHapticObject::WeArtHapticObject(WeArtClient* client)
+{
+	weArtclient = client;
+}
+
 
 void WeArtHapticObject::AddEffect(WeArtEffect* effect)
 {
@@ -131,7 +136,7 @@ void WeArtHapticObject::SendMessage(WeArtMessage* msg)
 				if (ap & actuationPointFlag) {
 					msg->setHandSide(hs);
 					msg->setActuationPoint(ap);
-					//weArtController->SendMessage(msg);
+					weArtclient->SendMessage(msg);
 				}
 			}
 		}

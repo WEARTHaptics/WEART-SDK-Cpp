@@ -11,6 +11,7 @@
 #include "WeArtForce.h"
 #include "WeArtTexture.h"
 #include "WeArtMessages.h"
+#include "WeArtClient.h"
 
 
 // A haptic object class, representing player-controller objects able to interact
@@ -23,10 +24,14 @@
 // messages representing the processed events
 class WeArtHapticObject 
 {
+private:
+	
+	WeArtClient* weArtclient;
+
 
 public:
 	// Sets default values for this component's properties
-	WeArtHapticObject();
+	WeArtHapticObject(WeArtClient *client);
 
 	// Hand/finger state variables
 	int32  handSideFlag;

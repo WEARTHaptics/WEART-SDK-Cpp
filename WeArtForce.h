@@ -1,4 +1,5 @@
 #pragma once
+#include <WEART_SDK/WeArtCommon.h>
 
 struct WeArtForce {
 
