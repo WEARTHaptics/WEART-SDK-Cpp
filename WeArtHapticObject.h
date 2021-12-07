@@ -4,9 +4,6 @@
 #include "WeArtEffect.h"
 #include <vector>
 
-// Included cause of a bug in UnrealHeaderTool.
-// Those are already included in WeArtEffect.h,
-// but need to be included there as well.
 #include "WeArtTemperature.h"
 #include "WeArtForce.h"
 #include "WeArtTexture.h"

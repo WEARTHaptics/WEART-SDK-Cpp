@@ -2,10 +2,11 @@
 
 #include "pch.h"
 #include <WEART_SDK/WeArtClient.h>
-#include <windows.h>z
+#include <windows.h>
 #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <windows.h>ù
 
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
 #pragma comment (lib, "Ws2_32.lib")
@@ -13,6 +14,10 @@
 #pragma comment (lib, "AdvApi32.lib")
 
 #define DEFAULT_BUFLEN 512
+int recvbuflen = DEFAULT_BUFLEN;
+char recvbuf[DEFAULT_BUFLEN];
+
+#define DATA_BUFSIZE 4096
 
 static char messagesSeparator = '~';
 
@@ -31,6 +36,7 @@ WeArtClient::WeArtClient(PCSTR IP_ADDESS, PCSTR PORT) {
     // Initialize Winsock
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
+        IsConnected = false;
         printf("WSAStartup failed with error: %d\n", iResult);
         return;
     }
@@ -43,6 +49,7 @@ WeArtClient::WeArtClient(PCSTR IP_ADDESS, PCSTR PORT) {
     // Resolve the server address and port
     iResult = getaddrinfo(IP_ADDESS, PORT, &hints, &result);
     if (iResult != 0) {
+        IsConnected = false;
         printf("getaddrinfo failed with error: %d\n", iResult);
         WSACleanup();
         return;
@@ -55,6 +62,7 @@ WeArtClient::WeArtClient(PCSTR IP_ADDESS, PCSTR PORT) {
         ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,
             ptr->ai_protocol);
         if (ConnectSocket == INVALID_SOCKET) {
+            IsConnected = false;
             printf("socket failed with error: %ld\n", WSAGetLastError());
             WSACleanup();
             return;
@@ -63,6 +71,7 @@ WeArtClient::WeArtClient(PCSTR IP_ADDESS, PCSTR PORT) {
         // Connect to server.
         iResult = connect(ConnectSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
         if (iResult == SOCKET_ERROR) {
+            IsConnected = false;
             closesocket(ConnectSocket);
             ConnectSocket = INVALID_SOCKET;
             continue;
@@ -74,10 +83,94 @@ WeArtClient::WeArtClient(PCSTR IP_ADDESS, PCSTR PORT) {
 
     if (ConnectSocket == INVALID_SOCKET) {
         printf("Unable to connect to server!\n");
+        IsConnected = false;
         WSACleanup();
         return;
     }
+
+    IsConnected = true;
+
+    //ReadData();
+    OnReceive();
+}
+
+
+void WeArtClient::OnReceive()
+{
+
+    DWORD RecvBytes, Flags;
+    WSABUF DataBuf;
+
+    std::string bufferText;
+    bufferText.resize(1024);
     
+    DataBuf.len = 1024;
+    DataBuf.buf = &bufferText[0];
+
+    std::string trailingText;
+
+    int err = 0;
+
+    WSAOVERLAPPED RecvOverlapped;
+
+    // Make sure the RecvOverlapped struct is zeroed out
+    SecureZeroMemory((PVOID)&RecvOverlapped, sizeof(WSAOVERLAPPED));
+
+    struct addrinfo* result = NULL;
+
+    // Call WSARecv until the peer closes the connection
+    // or until an error occurs
+    while (1) {
+
+        Flags = 0;
+        int rc = WSARecv(ConnectSocket, &DataBuf, 1, &RecvBytes, &Flags, &RecvOverlapped, NULL);
+        if ((rc == SOCKET_ERROR) && (WSA_IO_PENDING != (err = WSAGetLastError()))) {
+            printf("WSARecv failed with error: %d\n", err);
+            break;
+        }
+
+        const int lastSeparatorIndex = bufferText.find_last_of(messagesSeparator);
+        trailingText = bufferText.substr(lastSeparatorIndex + 1);
+        std::string textToParse = bufferText.substr(0, lastSeparatorIndex);
+
+        // Split the string on separator occurence
+        std::vector<std::string> splitStrings;
+        std::istringstream dataStream(textToParse);
+        std::string s;
+        while (getline(dataStream, s, messagesSeparator)) {
+            if (s.empty())
+                continue;
+            splitStrings.push_back(s);
+        }
+
+        std::vector<WeArtMessage*> messages;
+
+        // Std::strings to WeArtMessages
+        messages.resize(splitStrings.size());
+        for (int i = 0; i < messages.size(); i++) {
+            messages[i] = messageSerializer.Deserialize(splitStrings[i]);
+        }
+
+        
+        for (auto msg : messages) {
+
+            if (msg == NULL)
+                continue;
+
+           
+            // Forward the message to relevant tracking objects
+            for (WeArtThimbleTrackingObject* obj : thimbleTrackingObjects) {
+                obj->OnMessageReceived(msg);
+            }
+        }
+
+        WSAResetEvent(RecvOverlapped.hEvent);
+
+        // If 0 bytes are received, the connection was closed
+        if (RecvBytes == 0)
+            break;
+    }
+
 }
 
 void WeArtClient::Start() {
@@ -107,9 +200,15 @@ void WeArtClient::Close() {
     // cleanup
     closesocket(ConnectSocket);
     WSACleanup();
+
+    IsConnected = false;
 }
 
 void WeArtClient::SendMessage(WeArtMessage* message) {
+
+    if (!IsConnected) {
+        return;
+    }
 
     // WeArt message to string
     std::string text = messageSerializer.Serialize(message);
@@ -121,6 +220,7 @@ void WeArtClient::SendMessage(WeArtMessage* message) {
     // Send an initial buffer
     int iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
     if (iResult == SOCKET_ERROR) {
+        IsConnected = false;
         printf("send failed with error: %d\n", WSAGetLastError());
         closesocket(ConnectSocket);
         WSACleanup();
@@ -128,7 +228,8 @@ void WeArtClient::SendMessage(WeArtMessage* message) {
     }
 }
 
-bool WeArtClient::ReceiveMessages(std::vector<WeArtMessage*>& messages)
-{
-	return false;
+
+void WeArtClient::AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects) {
+
+    this->thimbleTrackingObjects.push_back(trackingObjects);
 }

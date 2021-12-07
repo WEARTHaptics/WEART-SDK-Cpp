@@ -1,6 +1,7 @@
 #pragma once
-#include <WEART_SDK/WeArtMessages.h>
-#include <WEART_SDK/WeArtMessageSerializer.h>
+#include "WeArtMessages.h""
+#include "WeArtMessageSerializer.h"
+#include "WeArtThimbleTrackingObject.h"
 #include <winsock2.h>
 
 class WeArtClient
@@ -10,9 +11,13 @@ private:
 
 	SOCKET ConnectSocket;
 
+	std::vector<WeArtThimbleTrackingObject*> thimbleTrackingObjects;
+
 protected:
 	WeArtMessageSerializer messageSerializer;
 
+	void ReadData();
+	void OnReceive();
 
 public:
 	WeArtClient(PCSTR IP_ADDESS, PCSTR PORT);
@@ -22,6 +27,8 @@ public:
 	void Close();
 
 	void SendMessage(WeArtMessage* message);
-	bool ReceiveMessages(std::vector<WeArtMessage*>& messages);
+
+	void AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects);
+
 };
 
