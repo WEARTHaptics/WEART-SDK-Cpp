@@ -12,6 +12,7 @@ private:
 	SOCKET ConnectSocket;
 
 	std::vector<WeArtThimbleTrackingObject*> thimbleTrackingObjects;
+	void TrackingMessages(std::vector<WeArtMessage*> messages);
 
 protected:
 	WeArtMessageSerializer messageSerializer;
@@ -29,6 +30,7 @@ public:
 	void SendMessage(WeArtMessage* message);
 
 	void AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects);
+	int SizeThimbles();
 
 };
 

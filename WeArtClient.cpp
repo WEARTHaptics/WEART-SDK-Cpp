@@ -152,17 +152,7 @@ void WeArtClient::OnReceive()
         }
 
         
-        for (auto msg : messages) {
-
-            if (msg == NULL)
-                continue;
-
-           
-            // Forward the message to relevant tracking objects
-            for (WeArtThimbleTrackingObject* obj : thimbleTrackingObjects) {
-                obj->OnMessageReceived(msg);
-            }
-        }
+        TrackingMessages(messages);
 
         WSAResetEvent(RecvOverlapped.hEvent);
 
@@ -228,8 +218,26 @@ void WeArtClient::SendMessage(WeArtMessage* message) {
     }
 }
 
+void WeArtClient::TrackingMessages(std::vector<WeArtMessage*> messages)
+{
+    for (auto msg : messages) {
+
+        if (msg == NULL)
+            continue;
+
+
+        // Forward the message to relevant tracking objects
+        for (WeArtThimbleTrackingObject* obj : thimbleTrackingObjects) {
+            obj->OnMessageReceived(msg);
+        }
+    }
+}
+
+int WeArtClient::SizeThimbles() {
+    return thimbleTrackingObjects.size();
+}
 
 void WeArtClient::AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects) {
 
-    this->thimbleTrackingObjects.push_back(trackingObjects);
+    thimbleTrackingObjects.push_back(trackingObjects);
 }
