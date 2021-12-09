@@ -23,7 +23,13 @@ static char messagesSeparator = '~';
 
 // https://docs.microsoft.com/en-us/windows/win32/winsock/complete-client-code
 // reference
-WeArtClient::WeArtClient(PCSTR IP_ADDESS, PCSTR PORT) {
+WeArtClient::WeArtClient(PCSTR ip_address, PCSTR port) {
+
+    IP_ADDESS = ip_address;
+    PORT = port;
+}
+
+void WeArtClient::Run() {
 
     WSADATA wsaData;
     ConnectSocket = INVALID_SOCKET;
@@ -90,7 +96,6 @@ WeArtClient::WeArtClient(PCSTR IP_ADDESS, PCSTR PORT) {
 
     IsConnected = true;
 
-    //ReadData();
     OnReceive();
 }
 
@@ -151,14 +156,15 @@ void WeArtClient::OnReceive()
             messages[i] = messageSerializer.Deserialize(splitStrings[i]);
         }
 
-        
         TrackingMessages(messages);
 
         WSAResetEvent(RecvOverlapped.hEvent);
 
         // If 0 bytes are received, the connection was closed
-        if (RecvBytes == 0)
+        if (RecvBytes == 0) {
+            OutputDebugStringA(">>> Exit reading buffer");
             break;
+        }
     }
 
 }
@@ -224,7 +230,6 @@ void WeArtClient::TrackingMessages(std::vector<WeArtMessage*> messages)
 
         if (msg == NULL)
             continue;
-
 
         // Forward the message to relevant tracking objects
         for (WeArtThimbleTrackingObject* obj : thimbleTrackingObjects) {

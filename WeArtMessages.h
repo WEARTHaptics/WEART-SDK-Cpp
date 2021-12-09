@@ -361,6 +361,8 @@ public:
 
 		float num(byteValue);
 		float denom(255);
-		return num / denom;
+		float closure = num / denom;
+
+		return closure;
 	}
 };

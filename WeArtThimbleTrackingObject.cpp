@@ -14,8 +14,9 @@ float WeArtThimbleTrackingObject::GetClosure() {
 
 void WeArtThimbleTrackingObject::OnMessageReceived(WeArtMessage* msg)
 {
+	
 	if (msg->getID() == "Tracking") {
 		TrackingMessage* trackingMsg = static_cast<TrackingMessage*>(msg);
 		Closure = trackingMsg->GetClosure(handSide, actuationPoint);
-	};
+	}
 }

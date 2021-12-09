@@ -14,17 +14,21 @@ private:
 	std::vector<WeArtThimbleTrackingObject*> thimbleTrackingObjects;
 	void TrackingMessages(std::vector<WeArtMessage*> messages);
 
+	PCSTR IP_ADDESS; 
+	PCSTR PORT;
+
 protected:
 	WeArtMessageSerializer messageSerializer;
 
-	void ReadData();
 	void OnReceive();
 
 public:
-	WeArtClient(PCSTR IP_ADDESS, PCSTR PORT);
+	WeArtClient(PCSTR ip_address, PCSTR port);
 
 	void Start();
 	void Stop();
+
+	void Run();
 	void Close();
 
 	void SendMessage(WeArtMessage* message);
