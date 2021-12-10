@@ -6,7 +6,12 @@
 #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <windows.h>ù
+#include <windows.h>
+
+#include <ppltasks.h>
+using namespace Windows::Foundation;
+using namespace concurrency;
+using namespace Windows::Devices::Enumeration;
 
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
 #pragma comment (lib, "Ws2_32.lib")
@@ -95,44 +100,111 @@ void WeArtClient::Run() {
     }
 
     IsConnected = true;
+    
+    
+    // Explicit construction. (Not recommended)
+    // Pass the IAsyncOperation to a task constructor.
+    // task<DeviceInformationCollection^> deviceEnumTask(deviceOp);
 
-    OnReceive();
+    auto workItem = ref new Windows::System::Threading::WorkItemHandler([this](IAsyncAction^ workItem)
+        {
+            OnReceive();
+        });
+
+    auto asyncAction = Windows::System::Threading::ThreadPool::RunAsync(workItem);
 }
 
 
-void WeArtClient::OnReceive()
-{
+void WeArtClient::OnReceive() {
 
-    DWORD RecvBytes, Flags;
     WSABUF DataBuf;
 
-    std::string bufferText;
-    bufferText.resize(1024);
-    
-    DataBuf.len = 1024;
-    DataBuf.buf = &bufferText[0];
+    char buffer[DATA_BUFSIZE];
+
+    DWORD EventTotal = 0, RecvBytes = 0, Flags = 0;
+    DWORD BytesTransferred;
+
+    WSAEVENT EventArray[WSA_MAXIMUM_WAIT_EVENTS];
+
+    WSAOVERLAPPED AcceptOverlapped;
+
 
     std::string trailingText;
 
-    int err = 0;
 
-    WSAOVERLAPPED RecvOverlapped;
 
-    // Make sure the RecvOverlapped struct is zeroed out
-    SecureZeroMemory((PVOID)&RecvOverlapped, sizeof(WSAOVERLAPPED));
+    EventArray[EventTotal] = WSACreateEvent();
 
-    struct addrinfo* result = NULL;
 
-    // Call WSARecv until the peer closes the connection
-    // or until an error occurs
-    while (1) {
 
-        Flags = 0;
-        int rc = WSARecv(ConnectSocket, &DataBuf, 1, &RecvBytes, &Flags, &RecvOverlapped, NULL);
-        if ((rc == SOCKET_ERROR) && (WSA_IO_PENDING != (err = WSAGetLastError()))) {
-            printf("WSARecv failed with error: %d\n", err);
-            break;
+    ZeroMemory(&AcceptOverlapped, sizeof(WSAOVERLAPPED));
+
+    AcceptOverlapped.hEvent = EventArray[EventTotal];
+
+
+
+    DataBuf.len = DATA_BUFSIZE;
+
+    DataBuf.buf = buffer;
+
+
+
+    EventTotal++;
+
+
+
+    // Step 4:
+
+    //  Post a WSARecv request to begin receiving data on the socket
+
+    if (WSARecv(ConnectSocket, &DataBuf, 1, &RecvBytes, &Flags, &AcceptOverlapped, NULL) == SOCKET_ERROR)
+
+    {
+
+        if (WSAGetLastError() != WSA_IO_PENDING)
+
+        {
+
+            // Error occurred
+
         }
+
+    }
+
+
+
+    // Process overlapped receives on the socket
+
+    while (TRUE)
+
+    {
+
+        DWORD Index;
+
+        Index = WSAWaitForMultipleEvents(EventTotal, EventArray, FALSE, WSA_INFINITE, FALSE);
+
+
+        WSAResetEvent(EventArray[Index - WSA_WAIT_EVENT_0]);
+
+
+        WSAGetOverlappedResult(ConnectSocket, &AcceptOverlapped, &BytesTransferred, FALSE, &Flags);
+
+
+        if (BytesTransferred == 0)
+
+        {
+
+            printf("Closing socket %d\n", ConnectSocket);
+
+            closesocket(ConnectSocket);
+
+            WSACloseEvent(EventArray[Index - WSA_WAIT_EVENT_0]);
+
+            return;
+
+        }
+
+        std::string bufferText = std::string(buffer);
 
         const int lastSeparatorIndex = bufferText.find_last_of(messagesSeparator);
         trailingText = bufferText.substr(lastSeparatorIndex + 1);
@@ -158,15 +230,37 @@ void WeArtClient::OnReceive()
 
         TrackingMessages(messages);
 
-        WSAResetEvent(RecvOverlapped.hEvent);
+        Flags = 0;
 
-        // If 0 bytes are received, the connection was closed
-        if (RecvBytes == 0) {
-            OutputDebugStringA(">>> Exit reading buffer");
-            break;
+        ZeroMemory(&AcceptOverlapped, sizeof(WSAOVERLAPPED));
+
+
+
+        AcceptOverlapped.hEvent = EventArray[Index - WSA_WAIT_EVENT_0];
+
+
+
+        DataBuf.len = DATA_BUFSIZE;
+
+        DataBuf.buf = buffer;
+
+
+
+        if (WSARecv(ConnectSocket, &DataBuf, 1, &RecvBytes, &Flags, &AcceptOverlapped, NULL) == SOCKET_ERROR)
+
+        {
+
+            if (WSAGetLastError() != WSA_IO_PENDING)
+
+            {
+
+                // Unexpected error
+
+            }
+
         }
-    }
 
+    }
 }
 
 void WeArtClient::Start() {
