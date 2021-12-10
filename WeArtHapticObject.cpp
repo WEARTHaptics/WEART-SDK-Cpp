@@ -38,12 +38,12 @@ bool WeArtHapticObject::ContainsEffect(WeArtEffect* effect)
 void WeArtHapticObject::UpdateEffects(void)
 {
 	if (activeEffects.empty()) {
-		weArtForce.value = WeArtConstants::defaultForce;
+		weArtForce.value(WeArtConstants::defaultForce);
 		weArtForce.active = false;
-		weArtTemperature.value = WeArtConstants::defaultTemperature;
+		weArtTemperature.value(WeArtConstants::defaultTemperature);
 		weArtTemperature.active = false;
-		weArtTexture.textureType = (TextureType)WeArtConstants::defaultTextureIndex;
-		weArtTexture.textureVelocity = std::vector<float> { WeArtConstants::defaultTextureVelocity[0], WeArtConstants::defaultTextureVelocity[1], WeArtConstants::defaultTextureVelocity[2] };
+		weArtTexture.textureType((TextureType)WeArtConstants::defaultTextureIndex);
+		weArtTexture.textureVelocity(WeArtConstants::defaultTextureVelocity[0], WeArtConstants::defaultTextureVelocity[1], WeArtConstants::defaultTextureVelocity[2]);
 		weArtTexture.active = false;
 
 		StopTemperatureMessage msg1;
@@ -70,7 +70,7 @@ void WeArtHapticObject::UpdateEffects(void)
 				SendMessage(&msg);
 			}
 			else {
-				SetTemperatureMessage msg(newTemp.value);
+				SetTemperatureMessage msg(newTemp.value());
 				SendMessage(&msg);
 			}
 			weArtTemperature = newTemp;
@@ -92,7 +92,7 @@ void WeArtHapticObject::UpdateEffects(void)
 				SendMessage(&msg);
 			}
 			else {
-				const float fValue[3] = { newForce.value, 0.0, 0.0 };
+				const float fValue[3] = { newForce.value(), 0.0, 0.0 };
 				SetForceMessage msg(fValue);
 				SendMessage(&msg);
 			}
@@ -115,8 +115,8 @@ void WeArtHapticObject::UpdateEffects(void)
 				SendMessage(&msg);
 			}
 			else {
-				const float texValue[3] = { newTex.textureVelocity[0], newTex.textureVelocity[1], newTex.textureVelocity[2] };
-				SetTextureMessage msg((int)newTex.textureType, texValue, newTex.volume);
+				const float texValue[3] = { newTex.textureVelocity()[0], newTex.textureVelocity()[1], newTex.textureVelocity()[2] };
+				SetTextureMessage msg((int)newTex.textureType(), texValue, newTex.volume());
 				SendMessage(&msg);
 			}
 			weArtTexture = newTex;

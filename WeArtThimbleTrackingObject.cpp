@@ -8,10 +8,6 @@ WeArtThimbleTrackingObject::WeArtThimbleTrackingObject(HandSide side, ActuationP
 	Closure = 0.0f;
 }
 
-float WeArtThimbleTrackingObject::GetClosure() {
-	return Closure;
-}
-
 void WeArtThimbleTrackingObject::OnMessageReceived(WeArtMessage* msg)
 {
 	

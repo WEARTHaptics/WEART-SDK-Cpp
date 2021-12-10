@@ -12,7 +12,7 @@ public:
 
 	void OnMessageReceived(WeArtMessage *msg);
 
-	float GetClosure();
+	float GetClosure() const { return Closure; }
 
 
 protected:

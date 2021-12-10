@@ -102,10 +102,7 @@ void WeArtClient::Run() {
     IsConnected = true;
     
     
-    // Explicit construction. (Not recommended)
-    // Pass the IAsyncOperation to a task constructor.
-    // task<DeviceInformationCollection^> deviceEnumTask(deviceOp);
-
+    // receive data in background 
     auto workItem = ref new Windows::System::Threading::WorkItemHandler([this](IAsyncAction^ workItem)
         {
             OnReceive();
@@ -128,80 +125,45 @@ void WeArtClient::OnReceive() {
 
     WSAOVERLAPPED AcceptOverlapped;
 
-
     std::string trailingText;
 
-
-
     EventArray[EventTotal] = WSACreateEvent();
-
-
 
     ZeroMemory(&AcceptOverlapped, sizeof(WSAOVERLAPPED));
 
     AcceptOverlapped.hEvent = EventArray[EventTotal];
 
-
-
     DataBuf.len = DATA_BUFSIZE;
-
     DataBuf.buf = buffer;
-
-
 
     EventTotal++;
 
-
-
-    // Step 4:
-
-    //  Post a WSARecv request to begin receiving data on the socket
-
     if (WSARecv(ConnectSocket, &DataBuf, 1, &RecvBytes, &Flags, &AcceptOverlapped, NULL) == SOCKET_ERROR)
-
     {
-
         if (WSAGetLastError() != WSA_IO_PENDING)
 
         {
-
-            // Error occurred
-
+            printf("Error reading buffer socket");
         }
-
     }
 
-
-
-    // Process overlapped receives on the socket
-
     while (TRUE)
-
     {
-
         DWORD Index;
 
         Index = WSAWaitForMultipleEvents(EventTotal, EventArray, FALSE, WSA_INFINITE, FALSE);
 
-
         WSAResetEvent(EventArray[Index - WSA_WAIT_EVENT_0]);
-
 
         WSAGetOverlappedResult(ConnectSocket, &AcceptOverlapped, &BytesTransferred, FALSE, &Flags);
 
-
         if (BytesTransferred == 0)
-
         {
-
             printf("Closing socket %d\n", ConnectSocket);
-
             closesocket(ConnectSocket);
-
             WSACloseEvent(EventArray[Index - WSA_WAIT_EVENT_0]);
 
             return;
-
         }
 
         std::string bufferText = std::string(buffer);
@@ -234,32 +196,18 @@ void WeArtClient::OnReceive() {
 
         ZeroMemory(&AcceptOverlapped, sizeof(WSAOVERLAPPED));
 
-
-
         AcceptOverlapped.hEvent = EventArray[Index - WSA_WAIT_EVENT_0];
 
-
-
         DataBuf.len = DATA_BUFSIZE;
-
         DataBuf.buf = buffer;
 
-
-
         if (WSARecv(ConnectSocket, &DataBuf, 1, &RecvBytes, &Flags, &AcceptOverlapped, NULL) == SOCKET_ERROR)
-
         {
-
             if (WSAGetLastError() != WSA_IO_PENDING)
-
             {
-
-                // Unexpected error
-
+                printf("Error reading buffer socket");
             }
-
         }
-
     }
 }
 
