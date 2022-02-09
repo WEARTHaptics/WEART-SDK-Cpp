@@ -1,3 +1,8 @@
+/**
+*	WEART - Effect interface
+*	https://www.weart.it/
+*/
+
 #pragma once
 
 #include "WeArtTemperature.h"

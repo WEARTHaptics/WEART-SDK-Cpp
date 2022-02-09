@@ -1,3 +1,7 @@
+/**
+*	WEART - Temperature component
+*	https://www.weart.it/
+*/
 #pragma once
 #include <WEART_SDK/WeArtCommon.h>
 
@@ -8,6 +12,7 @@ public:
 	bool active;
 
 	float value() const { return _value; }
+
 	void value(float v) {
 		float lower = 0.0f;
 		float upper = 1.0f;

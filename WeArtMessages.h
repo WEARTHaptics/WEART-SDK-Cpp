@@ -1,3 +1,7 @@
+/**
+*	WEART - Message composer
+*	https://www.weart.it/
+*/
 #pragma once
 
 #include "WeArtCommon.h"

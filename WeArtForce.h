@@ -1,3 +1,8 @@
+/**
+*	WEART - Force struct 
+*	https://www.weart.it/
+*/
+
 #pragma once
 #include <WEART_SDK/WeArtCommon.h>
 

@@ -1,3 +1,8 @@
+/**
+*	WEART - Common TCP Client
+*	https://www.weart.it/
+*/
+
 #define WIN32_LEAN_AND_MEAN
 
 #include "pch.h"

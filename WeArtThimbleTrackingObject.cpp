@@ -1,3 +1,8 @@
+/**
+*	WEART - Tracking thimble component
+*	https://www.weart.it/
+*/
+
 #include "pch.h"
 #include "WeArtThimbleTrackingObject.h"
 #include "WeArtController.h"

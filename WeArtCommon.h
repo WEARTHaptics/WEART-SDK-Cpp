@@ -1,3 +1,8 @@
+/**
+*	WEART - Common utility 
+*	https://www.weart.it/
+*/
+
 #pragma once
 #include <vector>
 
@@ -59,6 +64,8 @@ enum class TextureType : uint8
 // Constants shared by the WeArt components
 namespace WeArtConstants
 {
+	const PCSTR DEFAULT_TCP_PORT = "13031";
+
 	const float defaultTemperature = 0.5f;
 	const float minTemperature = 0.0f;
 	const float maxTemperature = 1.0f;

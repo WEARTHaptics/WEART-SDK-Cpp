@@ -1,3 +1,7 @@
+/**
+*	WEART - HapticObject component
+*	https://www.weart.it/
+*/
 #pragma once
 
 #include "WeArtCommon.h"

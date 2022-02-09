@@ -1,3 +1,9 @@
+/**
+*	WEART - HapticObject component
+*	https://www.weart.it/
+*/
+
+
 #include "pch.h"
 #include "WeArtHapticObject.h"
 #include "WeArtController.h"

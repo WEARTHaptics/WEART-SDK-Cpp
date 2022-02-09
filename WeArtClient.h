@@ -1,3 +1,8 @@
+/**
+*	WEART - Common TCP Client
+*	https://www.weart.it/
+*/
+
 #pragma once
 #include "WeArtMessages.h""
 #include "WeArtMessageSerializer.h"

@@ -1,3 +1,7 @@
+/**
+*	WEART - Message serializer
+*	https://www.weart.it/
+*/
 #pragma once
 
 #include "WeArtMessages.h"

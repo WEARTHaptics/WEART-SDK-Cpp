@@ -1,3 +1,7 @@
+/**
+*	WEART - Texture component
+*	https://www.weart.it/
+*/
 #pragma once
 #include <WEART_SDK/WeArtCommon.h>
 

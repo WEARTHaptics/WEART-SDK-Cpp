@@ -1,3 +1,7 @@
+/**
+*	WEART - Tracking thimble component
+*	https://www.weart.it/
+*/
 #pragma once
 
 #include "WeArtCommon.h"
