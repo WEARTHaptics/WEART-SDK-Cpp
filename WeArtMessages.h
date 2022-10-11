@@ -9,6 +9,7 @@
 #include <vector>
 #include <cassert>
 
+
 static HandSide StringToHandside(std::string &str) {
 	if (str == "LEFT") {
 		return HandSide::Left;
@@ -369,4 +370,79 @@ public:
 
 		return closure;
 	}
+};
+
+
+class RawSensorsData : public WeArtMessageNoParams
+{
+
+public:
+
+	int handSide;
+	int actuationPoint;
+	float accX;
+	float accY;
+	float accZ;
+	float gyroX;
+	float gyroY;
+	float gyroZ;
+	int TOF;
+
+	virtual std::string getID() override { return std::string("SensorsData"); };
+
+	virtual std::vector<std::string> getValues() override {
+		std::vector<std::string> ret;
+		ret.push_back(std::to_string(handSide));
+		ret.push_back(std::to_string(actuationPoint));
+		ret.push_back(std::to_string(accX));
+		ret.push_back(std::to_string(accY));
+		ret.push_back(std::to_string(accZ));
+		ret.push_back(std::to_string(gyroX));
+		ret.push_back(std::to_string(gyroY));
+		ret.push_back(std::to_string(gyroZ));
+		ret.push_back(std::to_string(TOF));
+		return ret;
+	};
+
+	virtual void setValues(std::vector<std::string>& values) override {
+		assert(values.size() == 9);
+		handSide = std::stof(values[0]);
+		actuationPoint = std::stof(values[1]);
+		accX = std::stof(values[2]);
+		accY = std::stof(values[3]);
+		accZ = std::stof(values[4]);
+		gyroX = std::stof(values[5]);
+		gyroY = std::stof(values[6]);
+		gyroZ = std::stof(values[7]);
+		TOF = std::stof(values[8]);
+	};
+
+	HandSide GetHandSide() {
+		switch (handSide)
+		{
+			case 0:
+				return HandSide::Right;
+			case 1:
+				return HandSide::Left;
+			default:
+				return HandSide::Right;
+		}
+	}
+
+	ActuationPoint GetActuationPoint() {
+		switch (actuationPoint)
+		{
+			case 0:
+				return ActuationPoint::Index;
+			case 1:
+				return ActuationPoint::Thumb;
+			case 2:
+				return ActuationPoint::Middle;
+			case 3:
+				return ActuationPoint::Palm;
+			default:
+				break;
+		}
+	}
+
 };

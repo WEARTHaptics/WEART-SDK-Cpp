@@ -77,6 +77,11 @@ public:
 			return msg;
 			break;
 		}
+		case HashStringToInt("SensorsData"): {
+			WeArtMessage* msg = new RawSensorsData();
+			return msg;
+			break;
+		}
 
 		default:
 			return nullptr;

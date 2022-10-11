@@ -195,7 +195,7 @@ void WeArtClient::OnReceive() {
             messages[i] = messageSerializer.Deserialize(splitStrings[i]);
         }
 
-        TrackingMessages(messages);
+        ForwardingMessages(messages);
 
         Flags = 0;
 
@@ -258,7 +258,7 @@ void WeArtClient::SendMessage(WeArtMessage* message) {
     text += messagesSeparator;
 
     char sendbuf[120];
-    strcpy(sendbuf, text.c_str());
+    strcpy_s(sendbuf, text.c_str());
 
     // Send an initial buffer
     int iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
@@ -271,16 +271,24 @@ void WeArtClient::SendMessage(WeArtMessage* message) {
     }
 }
 
-void WeArtClient::TrackingMessages(std::vector<WeArtMessage*> messages)
+void WeArtClient::ForwardingMessages(std::vector<WeArtMessage*> messages)
 {
     for (auto msg : messages) {
 
         if (msg == NULL)
             continue;
 
-        // Forward the message to relevant tracking objects
-        for (WeArtThimbleTrackingObject* obj : thimbleTrackingObjects) {
-            obj->OnMessageReceived(msg);
+        if (msg->getID() == "SensorsData") {
+            // Forward the message to relevant raw sensors data 
+            for (WeArtRawSensorData* obj : thimbleRawSensorData) {
+                obj->OnMessageReceived(msg);
+            }
+        }
+        else if (msg->getID() == "Tracking") {
+            // Forward the message to relevant tracking objects
+            for (WeArtThimbleTrackingObject* obj : thimbleTrackingObjects) {
+                obj->OnMessageReceived(msg);
+            }
         }
     }
 }
@@ -292,4 +300,9 @@ int WeArtClient::SizeThimbles() {
 void WeArtClient::AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects) {
 
     thimbleTrackingObjects.push_back(trackingObjects);
+}
+
+void WeArtClient::AddThimbleRawSensors(WeArtRawSensorData * rawSensorsData) {
+
+    thimbleRawSensorData.push_back(rawSensorsData);
 }

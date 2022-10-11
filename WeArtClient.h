@@ -7,6 +7,7 @@
 #include "WeArtMessages.h""
 #include "WeArtMessageSerializer.h"
 #include "WeArtThimbleTrackingObject.h"
+#include "WeArtRawSensorData.h"
 #include <winsock2.h>
 
 class WeArtClient
@@ -17,7 +18,9 @@ private:
 	SOCKET ConnectSocket;
 
 	std::vector<WeArtThimbleTrackingObject*> thimbleTrackingObjects;
-	void TrackingMessages(std::vector<WeArtMessage*> messages);
+	std::vector<WeArtRawSensorData*> thimbleRawSensorData;
+
+	void ForwardingMessages(std::vector<WeArtMessage*> messages);
 
 	PCSTR IP_ADDESS; 
 	PCSTR PORT;
@@ -39,6 +42,8 @@ public:
 	void SendMessage(WeArtMessage* message);
 
 	void AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects);
+	void AddThimbleRawSensors(WeArtRawSensorData* rawSensorData);
+
 	int SizeThimbles();
 
 };
