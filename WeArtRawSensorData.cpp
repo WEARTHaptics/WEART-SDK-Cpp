@@ -16,7 +16,7 @@ void WeArtRawSensorData::OnMessageReceived(WeArtMessage* msg)
 {
 	if (msg->getID() == "SensorsData") {
 		RawSensorsData* rawSensorsData = static_cast<RawSensorsData*>(msg);
-		if (rawSensorsData->GetHandSide() == handSide && rawSensorsData->GetActuationPoint()) {
+		if (rawSensorsData->GetHandSide() == handSide && rawSensorsData->GetActuationPoint() == actuationPoint) {
 			
 			this->AccX = rawSensorsData->accX;
 			this->AccY = rawSensorsData->accY;
