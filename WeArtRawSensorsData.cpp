@@ -4,15 +4,15 @@
 */
 
 #include "pch.h"
-#include "WeArtRawSensorData.h"
+#include "WeArtRawSensorsData.h"
 #include "WeArtController.h"
 
-WeArtRawSensorData::WeArtRawSensorData(HandSide side, ActuationPoint actuation) {
+WeArtRawSensorsData::WeArtRawSensorsData(HandSide side, ActuationPoint actuation) {
 	handSide = side;
 	actuationPoint = actuation;
 }
 
-WeArtRawSensorData::Sample* WeArtRawSensorData::GetLastSample() {
+WeArtRawSensorsData::Sample* WeArtRawSensorsData::GetLastSample() {
 	if (this->samples.size() > 0) {
 		Sample *lastSample = this->samples.back();
 		return lastSample;
@@ -25,7 +25,7 @@ WeArtRawSensorData::Sample* WeArtRawSensorData::GetLastSample() {
 	
 }
 
-void WeArtRawSensorData::OnMessageReceived(WeArtMessage* msg)
+void WeArtRawSensorsData::OnMessageReceived(WeArtMessage* msg)
 {
 	if (msg->getID() == "SensorsData") {
 		RawSensorsData* rawSensorsData = static_cast<RawSensorsData*>(msg);

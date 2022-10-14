@@ -7,11 +7,11 @@
 #include "WeArtCommon.h"
 #include "WeArtMessages.h"
 
-class WeArtRawSensorData
+class WeArtRawSensorsData
 {
 public:
 
-	WeArtRawSensorData(HandSide handSide, ActuationPoint actuationPoint);
+	WeArtRawSensorsData(HandSide handSide, ActuationPoint actuationPoint);
 
 	void OnMessageReceived(WeArtMessage* msg);
 
