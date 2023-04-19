@@ -280,7 +280,7 @@ void WeArtClient::ForwardingMessages(std::vector<WeArtMessage*> messages)
 
         if (msg->getID() == "SensorsData") {
             // Forward the message to relevant raw sensors data 
-            for (WeArtRawSensorData* obj : thimbleRawSensorData) {
+            for (WeArtRawSensorsData* obj : thimbleRawSensorData) {
                 obj->OnMessageReceived(msg);
             }
         }
@@ -302,7 +302,7 @@ void WeArtClient::AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects
     thimbleTrackingObjects.push_back(trackingObjects);
 }
 
-void WeArtClient::AddThimbleRawSensors(WeArtRawSensorData * rawSensorsData) {
+void WeArtClient::AddThimbleRawSensors(WeArtRawSensorsData * rawSensorsData) {
 
     thimbleRawSensorData.push_back(rawSensorsData);
 }

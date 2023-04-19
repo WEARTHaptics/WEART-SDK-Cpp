@@ -4,10 +4,10 @@
 */
 
 #pragma once
-#include "WeArtMessages.h""
+#include "WeArtMessages.h"
 #include "WeArtMessageSerializer.h"
 #include "WeArtThimbleTrackingObject.h"
-#include "WeArtRawSensorData.h"
+#include "WeArtRawSensorsData.h"
 #include <winsock2.h>
 
 class WeArtClient
@@ -18,7 +18,7 @@ private:
 	SOCKET ConnectSocket;
 
 	std::vector<WeArtThimbleTrackingObject*> thimbleTrackingObjects;
-	std::vector<WeArtRawSensorData*> thimbleRawSensorData;
+	std::vector<WeArtRawSensorsData*> thimbleRawSensorData;
 
 	void ForwardingMessages(std::vector<WeArtMessage*> messages);
 
@@ -42,7 +42,7 @@ public:
 	void SendMessage(WeArtMessage* message);
 
 	void AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects);
-	void AddThimbleRawSensors(WeArtRawSensorData* rawSensorData);
+	void AddThimbleRawSensors(WeArtRawSensorsData* rawSensorData);
 
 	int SizeThimbles();
 
