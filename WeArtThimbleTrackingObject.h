@@ -6,15 +6,15 @@
 
 #include "WeArtCommon.h"
 #include "WeArtMessages.h"
+#include "WeArtMessageListener.h"
 
-class WeArtThimbleTrackingObject
+class WeArtThimbleTrackingObject : public WeArtMessageListener
 {
-
 public:
 
 	WeArtThimbleTrackingObject(HandSide handSide, ActuationPoint actuationPoint);
 
-	void OnMessageReceived(WeArtMessage *msg);
+	void OnMessageReceived(WeArtMessage *msg) override;
 
 	float GetClosure() const { return Closure; }
 

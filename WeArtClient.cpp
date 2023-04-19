@@ -283,22 +283,14 @@ void WeArtClient::SendMessage(WeArtMessage* message) {
 
 void WeArtClient::ForwardingMessages(std::vector<WeArtMessage*> messages)
 {
+    // Forward the messages to the relevant listeners
     for (auto msg : messages) {
-
         if (msg == NULL)
             continue;
 
-        if (msg->getID() == "SensorsData") {
-            // Forward the message to relevant raw sensors data 
-            for (WeArtRawSensorsData* obj : thimbleRawSensorData) {
-                obj->OnMessageReceived(msg);
-            }
-        }
-        else if (msg->getID() == "Tracking") {
-            // Forward the message to relevant tracking objects
-            for (WeArtThimbleTrackingObject* obj : thimbleTrackingObjects) {
-                obj->OnMessageReceived(msg);
-            }
+        for (WeArtMessageListener* listener : messageListeners) {
+            if (listener->accept(msg->getID()))
+                listener->OnMessageReceived(msg);
         }
     }
 }
@@ -307,12 +299,21 @@ int WeArtClient::SizeThimbles() {
     return thimbleTrackingObjects.size();
 }
 
-void WeArtClient::AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects) {
+void WeArtClient::AddMessageListener(WeArtMessageListener* listener) {
+    messageListeners.push_back(listener);
+}
 
+void WeArtClient::RemoveMessageListener(WeArtMessageListener* listener) {
+    auto it = std::find(messageListeners.begin(), messageListeners.end(), listener);
+    if (it != messageListeners.end())
+        messageListeners.erase(it);
+}
+
+void WeArtClient::AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects) {
     thimbleTrackingObjects.push_back(trackingObjects);
+    AddMessageListener(trackingObjects);
 }
 
 void WeArtClient::AddThimbleRawSensors(WeArtRawSensorsData * rawSensorsData) {
-
-    thimbleRawSensorData.push_back(rawSensorsData);
+    AddMessageListener(rawSensorsData);
 }

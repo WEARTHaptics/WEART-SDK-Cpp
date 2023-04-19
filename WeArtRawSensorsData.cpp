@@ -7,7 +7,9 @@
 #include "WeArtRawSensorsData.h"
 #include "WeArtController.h"
 
-WeArtRawSensorsData::WeArtRawSensorsData(HandSide side, ActuationPoint actuation) {
+WeArtRawSensorsData::WeArtRawSensorsData(HandSide side, ActuationPoint actuation)
+	: WeArtMessageListener({"SensorsData"})
+{
 	handSide = side;
 	actuationPoint = actuation;
 }

@@ -5,15 +5,16 @@
 #pragma once
 
 #include "WeArtCommon.h"
+#include "WeArtMessageListener.h"
 #include "WeArtMessages.h"
 
-class WeArtRawSensorsData
+class WeArtRawSensorsData : public WeArtMessageListener
 {
 public:
 
 	WeArtRawSensorsData(HandSide handSide, ActuationPoint actuationPoint);
 
-	void OnMessageReceived(WeArtMessage* msg);
+	void OnMessageReceived(WeArtMessage* msg) override;
 
 	class Sample {
 		public: 

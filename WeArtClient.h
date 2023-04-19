@@ -4,6 +4,7 @@
 */
 
 #pragma once
+#include "WeArtMessageListener.h"
 #include "WeArtMessages.h"
 #include "WeArtMessageSerializer.h"
 #include "WeArtThimbleTrackingObject.h"
@@ -18,13 +19,12 @@ private:
 	SOCKET ConnectSocket;
 
 	std::vector<WeArtThimbleTrackingObject*> thimbleTrackingObjects;
-	std::vector<WeArtRawSensorsData*> thimbleRawSensorData;
+	std::vector<WeArtMessageListener*> messageListeners;
 
 	void ForwardingMessages(std::vector<WeArtMessage*> messages);
 
 	PCSTR IP_ADDESS; 
 	PCSTR PORT;
-
 protected:
 	WeArtMessageSerializer messageSerializer;
 
@@ -46,7 +46,9 @@ public:
 
 	void AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects);
 	void AddThimbleRawSensors(WeArtRawSensorsData* rawSensorData);
-
 	int SizeThimbles();
+
+	void AddMessageListener(WeArtMessageListener* listener);
+	void RemoveMessageListener(WeArtMessageListener* listener);
 };
 
