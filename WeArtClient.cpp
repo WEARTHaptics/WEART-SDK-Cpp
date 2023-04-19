@@ -167,15 +167,14 @@ void WeArtClient::OnReceive() {
             printf("Closing socket %d\n", ConnectSocket);
             closesocket(ConnectSocket);
             WSACloseEvent(EventArray[Index - WSA_WAIT_EVENT_0]);
-
             return;
         }
 
-        std::string bufferText = std::string(buffer);
-
+        // Get text to parse and trailing text to use on next receive
+        std::string bufferText = std::string(buffer, (size_t)BytesTransferred);
         const int lastSeparatorIndex = bufferText.find_last_of(messagesSeparator);
+        std::string textToParse = trailingText + bufferText.substr(0, lastSeparatorIndex);
         trailingText = bufferText.substr(lastSeparatorIndex + 1);
-        std::string textToParse = bufferText.substr(0, lastSeparatorIndex);
 
         // Split the string on separator occurence
         std::vector<std::string> splitStrings;
