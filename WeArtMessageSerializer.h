@@ -32,6 +32,18 @@ public:
 			return msg;
 			break;
 		}
+		case HashStringToInt("CalibrationResult"):
+		{
+			WeArtMessage* msg = new CalibrationResultMessage();
+			return msg;
+			break;
+		}
+		case HashStringToInt("CalibrationStatus"):
+		{
+			WeArtMessage* msg = new CalibrationStatusMessage();
+			return msg;
+			break;
+		}
 		case HashStringToInt("exit"): {
 			WeArtMessage* msg = new ExitMessage();
 			return msg;

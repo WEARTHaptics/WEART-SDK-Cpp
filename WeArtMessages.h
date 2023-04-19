@@ -37,6 +37,20 @@ static std::string HandsideToString(HandSide hs) {
 	}
 };
 
+static std::string CalibrationHandSideToString(HandSide hs) {
+	return hs == HandSide::Left ? "0" : "1";
+}
+
+static HandSide StringToCalibrationHandSide(std::string& str) {
+	if (str == "0")
+		return HandSide::Left;
+	else if (str == "1")
+		return HandSide::Right;
+
+	assert(false);
+	return HandSide::Left;
+}
+
 
 static ActuationPoint StringToActuationPoint(std::string& str) {
 	if (str == "THUMB") {
@@ -101,8 +115,17 @@ public:
 };
 
 
-class WeArtMessageObjectSpecific : public WeArtMessage {
+class WeArtMessageHandSpecific : public WeArtMessage {
+public:
+	HandSide getHand() { return handSide; }
+protected:
+	HandSide handSide;
+public:
+	virtual void setHandSide(HandSide hs) override { handSide = hs; };
+	virtual void setActuationPoint(ActuationPoint ap) override {};
+};
 
+class WeArtMessageObjectSpecific : public WeArtMessage {
 protected:
 	HandSide handSide;
 	ActuationPoint actuationPoint;
@@ -123,6 +146,63 @@ class StopFromClientMessage : public WeArtMessageNoParams {
 public:
 	virtual std::string getID() override { return std::string("StopFromClient"); };
 };
+
+class StartCalibrationMessage : public WeArtMessageNoParams {
+public:
+	virtual std::string getID() override { return std::string("StartCalibration"); }
+};
+
+class StopCalibrationMessage : public WeArtMessageNoParams {
+public:
+	virtual std::string getID() override { return std::string("StopCalibration"); }
+};
+
+class CalibrationStatusMessage : public WeArtMessageHandSpecific {
+public:
+	virtual std::string getID() override { return std::string("CalibrationStatus"); }
+	
+	CalibrationStatus getStatus() { return status; }
+
+	virtual std::vector<std::string> getValues() override {
+		std::vector<std::string> ret;
+		ret.push_back(CalibrationHandSideToString(handSide));
+		ret.push_back(std::to_string((int)status));
+		return ret;
+	};
+
+	virtual void setValues(std::vector<std::string>& values) override {
+		assert(values.size() == 2);
+		handSide = StringToCalibrationHandSide(values[0]);
+		status = (CalibrationStatus)std::stoi(values[1]);
+	};
+
+protected:
+	CalibrationStatus status;
+};
+
+class CalibrationResultMessage : public WeArtMessageHandSpecific {
+public:
+	virtual std::string getID() override { return std::string("CalibrationResult"); }
+
+	bool getSuccess() { return success; }
+
+	virtual std::vector<std::string> getValues() override {
+		std::vector<std::string> ret;
+		ret.push_back(CalibrationHandSideToString(handSide));
+		ret.push_back(success ? "0" : "1");
+		return ret;
+	};
+
+	virtual void setValues(std::vector<std::string>& values) override {
+		assert(values.size() == 2);
+		handSide = StringToCalibrationHandSide(values[0]);
+		success = std::stoi(values[1]) == 0;
+	};
+
+protected:
+	bool success;
+};
+
 
 class ExitMessage : public WeArtMessageNoParams {
 

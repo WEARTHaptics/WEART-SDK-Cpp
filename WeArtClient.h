@@ -39,12 +39,14 @@ public:
 	void Run();
 	void Close();
 
+	void StartCalibration();
+	void StopCalibration();
+
 	void SendMessage(WeArtMessage* message);
 
 	void AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects);
 	void AddThimbleRawSensors(WeArtRawSensorsData* rawSensorData);
 
 	int SizeThimbles();
-
 };
 

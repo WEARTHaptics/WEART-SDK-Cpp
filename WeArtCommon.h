@@ -38,6 +38,11 @@ enum GraspingState
 	Released = 1
 };
 
+enum CalibrationStatus {
+	IDLE = 0,
+	Calibrating = 1,
+	Running = 2,
+};
 
 enum class TextureType : uint8
 {

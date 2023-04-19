@@ -247,6 +247,16 @@ void WeArtClient::Close() {
     IsConnected = false;
 }
 
+void WeArtClient::StartCalibration() {
+    StartCalibrationMessage startCalibration;
+    SendMessage(&startCalibration);
+}
+
+void WeArtClient::StopCalibration() {
+    StopCalibrationMessage stopCalibration;
+    SendMessage(&stopCalibration);
+}
+
 void WeArtClient::SendMessage(WeArtMessage* message) {
 
     if (!IsConnected) {
