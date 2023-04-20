@@ -69,6 +69,45 @@ std::string ActuationPointToString(ActuationPoint ap) {
 	}
 }
 
+TrackingType StringToTrackingType(const std::string& str) {
+	if (str == "TrackType0")
+		return TrackingType::CLAP_HAND;
+	if (str == "TrackType1")
+		return TrackingType::WEART_HAND;
+	return TrackingType::DEFAULT;
+}
+
+std::string TrackingTypeToString(TrackingType trackType) {
+	switch (trackType) {
+		case TrackingType::DEFAULT:
+			return "";
+		case TrackingType::CLAP_HAND:
+			return "TrackType0";
+		case TrackingType::WEART_HAND:
+			return "TrackType1";
+	}
+	return "";
+}
+
+// StartFromClient message
+
+std::vector<std::string> StartFromClientMessage::getValues() {
+	std::vector<std::string> ret;
+	if (_trackType != TrackingType::DEFAULT) {
+		ret.push_back(WeArtConstants::WEART_SDK_TYPE);
+		ret.push_back(WeArtConstants::WEART_SDK_VERSION);
+		ret.push_back(TrackingTypeToString(_trackType));
+	}
+	return ret;
+}
+
+void StartFromClientMessage::setValues(std::vector<std::string>& values) {
+	if (values.empty())
+		_trackType = TrackingType::DEFAULT;
+	else
+		_trackType = StringToTrackingType(values[2]);
+}
+
 // Calibration Status
 
 std::vector<std::string> CalibrationStatusMessage::getValues() {

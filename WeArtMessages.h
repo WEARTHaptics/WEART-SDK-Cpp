@@ -10,7 +10,6 @@
 #include <cassert>
 
 // Utility Methods, called to serialize/deserialize types
-
 HandSide StringToHandside(std::string& str);
 
 std::string HandsideToString(HandSide hs);
@@ -22,6 +21,10 @@ HandSide StringToCalibrationHandSide(std::string& str);
 ActuationPoint StringToActuationPoint(std::string& str);
 
 std::string ActuationPointToString(ActuationPoint ap);
+
+TrackingType StringToTrackingType(const std::string& str);
+
+std::string TrackingTypeToString(TrackingType trackType);
 
 //! @brief Generic Weart message
 class WeArtMessage {
@@ -87,9 +90,19 @@ class StartFromClientMessage : public WeArtMessageNoParams {
 public:
 	static constexpr const char* ID = "StartFromClient";
 
+	StartFromClientMessage(TrackingType trackType = TrackingType::WEART_HAND) : _trackType(trackType) {}
+
 	virtual std::string getID() override {
 		return ID;
 	};
+
+	virtual void setHandSide(HandSide hs) override {};
+	virtual void setActuationPoint(ActuationPoint ap) override {};
+
+	virtual std::vector<std::string> getValues() override;
+	virtual void setValues(std::vector<std::string>& values) override;
+private:
+	TrackingType _trackType;
 };
 
 class StopFromClientMessage : public WeArtMessageNoParams {

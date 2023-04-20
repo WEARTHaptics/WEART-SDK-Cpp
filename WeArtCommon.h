@@ -6,6 +6,12 @@
 #pragma once
 #include <vector>
 
+enum class TrackingType {
+	DEFAULT,	//!< Deprecated, contains only closure values 
+	CLAP_HAND,	//!< Tracking with closures, 3 angles for thumb abduction, 1 value for other fingers abduction
+	WEART_HAND,	//!< Tracking with closures and 1 value for each finger abduction
+};
+
 enum HandSide {
 	//HSnone = 0	
 	Left = 1 << 0,
@@ -64,6 +70,9 @@ enum class TextureType : uint8 {
 // Constants shared by the WeArt components
 namespace WeArtConstants {
 	const PCSTR DEFAULT_TCP_PORT = "13031";
+
+	const std::string WEART_SDK_VERSION = "1.0.0";
+	const std::string WEART_SDK_TYPE = "SdkLLCPP";
 
 	const float defaultTemperature = 0.5f;
 	const float minTemperature = 0.0f;

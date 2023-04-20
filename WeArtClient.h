@@ -17,7 +17,7 @@ public:
 	WeArtClient(PCSTR ip_address, PCSTR port);
 
 	//! @brief Send a start command to the middleware
-	void Start();
+	void Start(TrackingType trackType = TrackingType::WEART_HAND);
 
 	//! @brief Send a stop command to the middleware
 	void Stop();
