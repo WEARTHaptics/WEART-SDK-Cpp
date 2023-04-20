@@ -8,7 +8,7 @@
 #include "WeArtController.h"
 
 WeArtRawSensorsData::WeArtRawSensorsData(HandSide side, ActuationPoint actuation)
-	: WeArtMessageListener({"SensorsData"})
+	: WeArtMessageListener({RawSensorsData::ID})
 {
 	handSide = side;
 	actuationPoint = actuation;
@@ -29,7 +29,7 @@ WeArtRawSensorsData::Sample* WeArtRawSensorsData::GetLastSample() {
 
 void WeArtRawSensorsData::OnMessageReceived(WeArtMessage* msg)
 {
-	if (msg->getID() == "SensorsData") {
+	if (msg->getID() == RawSensorsData::ID) {
 		RawSensorsData* rawSensorsData = static_cast<RawSensorsData*>(msg);
 		if (rawSensorsData->GetHandSide() == handSide && rawSensorsData->GetActuationPoint() == actuationPoint) {
 			

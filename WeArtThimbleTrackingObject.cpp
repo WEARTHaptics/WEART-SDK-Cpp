@@ -8,7 +8,7 @@
 #include "WeArtController.h"
 
 WeArtThimbleTrackingObject::WeArtThimbleTrackingObject(HandSide side, ActuationPoint actuation) 
-	: WeArtMessageListener({"Tracking"})
+	: WeArtMessageListener({TrackingMessage::ID})
 {
 	handSide = side;
 	actuationPoint = actuation;
@@ -17,7 +17,7 @@ WeArtThimbleTrackingObject::WeArtThimbleTrackingObject(HandSide side, ActuationP
 
 void WeArtThimbleTrackingObject::OnMessageReceived(WeArtMessage* msg)
 {
-	if (msg->getID() == "Tracking") {
+	if (msg->getID() == TrackingMessage::ID) {
 		TrackingMessage* trackingMsg = static_cast<TrackingMessage*>(msg);
 		Closure = trackingMsg->GetClosure(handSide, actuationPoint);
 	}

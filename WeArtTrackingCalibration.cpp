@@ -2,7 +2,7 @@
 #include "WeArtTrackingCalibration.h"
 
 WeArtTrackingCalibration::WeArtTrackingCalibration()
-	: WeArtMessageListener({"CalibrationStatus", "CalibrationResult"}) {}
+	: WeArtMessageListener({CalibrationStatusMessage::ID, CalibrationResultMessage::ID}) {}
 
 void WeArtTrackingCalibration::AddStatusCallback(std::function<void(HandSide, CalibrationStatus)> callback) {
 	statusCallbacks.push_back(callback);
@@ -13,7 +13,7 @@ void WeArtTrackingCalibration::AddResultCallback(std::function<void(HandSide, bo
 }
 
 void WeArtTrackingCalibration::OnMessageReceived(WeArtMessage* msg) {
-	if (msg->getID() == "CalibrationStatus")
+	if (msg->getID() == CalibrationStatusMessage::ID)
 	{
 		CalibrationStatusMessage* message = static_cast<CalibrationStatusMessage*>(msg);
 		currentHand = message->getHand();
@@ -22,7 +22,7 @@ void WeArtTrackingCalibration::OnMessageReceived(WeArtMessage* msg) {
 			callback(currentHand, status);
 
 	}
-	else if (msg->getID() == "CalibrationResult")
+	else if (msg->getID() == CalibrationResultMessage::ID)
 	{
 		CalibrationResultMessage* message = static_cast<CalibrationResultMessage*>(msg);
 		currentHand = message->getHand();
