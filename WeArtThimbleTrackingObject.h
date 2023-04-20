@@ -6,25 +6,27 @@
 
 #include "WeArtCommon.h"
 #include "WeArtMessages.h"
+#include "WeArtMessageListener.h"
 
-class WeArtThimbleTrackingObject
-{
-
+//! @brief Object used to track a single thimble object and its closure value
+class WeArtThimbleTrackingObject : public WeArtMessageListener {
 public:
-
 	WeArtThimbleTrackingObject(HandSide handSide, ActuationPoint actuationPoint);
 
-	void OnMessageReceived(WeArtMessage *msg);
+	//! @copydoc WeArtMessageListener::OnMessageReceived
+	void OnMessageReceived(WeArtMessage* msg) override;
 
-	float GetClosure() const { return Closure; }
-
-
+	//! @brief Get last received thimble closure
+	//! @return last received thimble closure
+	float GetClosure() const {
+		return Closure;
+	}
 protected:
 
 	HandSide handSide;
 
 	ActuationPoint actuationPoint;
-	
+
 	float Closure;
 };
 

@@ -9,40 +9,33 @@
 #include "WeArtController.h"
 #include <algorithm>
 
-WeArtHapticObject::WeArtHapticObject(WeArtClient* client)
-{
+WeArtHapticObject::WeArtHapticObject(WeArtClient* client) {
 	weArtclient = client;
 }
 
 
-void WeArtHapticObject::AddEffect(WeArtEffect* effect)
-{
-	if (!ContainsEffect(effect))
-	{
+void WeArtHapticObject::AddEffect(WeArtEffect* effect) {
+	if (!ContainsEffect(effect)) {
 		activeEffects.push_back(effect);
 		UpdateEffects();
 	}
 }
 
 
-void WeArtHapticObject::RemoveEffect(WeArtEffect* effect)
-{
-	if (ContainsEffect(effect))
-	{
+void WeArtHapticObject::RemoveEffect(WeArtEffect* effect) {
+	if (ContainsEffect(effect)) {
 		activeEffects.erase(std::remove(activeEffects.begin(), activeEffects.end(), effect), activeEffects.end());
 		UpdateEffects();
 	}
 }
 
 
-bool WeArtHapticObject::ContainsEffect(WeArtEffect* effect)
-{
+bool WeArtHapticObject::ContainsEffect(WeArtEffect* effect) {
 	return std::find(activeEffects.begin(), activeEffects.end(), effect) != activeEffects.end();
 }
 
 
-void WeArtHapticObject::UpdateEffects(void)
-{
+void WeArtHapticObject::UpdateEffects(void) {
 	if (activeEffects.empty()) {
 		weArtForce.value(WeArtConstants::defaultForce);
 		weArtForce.active = false;
@@ -58,13 +51,11 @@ void WeArtHapticObject::UpdateEffects(void)
 		SendMessage(&msg2);
 		StopTextureMessage msg3;
 		SendMessage(&msg3);
-	}
-	else {
+	} else {
 		// Update temperature and send relevant messages
 		WeArtEffect* tempEffect = nullptr;
 		for (std::vector<WeArtEffect*>::reverse_iterator i = activeEffects.rbegin(); i != activeEffects.rend(); ++i) {
-			if ((*i)->getTemperature().active)
-			{
+			if ((*i)->getTemperature().active) {
 				tempEffect = *i;
 				break;
 			}
@@ -74,8 +65,7 @@ void WeArtHapticObject::UpdateEffects(void)
 			if (!newTemp.active) {
 				StopTemperatureMessage msg;
 				SendMessage(&msg);
-			}
-			else {
+			} else {
 				SetTemperatureMessage msg(newTemp.value());
 				SendMessage(&msg);
 			}
@@ -85,8 +75,7 @@ void WeArtHapticObject::UpdateEffects(void)
 		// Update force and set relevant messages
 		WeArtEffect* forceEffect = nullptr;
 		for (std::vector<WeArtEffect*>::reverse_iterator i = activeEffects.rbegin(); i != activeEffects.rend(); ++i) {
-			if ((*i)->getForce().active)
-			{
+			if ((*i)->getForce().active) {
 				forceEffect = *i;
 				break;
 			}
@@ -96,8 +85,7 @@ void WeArtHapticObject::UpdateEffects(void)
 			if (!newForce.active) {
 				StopForceMessage msg;
 				SendMessage(&msg);
-			}
-			else {
+			} else {
 				const float fValue[3] = { newForce.value(), 0.0, 0.0 };
 				SetForceMessage msg(fValue);
 				SendMessage(&msg);
@@ -108,8 +96,7 @@ void WeArtHapticObject::UpdateEffects(void)
 		// Update texture and set relevant messages
 		WeArtEffect* texEffect = nullptr;
 		for (std::vector<WeArtEffect*>::reverse_iterator i = activeEffects.rbegin(); i != activeEffects.rend(); ++i) {
-			if ((*i)->getTexture().active)
-			{
+			if ((*i)->getTexture().active) {
 				texEffect = *i;
 				break;
 			}
@@ -119,8 +106,7 @@ void WeArtHapticObject::UpdateEffects(void)
 			if (!newTex.active) {
 				StopTextureMessage msg;
 				SendMessage(&msg);
-			}
-			else {
+			} else {
 				const float texValue[3] = { newTex.textureVelocity()[0], newTex.textureVelocity()[1], newTex.textureVelocity()[2] };
 				SetTextureMessage msg((int)newTex.textureType(), texValue, newTex.volume());
 				SendMessage(&msg);
@@ -131,8 +117,7 @@ void WeArtHapticObject::UpdateEffects(void)
 }
 
 
-void WeArtHapticObject::SendMessage(WeArtMessage* msg)
-{
+void WeArtHapticObject::SendMessage(WeArtMessage* msg) {
 	const HandSide hand_sides[] = { HandSide::Left, HandSide::Right };
 	const ActuationPoint actuation_points[] = { ActuationPoint::Thumb, ActuationPoint::Index, ActuationPoint::Middle, ActuationPoint::Palm };
 

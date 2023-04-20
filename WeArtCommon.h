@@ -1,46 +1,46 @@
 /**
-*	WEART - Common utility 
+*	WEART - Common utility
 *	https://www.weart.it/
 */
 
 #pragma once
 #include <vector>
 
-enum HandSide
-{
+enum HandSide {
 	//HSnone = 0	
-	Left	= 1 << 0,
-	Right	= 1 << 1,
+	Left = 1 << 0,
+	Right = 1 << 1,
 };
 
 
-enum ActuationPoint
-{
+enum ActuationPoint {
 	//APnone	= 0
-	Thumb	= 1 << 0,
-	Index	= 1 << 1,
-	Middle	= 1 << 2,
-	Palm	= 1 << 3,
+	Thumb = 1 << 0,
+	Index = 1 << 1,
+	Middle = 1 << 2,
+	Palm = 1 << 3,
 };
 
 
-enum HandClosingState
-{
+enum HandClosingState {
 	Open = 0,
 	Closing = 1,
 	Closed = 2
 };
 
 
-enum GraspingState
-{
+enum GraspingState {
 	Grabbed = 0,
 	Released = 1
 };
 
+enum CalibrationStatus {
+	IDLE = 0,
+	Calibrating = 1,
+	Running = 2,
+};
 
-enum class TextureType : uint8
-{
+enum class TextureType : uint8 {
 	ClickNormal = 0, ClickSoft = 1, DoubleClick = 2,
 	AluminiumFineMeshSlow = 3, AluminiumFineMeshFast = 4,
 	PlasticMeshSlow = 5, ProfiledAluminiumMeshMedium = 6, ProfiledAluminiumMeshFast = 7,
@@ -62,8 +62,7 @@ enum class TextureType : uint8
 
 
 // Constants shared by the WeArt components
-namespace WeArtConstants
-{
+namespace WeArtConstants {
 	const PCSTR DEFAULT_TCP_PORT = "13031";
 
 	const float defaultTemperature = 0.5f;

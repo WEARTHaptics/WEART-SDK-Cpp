@@ -167,15 +167,14 @@ void WeArtClient::OnReceive() {
             printf("Closing socket %d\n", ConnectSocket);
             closesocket(ConnectSocket);
             WSACloseEvent(EventArray[Index - WSA_WAIT_EVENT_0]);
-
             return;
         }
 
-        std::string bufferText = std::string(buffer);
-
+        // Get text to parse and trailing text to use on next receive
+        std::string bufferText = std::string(buffer, (size_t)BytesTransferred);
         const int lastSeparatorIndex = bufferText.find_last_of(messagesSeparator);
+        std::string textToParse = trailingText + bufferText.substr(0, lastSeparatorIndex);
         trailingText = bufferText.substr(lastSeparatorIndex + 1);
-        std::string textToParse = bufferText.substr(0, lastSeparatorIndex);
 
         // Split the string on separator occurence
         std::vector<std::string> splitStrings;
@@ -247,6 +246,16 @@ void WeArtClient::Close() {
     IsConnected = false;
 }
 
+void WeArtClient::StartCalibration() {
+    StartCalibrationMessage startCalibration;
+    SendMessage(&startCalibration);
+}
+
+void WeArtClient::StopCalibration() {
+    StopCalibrationMessage stopCalibration;
+    SendMessage(&stopCalibration);
+}
+
 void WeArtClient::SendMessage(WeArtMessage* message) {
 
     if (!IsConnected) {
@@ -273,22 +282,14 @@ void WeArtClient::SendMessage(WeArtMessage* message) {
 
 void WeArtClient::ForwardingMessages(std::vector<WeArtMessage*> messages)
 {
+    // Forward the messages to the relevant listeners
     for (auto msg : messages) {
-
         if (msg == NULL)
             continue;
 
-        if (msg->getID() == "SensorsData") {
-            // Forward the message to relevant raw sensors data 
-            for (WeArtRawSensorData* obj : thimbleRawSensorData) {
-                obj->OnMessageReceived(msg);
-            }
-        }
-        else if (msg->getID() == "Tracking") {
-            // Forward the message to relevant tracking objects
-            for (WeArtThimbleTrackingObject* obj : thimbleTrackingObjects) {
-                obj->OnMessageReceived(msg);
-            }
+        for (WeArtMessageListener* listener : messageListeners) {
+            if (listener->accept(msg->getID()))
+                listener->OnMessageReceived(msg);
         }
     }
 }
@@ -297,12 +298,21 @@ int WeArtClient::SizeThimbles() {
     return thimbleTrackingObjects.size();
 }
 
-void WeArtClient::AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects) {
-
-    thimbleTrackingObjects.push_back(trackingObjects);
+void WeArtClient::AddMessageListener(WeArtMessageListener* listener) {
+    messageListeners.push_back(listener);
 }
 
-void WeArtClient::AddThimbleRawSensors(WeArtRawSensorData * rawSensorsData) {
+void WeArtClient::RemoveMessageListener(WeArtMessageListener* listener) {
+    auto it = std::find(messageListeners.begin(), messageListeners.end(), listener);
+    if (it != messageListeners.end())
+        messageListeners.erase(it);
+}
 
-    thimbleRawSensorData.push_back(rawSensorsData);
+void WeArtClient::AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects) {
+    thimbleTrackingObjects.push_back(trackingObjects);
+    AddMessageListener(trackingObjects);
+}
+
+void WeArtClient::AddThimbleRawSensors(WeArtRawSensorsData * rawSensorsData) {
+    AddMessageListener(rawSensorsData);
 }
