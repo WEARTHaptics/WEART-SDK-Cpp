@@ -225,6 +225,7 @@ std::vector<std::string> TrackingMessage::getValues() {
 	ret.push_back(std::to_string(LeftPalmClosure));
 	return ret;
 }
+
 void TrackingMessage::setValues(std::vector<std::string>& values) {
 	assert(values.size() == 8);
 	RightThumbClosure = std::stof(values[0]);
@@ -236,6 +237,7 @@ void TrackingMessage::setValues(std::vector<std::string>& values) {
 	LeftMiddleClosure = std::stof(values[6]);
 	LeftPalmClosure = std::stof(values[7]);
 }
+
 float TrackingMessage::GetClosure(HandSide handSide, ActuationPoint actuationPoint) {
 	uint8 byteValue = 0x00;
 	switch (handSide) {

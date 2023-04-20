@@ -8,37 +8,40 @@
 #include "WeArtMessageListener.h"
 #include "WeArtMessages.h"
 
-class WeArtRawSensorsData : public WeArtMessageListener
-{
+//! @brief Object used to track the raw sensors data for a single thimble
+class WeArtRawSensorsData : public WeArtMessageListener {
 public:
-
 	WeArtRawSensorsData(HandSide handSide, ActuationPoint actuationPoint);
 
+	//! @copydoc WeArtMessageListener::OnMessageReceived
 	void OnMessageReceived(WeArtMessage* msg) override;
 
+	//! @brief Data received from sensors
 	class Sample {
-		public: 
-			float AccX;
-			float AccY;
-			float AccZ;
-			float GyroX;
-			float GyroY;
-			float GyroZ;
-			int TOF;
+	public:
+		float AccX;
+		float AccY;
+		float AccZ;
+		float GyroX;
+		float GyroY;
+		float GyroZ;
+		int TOF;
 
-			Sample() {
-				AccX = 0.0f;
-				AccY = 0.0f;
-				AccZ = 0.0f;
-				GyroX = 0.0f;
-				GyroY = 0.0f;
-				GyroZ = 0.0f;
-				TOF = 0;
-			}
+		Sample() {
+			AccX = 0.0f;
+			AccY = 0.0f;
+			AccZ = 0.0f;
+			GyroX = 0.0f;
+			GyroY = 0.0f;
+			GyroZ = 0.0f;
+			TOF = 0;
+		}
 	};
 
 	std::vector<Sample*> samples;
 
+	//! @brief Get the last sample received
+	//! @return the last sample received
 	Sample* GetLastSample();
 
 protected:

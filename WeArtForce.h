@@ -1,32 +1,43 @@
 /**
-*	WEART - Force struct 
+*	WEART - Force struct
 *	https://www.weart.it/
 */
 
 #pragma once
 #include <WEART_SDK/WeArtCommon.h>
 
+//! @brief Force value to be applied to an effect
 struct WeArtForce {
-
-private: 
-
-	float _value;
-
 public:
-	
-	bool active;
-	
-	float value() const { return _value; }
+	WeArtForce() : active(false), _value(DefaultValue) {};
 
-	void value(float v) { 
-		float lower = 0.0f;
-		float upper = 1.0f;
-		_value = v <= lower ? lower : v >= upper ? upper : v;
+	WeArtForce(bool active, float force) {
+		this->active = active;
+		value(force);
 	}
 
-	WeArtForce() : active(false), _value(WeArtConstants::defaultForce) {};
+	static constexpr float DefaultValue = 0.0f;
+	static constexpr float MinValue = 0.0f;
+	static constexpr float MaxValue = 1.0f;
+
+	bool active;
+
+	//! @brief Force value getter
+	//! @return the force value
+	float value() const {
+		return _value;
+	}
+
+	//! @brief Force value setter
+	//! @param force Value to set 
+	void value(float force) {
+		_value = force <= MinValue ? MinValue : force >= MaxValue ? MaxValue : force;
+	}
 
 	bool operator== (const WeArtForce& other) {
 		return (active == other.active && _value == other.value());
 	};
+
+private:
+	float _value;
 };

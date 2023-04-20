@@ -8,11 +8,24 @@ class WeArtTrackingCalibration : public WeArtMessageListener {
 public:
 	WeArtTrackingCalibration();
 
-	HandSide getCurrentHand() { return currentHand; }
-	CalibrationStatus getStatus() { return status; }
-	bool getResult() { return result; }
+	HandSide getCurrentHand() {
+		return currentHand;
+	}
 
+	CalibrationStatus getStatus() {
+		return status;
+	}
+
+	bool getResult() {
+		return result;
+	}
+
+	//! @brief Adds a callback for calibration status update
+	//! @param callback Callback called on calibration status update
 	void AddStatusCallback(std::function<void(HandSide, CalibrationStatus)> callback);
+
+	//! @brief Adds a callback for calibration result
+	//! @param callback Callback called when a calibration result is received
 	void AddResultCallback(std::function<void(HandSide, bool)> callback);
 
 private:

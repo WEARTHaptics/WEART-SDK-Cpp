@@ -8,31 +8,28 @@
 #include "WeArtController.h"
 
 WeArtRawSensorsData::WeArtRawSensorsData(HandSide side, ActuationPoint actuation)
-	: WeArtMessageListener({RawSensorsData::ID})
-{
+	: WeArtMessageListener({ RawSensorsData::ID }) {
 	handSide = side;
 	actuationPoint = actuation;
 }
 
 WeArtRawSensorsData::Sample* WeArtRawSensorsData::GetLastSample() {
 	if (this->samples.size() > 0) {
-		Sample *lastSample = this->samples.back();
+		Sample* lastSample = this->samples.back();
 		return lastSample;
-	}
-	else {
-		Sample *sample = new Sample();
+	} else {
+		Sample* sample = new Sample();
 		return sample;
 
 	}
-	
+
 }
 
-void WeArtRawSensorsData::OnMessageReceived(WeArtMessage* msg)
-{
+void WeArtRawSensorsData::OnMessageReceived(WeArtMessage* msg) {
 	if (msg->getID() == RawSensorsData::ID) {
 		RawSensorsData* rawSensorsData = static_cast<RawSensorsData*>(msg);
 		if (rawSensorsData->GetHandSide() == handSide && rawSensorsData->GetActuationPoint() == actuationPoint) {
-			
+
 			Sample* dataSample = new Sample();
 
 			dataSample->AccX = rawSensorsData->accX;
@@ -47,8 +44,7 @@ void WeArtRawSensorsData::OnMessageReceived(WeArtMessage* msg)
 
 			if (this->samples.size() <= K_NUM_SAMPLES) {
 				samples.push_back(dataSample);
-			}
-			else {
+			} else {
 				samples.clear();
 				samples.push_back(dataSample);
 			}
