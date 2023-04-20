@@ -254,27 +254,122 @@ void StopTextureMessage::setValues(std::vector<std::string>& values) {
 
 std::vector<std::string> TrackingMessage::getValues() {
 	std::vector<std::string> ret;
-	ret.push_back(std::to_string(RightThumbClosure));
-	ret.push_back(std::to_string(RightIndexClosure));
-	ret.push_back(std::to_string(RightMiddleClosure));
-	ret.push_back(std::to_string(RightPalmClosure));
-	ret.push_back(std::to_string(LeftThumbClosure));
-	ret.push_back(std::to_string(LeftIndexClosure));
-	ret.push_back(std::to_string(LeftMiddleClosure));
-	ret.push_back(std::to_string(LeftPalmClosure));
+	ret.push_back(TrackingTypeToString(_trackingType));
+	switch (_trackingType) {
+		case TrackingType::DEFAULT:
+		{
+			ret.push_back(std::to_string(RightThumbClosure));
+			ret.push_back(std::to_string(RightIndexClosure));
+			ret.push_back(std::to_string(RightMiddleClosure));
+			ret.push_back(std::to_string(RightPalmClosure));
+			ret.push_back(std::to_string(LeftThumbClosure));
+			ret.push_back(std::to_string(LeftIndexClosure));
+			ret.push_back(std::to_string(LeftMiddleClosure));
+			ret.push_back(std::to_string(LeftPalmClosure));
+			break;
+		}
+		case TrackingType::CLAP_HAND:
+		{
+			// Right
+			ret.push_back(std::to_string(RightIndexClosure));
+			ret.push_back(std::to_string(RightIndexAbduction));
+			ret.push_back(std::to_string(RightThumbClosure));
+			ret.push_back(std::to_string(RightThumbAbduction_X));
+			ret.push_back(std::to_string(RightThumbAbduction_Y));
+			ret.push_back(std::to_string(RightThumbAbduction_Z));
+			ret.push_back(std::to_string(RightMiddleClosure));
+			ret.push_back(std::to_string(RightMiddleAbduction));
+
+			// Left
+			ret.push_back(std::to_string(LeftIndexClosure));
+			ret.push_back(std::to_string(LeftIndexAbduction));
+			ret.push_back(std::to_string(LeftThumbClosure));
+			ret.push_back(std::to_string(LeftThumbAbduction_X));
+			ret.push_back(std::to_string(LeftThumbAbduction_Y));
+			ret.push_back(std::to_string(LeftThumbAbduction_Z));
+			ret.push_back(std::to_string(LeftMiddleClosure));
+			ret.push_back(std::to_string(LeftMiddleAbduction));
+			break;
+		}
+		case TrackingType::WEART_HAND:
+		{
+			// Right
+			ret.push_back(std::to_string(RightIndexClosure));
+			ret.push_back(std::to_string(RightThumbClosure));
+			ret.push_back(std::to_string(RightThumbAbduction));
+			ret.push_back(std::to_string(RightMiddleClosure));
+
+			// Left
+			ret.push_back(std::to_string(LeftIndexClosure));
+			ret.push_back(std::to_string(LeftThumbClosure));
+			ret.push_back(std::to_string(LeftThumbAbduction));
+			ret.push_back(std::to_string(LeftMiddleClosure));
+		}
+	}
+
 	return ret;
 }
 
 void TrackingMessage::setValues(std::vector<std::string>& values) {
-	assert(values.size() == 8);
-	RightThumbClosure = std::stof(values[0]);
-	RightIndexClosure = std::stof(values[1]);
-	RightMiddleClosure = std::stof(values[2]);
-	RightPalmClosure = std::stof(values[3]);
-	LeftThumbClosure = std::stof(values[4]);
-	LeftIndexClosure = std::stof(values[5]);
-	LeftMiddleClosure = std::stof(values[6]);
-	LeftPalmClosure = std::stof(values[7]);
+	_trackingType = StringToTrackingType(values[0]);
+	switch (_trackingType) {
+		case TrackingType::DEFAULT:
+		{
+			assert(values.size() == 8);
+			RightThumbClosure = std::stoi(values[0]);
+			RightIndexClosure = std::stoi(values[1]);
+			RightMiddleClosure = std::stoi(values[2]);
+			RightPalmClosure = std::stoi(values[3]);
+			LeftThumbClosure = std::stoi(values[4]);
+			LeftIndexClosure = std::stoi(values[5]);
+			LeftMiddleClosure = std::stoi(values[6]);
+			LeftPalmClosure = std::stoi(values[7]);
+			break;
+		}
+		case TrackingType::CLAP_HAND:
+		{
+			assert(values.size() == 17);
+			// Right
+			RightIndexClosure = std::stoi(values[1]);
+			RightIndexAbduction = std::stof(values[2]);
+
+			RightThumbClosure = std::stoi(values[3]);
+			RightThumbAbduction_X = std::stof(values[4]);
+			RightThumbAbduction_Y = std::stof(values[5]);
+			RightThumbAbduction_Z = std::stof(values[6]);
+
+			RightMiddleClosure = std::stoi(values[7]);
+			RightMiddleAbduction = std::stof(values[8]);
+
+			// Left
+			LeftIndexClosure = std::stoi(values[9]);
+			LeftIndexAbduction = std::stof(values[10]);
+
+			LeftThumbClosure = std::stoi(values[11]);
+			LeftThumbAbduction_X = std::stof(values[12]);
+			LeftThumbAbduction_Y = std::stof(values[13]);
+			LeftThumbAbduction_Z = std::stof(values[14]);
+
+			LeftMiddleClosure = std::stoi(values[15]);
+			LeftMiddleAbduction = std::stof(values[16]);
+			break;
+		}
+		case TrackingType::WEART_HAND:
+		{
+			assert(values.size() == 9);
+			// Right
+			RightIndexClosure = std::stoi(values[1]);
+			RightThumbClosure = std::stoi(values[2]);
+			RightThumbAbduction = std::stof(values[3]);
+			RightMiddleClosure = std::stoi(values[4]);
+
+			// Left
+			LeftIndexClosure = std::stoi(values[5]);
+			LeftThumbClosure = std::stoi(values[6]);
+			LeftThumbAbduction = std::stof(values[7]);
+			LeftMiddleClosure = std::stoi(values[8]);
+		}
+	}
 }
 
 float TrackingMessage::GetClosure(HandSide handSide, ActuationPoint actuationPoint) {
@@ -305,6 +400,38 @@ float TrackingMessage::GetClosure(HandSide handSide, ActuationPoint actuationPoi
 	return closure;
 }
 
+float TrackingMessage::GetAbduction(HandSide handSide, ActuationPoint actuationPoint) {
+	switch (handSide) {
+		case HandSide::Left:
+			switch (actuationPoint) {
+				case ActuationPoint::Thumb:  return RightThumbAbduction;
+				case ActuationPoint::Index:  return RightIndexAbduction;
+				case ActuationPoint::Middle: return RightMiddleAbduction;
+			}
+			break;
+		case HandSide::Right:
+			switch (actuationPoint) {
+				case ActuationPoint::Thumb:  return LeftThumbAbduction;
+				case ActuationPoint::Index:  return LeftIndexAbduction;
+				case ActuationPoint::Middle: return LeftMiddleAbduction;
+			}
+			break;
+	}
+	return 0.0f;
+}
+
+TrackingMessage::Angles TrackingMessage::GetAbductionAngles(HandSide handSide, ActuationPoint actuationPoint) {
+	switch (handSide) {
+		case HandSide::Left:
+			if (actuationPoint == ActuationPoint::Thumb) return { RightThumbAbduction_X, RightThumbAbduction_Y ,RightThumbAbduction_Z };
+			break;
+		case HandSide::Right:
+			if (actuationPoint == ActuationPoint::Thumb) return { LeftThumbAbduction_X, LeftThumbAbduction_Y , LeftThumbAbduction_Z };
+			break;
+	}
+	return { 0.0f, 0.0f, 0.0f };
+}
+
 // Raw Sensors Data
 
 std::vector<std::string> RawSensorsData::getValues() {
@@ -320,18 +447,20 @@ std::vector<std::string> RawSensorsData::getValues() {
 	ret.push_back(std::to_string(TOF));
 	return ret;
 }
+
 void RawSensorsData::setValues(std::vector<std::string>& values) {
 	assert(values.size() == 9);
-	handSide = std::stof(values[0]);
-	actuationPoint = std::stof(values[1]);
+	handSide = std::stoi(values[0]);
+	actuationPoint = std::stoi(values[1]);
 	accX = std::stof(values[2]);
 	accY = std::stof(values[3]);
 	accZ = std::stof(values[4]);
 	gyroX = std::stof(values[5]);
 	gyroY = std::stof(values[6]);
 	gyroZ = std::stof(values[7]);
-	TOF = std::stof(values[8]);
+	TOF = std::stoi(values[8]);
 }
+
 HandSide RawSensorsData::GetHandSide() {
 	switch (handSide) {
 		case 0:
@@ -356,4 +485,5 @@ ActuationPoint RawSensorsData::GetActuationPoint() {
 		default:
 			break;
 	}
+	return ActuationPoint::Index;
 }

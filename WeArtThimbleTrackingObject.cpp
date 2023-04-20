@@ -11,12 +11,13 @@ WeArtThimbleTrackingObject::WeArtThimbleTrackingObject(HandSide side, ActuationP
 	: WeArtMessageListener({ TrackingMessage::ID }) {
 	handSide = side;
 	actuationPoint = actuation;
-	Closure = 0.0f;
+	_closure = 0.0f;
 }
 
 void WeArtThimbleTrackingObject::OnMessageReceived(WeArtMessage* msg) {
 	if (msg->getID() == TrackingMessage::ID) {
 		TrackingMessage* trackingMsg = static_cast<TrackingMessage*>(msg);
-		Closure = trackingMsg->GetClosure(handSide, actuationPoint);
+		_closure = trackingMsg->GetClosure(handSide, actuationPoint);
+		_abduction = trackingMsg->GetAbduction(handSide, actuationPoint);
 	}
 }
