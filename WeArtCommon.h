@@ -8,8 +8,7 @@
 
 enum class TrackingType {
 	DEFAULT,	//!< Deprecated, contains only closure values 
-	CLAP_HAND,	//!< Tracking with closures, 3 angles for thumb abduction, 1 value for other fingers abduction
-	WEART_HAND,	//!< Tracking with closures and 1 value for each finger abduction
+	WEART_HAND,	//!< Tracking with closures, and abduction value for thumb
 };
 
 enum HandSide {

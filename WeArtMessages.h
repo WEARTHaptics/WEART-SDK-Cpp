@@ -324,12 +324,6 @@ public:
 	//! @return the requested abduction value
 	float GetAbduction(HandSide handSide, ActuationPoint actuationPoint);
 
-	//! @brief Getter for abduction angles (based on tracking type and given point)
-	//! @param handSide			Hand from which to get the value
-	//! @param actuationPoint	Actuation Point from which to get the value
-	//! @return the requested abduction angles
-	Angles GetAbductionAngles(HandSide handSide, ActuationPoint actuationPoint);
-
 	//! @brief Getter for closure value
 	//! @param handSide			Hand from which to get the value
 	//! @param actuationPoint	Actuation Point from which to get the value
@@ -350,19 +344,7 @@ private:
 
 	// Abductions
 	float RightThumbAbduction;
-	float RightIndexAbduction;
-	float RightMiddleAbduction;
 	float LeftThumbAbduction;
-	float LeftIndexAbduction;
-	float LeftMiddleAbduction;
-
-	// Thumb abduction (for clap hand tracking)
-	float RightThumbAbduction_X;
-	float RightThumbAbduction_Y;
-	float RightThumbAbduction_Z;
-	float LeftThumbAbduction_X;
-	float LeftThumbAbduction_Y;
-	float LeftThumbAbduction_Z;
 };
 
 

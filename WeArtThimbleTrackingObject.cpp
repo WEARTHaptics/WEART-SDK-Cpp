@@ -12,6 +12,7 @@ WeArtThimbleTrackingObject::WeArtThimbleTrackingObject(HandSide side, ActuationP
 	handSide = side;
 	actuationPoint = actuation;
 	_closure = 0.0f;
+	_abduction = 0.0f;
 }
 
 void WeArtThimbleTrackingObject::OnMessageReceived(WeArtMessage* msg) {

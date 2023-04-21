@@ -70,8 +70,6 @@ std::string ActuationPointToString(ActuationPoint ap) {
 }
 
 TrackingType StringToTrackingType(const std::string& str) {
-	if (str == "TrackType0")
-		return TrackingType::CLAP_HAND;
 	if (str == "TrackType1")
 		return TrackingType::WEART_HAND;
 	return TrackingType::DEFAULT;
@@ -81,8 +79,6 @@ std::string TrackingTypeToString(TrackingType trackType) {
 	switch (trackType) {
 		case TrackingType::DEFAULT:
 			return "";
-		case TrackingType::CLAP_HAND:
-			return "TrackType0";
 		case TrackingType::WEART_HAND:
 			return "TrackType1";
 	}
@@ -268,29 +264,6 @@ std::vector<std::string> TrackingMessage::getValues() {
 			ret.push_back(std::to_string(LeftPalmClosure));
 			break;
 		}
-		case TrackingType::CLAP_HAND:
-		{
-			// Right
-			ret.push_back(std::to_string(RightIndexClosure));
-			ret.push_back(std::to_string(RightIndexAbduction));
-			ret.push_back(std::to_string(RightThumbClosure));
-			ret.push_back(std::to_string(RightThumbAbduction_X));
-			ret.push_back(std::to_string(RightThumbAbduction_Y));
-			ret.push_back(std::to_string(RightThumbAbduction_Z));
-			ret.push_back(std::to_string(RightMiddleClosure));
-			ret.push_back(std::to_string(RightMiddleAbduction));
-
-			// Left
-			ret.push_back(std::to_string(LeftIndexClosure));
-			ret.push_back(std::to_string(LeftIndexAbduction));
-			ret.push_back(std::to_string(LeftThumbClosure));
-			ret.push_back(std::to_string(LeftThumbAbduction_X));
-			ret.push_back(std::to_string(LeftThumbAbduction_Y));
-			ret.push_back(std::to_string(LeftThumbAbduction_Z));
-			ret.push_back(std::to_string(LeftMiddleClosure));
-			ret.push_back(std::to_string(LeftMiddleAbduction));
-			break;
-		}
 		case TrackingType::WEART_HAND:
 		{
 			// Right
@@ -324,34 +297,6 @@ void TrackingMessage::setValues(std::vector<std::string>& values) {
 			LeftIndexClosure = std::stoi(values[5]);
 			LeftMiddleClosure = std::stoi(values[6]);
 			LeftPalmClosure = std::stoi(values[7]);
-			break;
-		}
-		case TrackingType::CLAP_HAND:
-		{
-			assert(values.size() == 17);
-			// Right
-			RightIndexClosure = std::stoi(values[1]);
-			RightIndexAbduction = std::stof(values[2]);
-
-			RightThumbClosure = std::stoi(values[3]);
-			RightThumbAbduction_X = std::stof(values[4]);
-			RightThumbAbduction_Y = std::stof(values[5]);
-			RightThumbAbduction_Z = std::stof(values[6]);
-
-			RightMiddleClosure = std::stoi(values[7]);
-			RightMiddleAbduction = std::stof(values[8]);
-
-			// Left
-			LeftIndexClosure = std::stoi(values[9]);
-			LeftIndexAbduction = std::stof(values[10]);
-
-			LeftThumbClosure = std::stoi(values[11]);
-			LeftThumbAbduction_X = std::stof(values[12]);
-			LeftThumbAbduction_Y = std::stof(values[13]);
-			LeftThumbAbduction_Z = std::stof(values[14]);
-
-			LeftMiddleClosure = std::stoi(values[15]);
-			LeftMiddleAbduction = std::stof(values[16]);
 			break;
 		}
 		case TrackingType::WEART_HAND:
@@ -403,34 +348,15 @@ float TrackingMessage::GetClosure(HandSide handSide, ActuationPoint actuationPoi
 float TrackingMessage::GetAbduction(HandSide handSide, ActuationPoint actuationPoint) {
 	switch (handSide) {
 		case HandSide::Left:
-			switch (actuationPoint) {
-				case ActuationPoint::Thumb:  return RightThumbAbduction;
-				case ActuationPoint::Index:  return RightIndexAbduction;
-				case ActuationPoint::Middle: return RightMiddleAbduction;
-			}
+			if(actuationPoint == ActuationPoint::Thumb)  return LeftThumbAbduction;
 			break;
 		case HandSide::Right:
-			switch (actuationPoint) {
-				case ActuationPoint::Thumb:  return LeftThumbAbduction;
-				case ActuationPoint::Index:  return LeftIndexAbduction;
-				case ActuationPoint::Middle: return LeftMiddleAbduction;
-			}
+			if(actuationPoint == ActuationPoint::Thumb)  return RightThumbAbduction;
 			break;
 	}
 	return 0.0f;
 }
 
-TrackingMessage::Angles TrackingMessage::GetAbductionAngles(HandSide handSide, ActuationPoint actuationPoint) {
-	switch (handSide) {
-		case HandSide::Left:
-			if (actuationPoint == ActuationPoint::Thumb) return { RightThumbAbduction_X, RightThumbAbduction_Y ,RightThumbAbduction_Z };
-			break;
-		case HandSide::Right:
-			if (actuationPoint == ActuationPoint::Thumb) return { LeftThumbAbduction_X, LeftThumbAbduction_Y , LeftThumbAbduction_Z };
-			break;
-	}
-	return { 0.0f, 0.0f, 0.0f };
-}
 
 // Raw Sensors Data
 
