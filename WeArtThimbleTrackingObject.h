@@ -19,14 +19,19 @@ public:
 	//! @brief Get last received thimble closure
 	//! @return last received thimble closure
 	float GetClosure() const {
-		return Closure;
+		return _closure;
+	}
+
+	//! @brief Get last received thimble abduction
+	//! @return last received thimble abduction
+	float GetAbduction() const {
+		return _abduction;
 	}
 protected:
-
 	HandSide handSide;
-
 	ActuationPoint actuationPoint;
 
-	float Closure;
+	float _closure;
+	float _abduction;
 };
 

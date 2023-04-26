@@ -10,7 +10,6 @@
 #include <cassert>
 
 // Utility Methods, called to serialize/deserialize types
-
 HandSide StringToHandside(std::string& str);
 
 std::string HandsideToString(HandSide hs);
@@ -22,6 +21,10 @@ HandSide StringToCalibrationHandSide(std::string& str);
 ActuationPoint StringToActuationPoint(std::string& str);
 
 std::string ActuationPointToString(ActuationPoint ap);
+
+TrackingType StringToTrackingType(const std::string& str);
+
+std::string TrackingTypeToString(TrackingType trackType);
 
 //! @brief Generic Weart message
 class WeArtMessage {
@@ -87,9 +90,19 @@ class StartFromClientMessage : public WeArtMessageNoParams {
 public:
 	static constexpr const char* ID = "StartFromClient";
 
+	StartFromClientMessage(TrackingType trackType = TrackingType::WEART_HAND) : _trackType(trackType) {}
+
 	virtual std::string getID() override {
 		return ID;
 	};
+
+	virtual void setHandSide(HandSide hs) override {};
+	virtual void setActuationPoint(ActuationPoint ap) override {};
+
+	virtual std::vector<std::string> getValues() override;
+	virtual void setValues(std::vector<std::string>& values) override;
+private:
+	TrackingType _trackType;
 };
 
 class StopFromClientMessage : public WeArtMessageNoParams {
@@ -273,7 +286,16 @@ public:
 	virtual void setValues(std::vector<std::string>& values) override;
 };
 
-
+//! @brief Generic Tracking message, contains information on closure and abduction (based on tracking type)
+//! 
+//! Message containing the closure and abduction values of the different actuation points (thimbles and palm)
+//! The abduction values available depends on the tracking type selected when the connection started.
+//! 
+//! In particular:
+//! * DEFAULT: no abduction values (deprecated)
+//! * CLAP_HAND: 3 angles (X,Y,Z) for the thumb, and a single abduction value for index and middle
+//! * WEART_HAND: single abduction value only for the thumb
+//! 
 class TrackingMessage : public WeArtMessageNoParams {
 public:
 	static constexpr const char* ID = "Tracking";
@@ -282,13 +304,35 @@ public:
 		return std::string(ID);
 	};
 
+	struct Angles {
+		float X;
+		float Y;
+		float Z;
+	};
+
 	virtual std::vector<std::string> getValues() override;
 
 	virtual void setValues(std::vector<std::string>& values) override;
 
-	float GetClosure(HandSide handSide, ActuationPoint actuationPoint);
+	TrackingType GetType() {
+		return _trackingType;
+	}
 
+	//! @brief Getter for abduction value (based on tracking type and given point)
+	//! @param handSide			Hand from which to get the value
+	//! @param actuationPoint	Actuation Point from which to get the value
+	//! @return the requested abduction value
+	float GetAbduction(HandSide handSide, ActuationPoint actuationPoint);
+
+	//! @brief Getter for closure value
+	//! @param handSide			Hand from which to get the value
+	//! @param actuationPoint	Actuation Point from which to get the value
+	//! @return the requested closure value (from 0 to 1)
+	float GetClosure(HandSide handSide, ActuationPoint actuationPoint);
 private:
+	TrackingType _trackingType;
+
+	// Closures
 	uint8 RightThumbClosure;
 	uint8 RightIndexClosure;
 	uint8 RightMiddleClosure;
@@ -297,6 +341,10 @@ private:
 	uint8 LeftIndexClosure;
 	uint8 LeftMiddleClosure;
 	uint8 LeftPalmClosure;
+
+	// Abductions
+	float RightThumbAbduction;
+	float LeftThumbAbduction;
 };
 
 

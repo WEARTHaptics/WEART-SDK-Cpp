@@ -215,8 +215,8 @@ void WeArtClient::OnReceive() {
     }
 }
 
-void WeArtClient::Start() {
-    StartFromClientMessage startMsg;
+void WeArtClient::Start(TrackingType trackType) {
+    StartFromClientMessage startMsg(trackType);
     SendMessage(&startMsg);
 }
 
