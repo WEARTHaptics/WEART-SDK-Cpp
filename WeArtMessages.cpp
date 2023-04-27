@@ -305,13 +305,13 @@ void TrackingMessage::setValues(std::vector<std::string>& values) {
 			// Right
 			RightIndexClosure = std::stoi(values[1]);
 			RightThumbClosure = std::stoi(values[2]);
-			RightThumbAbduction = std::stof(values[3]);
+			RightThumbAbduction = std::stoi(values[3]);
 			RightMiddleClosure = std::stoi(values[4]);
 
 			// Left
 			LeftIndexClosure = std::stoi(values[5]);
 			LeftThumbClosure = std::stoi(values[6]);
-			LeftThumbAbduction = std::stof(values[7]);
+			LeftThumbAbduction = std::stoi(values[7]);
 			LeftMiddleClosure = std::stoi(values[8]);
 		}
 	}
@@ -346,12 +346,13 @@ float TrackingMessage::GetClosure(HandSide handSide, ActuationPoint actuationPoi
 }
 
 float TrackingMessage::GetAbduction(HandSide handSide, ActuationPoint actuationPoint) {
+	float maxAbductionValue = 255;
 	switch (handSide) {
 		case HandSide::Left:
-			if(actuationPoint == ActuationPoint::Thumb)  return LeftThumbAbduction;
+			if(actuationPoint == ActuationPoint::Thumb)  return ((float)LeftThumbAbduction) / maxAbductionValue;
 			break;
 		case HandSide::Right:
-			if(actuationPoint == ActuationPoint::Thumb)  return RightThumbAbduction;
+			if(actuationPoint == ActuationPoint::Thumb)  return ((float)RightThumbAbduction) / maxAbductionValue;
 			break;
 	}
 	return 0.0f;

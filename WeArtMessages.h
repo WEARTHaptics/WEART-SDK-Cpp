@@ -343,8 +343,8 @@ private:
 	uint8 LeftPalmClosure;
 
 	// Abductions
-	float RightThumbAbduction;
-	float LeftThumbAbduction;
+	uint8 RightThumbAbduction;
+	uint8 LeftThumbAbduction;
 };
 
 
