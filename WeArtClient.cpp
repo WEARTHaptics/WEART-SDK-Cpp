@@ -55,6 +55,7 @@ void WeArtClient::Run() {
     if (iResult != 0) {
         Connected = false;
         printf("WSAStartup failed with error: %d\n", iResult);
+        NotifyError(ErrorType::ConnectionError);
         return;
     }
 
@@ -69,6 +70,7 @@ void WeArtClient::Run() {
         Connected = false;
         printf("getaddrinfo failed with error: %d\n", iResult);
         WSACleanup();
+        NotifyError(ErrorType::ConnectionError);
         return;
     }
 
@@ -82,6 +84,7 @@ void WeArtClient::Run() {
             Connected = false;
             printf("socket failed with error: %ld\n", WSAGetLastError());
             WSACleanup();
+            NotifyError(ErrorType::ConnectionError);
             return;
         }
 
@@ -91,6 +94,7 @@ void WeArtClient::Run() {
             Connected = false;
             closesocket(ConnectSocket);
             ConnectSocket = INVALID_SOCKET;
+            NotifyError(ErrorType::ConnectionError);
             continue;
         }
         break;
@@ -102,6 +106,7 @@ void WeArtClient::Run() {
         printf("Unable to connect to server!\n");
         Connected = false;
         WSACleanup();
+        NotifyError(ErrorType::ConnectionError);
         return;
     }
 
@@ -149,12 +154,10 @@ void WeArtClient::OnReceive() {
 
     EventTotal++;
 
-    if (WSARecv(ConnectSocket, &DataBuf, 1, &RecvBytes, &Flags, &AcceptOverlapped, NULL) == SOCKET_ERROR)
-    {
-        if (WSAGetLastError() != WSA_IO_PENDING)
-
-        {
-            printf("Error reading buffer socket");
+    if (WSARecv(ConnectSocket, &DataBuf, 1, &RecvBytes, &Flags, &AcceptOverlapped, NULL) == SOCKET_ERROR) {
+        if (WSAGetLastError() != WSA_IO_PENDING) {
+            std::cerr << "Error reading buffer socket" << std::endl;
+            NotifyError(ErrorType::ReceiveMessageError);
         }
     }
 
@@ -212,11 +215,10 @@ void WeArtClient::OnReceive() {
         DataBuf.len = DATA_BUFSIZE;
         DataBuf.buf = buffer;
 
-        if (WSARecv(ConnectSocket, &DataBuf, 1, &RecvBytes, &Flags, &AcceptOverlapped, NULL) == SOCKET_ERROR)
-        {
-            if (WSAGetLastError() != WSA_IO_PENDING)
-            {
-                printf("Error reading buffer socket");
+        if (WSARecv(ConnectSocket, &DataBuf, 1, &RecvBytes, &Flags, &AcceptOverlapped, NULL) == SOCKET_ERROR) {
+            if (WSAGetLastError() != WSA_IO_PENDING) {
+                std::cerr << "Error reading buffer socket" << std::endl;
+                NotifyError(ErrorType::ReceiveMessageError);
             }
         }
     }
@@ -284,6 +286,7 @@ void WeArtClient::SendMessage(WeArtMessage* message) {
         printf("send failed with error: %d\n", WSAGetLastError());
         closesocket(ConnectSocket);
         WSACleanup();
+        NotifyError(ErrorType::SendMessageError);
         NotifyConnectionStatus(false);
         return;
     }
@@ -304,18 +307,25 @@ void WeArtClient::ForwardingMessages(std::vector<WeArtMessage*> messages)
 }
 
 void WeArtClient::NotifyConnectionStatus(bool connected) {
-    // Call all registered callbacks (asynchronously and without waiting for the result)
-    for (auto callback : connectionStatusCallbacks) {
-        auto calledCallback = std::async(callback, connected);
-        pendingConnectionStatusCallbacks.emplace_front(std::move(calledCallback));
-    }
+    for (auto callback : connectionStatusCallbacks)
+        pendingCallbacks.emplace_front(std::async(callback, connected));
+    ClearProcessedCallbacks();
+}
 
+void WeArtClient::NotifyError(ErrorType errorType) {
+    for (auto callback : errorCallbacks)
+        pendingCallbacks.emplace_front(std::async(callback, errorType));
+    ClearProcessedCallbacks();
+}
+
+void WeArtClient::ClearProcessedCallbacks() {
     // Remove processed callbacks from vector (garbage collection)
     // Futures must be kept in a list to avoid their premature deletion because of scope
-    pendingConnectionStatusCallbacks.remove_if([](const std::future<void>& f) {
+    pendingCallbacks.remove_if([](const std::future<void>& f) {
         return f.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
         });
 }
+
 
 int WeArtClient::SizeThimbles() {
     return thimbleTrackingObjects.size();

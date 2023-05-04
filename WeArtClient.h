@@ -67,6 +67,16 @@ public:
 	//! @param callback The callback to be called whenever the connection status changes
 	void AddConnectionStatusCallback(std::function<void(bool)> callback);
 
+	enum ErrorType {
+		ConnectionError,
+		SendMessageError,
+		ReceiveMessageError
+	};
+
+	//! @brief Adds a callback for errors (connection, send or receive errors)
+	//! @param callback The callback to be called whenever an error occurs
+	void AddErrorCallback(std::function<void(ErrorType)> callback);
+
 protected:
 	WeArtMessageSerializer messageSerializer;
 
@@ -83,12 +93,15 @@ private:
 
 	void ForwardingMessages(std::vector<WeArtMessage*> messages);
 
-	// Connection status callbacks management
+	// Connection status and errors callbacks management
 	std::vector<std::function<void(bool)>> connectionStatusCallbacks;
-	std::forward_list<std::future<void>> pendingConnectionStatusCallbacks;
-	void NotifyConnectionStatus(bool connected);
-	
+	std::vector<std::function<void(ErrorType)>> errorCallbacks;
+	std::forward_list<std::future<void>> pendingCallbacks;
 
+	void NotifyConnectionStatus(bool connected);
+	void NotifyError(ErrorType errorType);
+	void ClearProcessedCallbacks();
+	
 	PCSTR IP_ADDESS;
 	PCSTR PORT;
 };
