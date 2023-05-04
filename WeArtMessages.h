@@ -45,6 +45,7 @@ public:
 };
 
 
+//! @brief Message without handside or actuation point parameters
 class WeArtMessageNoParams : public WeArtMessage {
 public:
 	virtual void setHandSide(HandSide hs) override {};
@@ -57,7 +58,7 @@ public:
 	virtual void setValues(std::vector<std::string>& values) override {};
 };
 
-
+//! @brief Message related to a given handside
 class WeArtMessageHandSpecific : public WeArtMessage {
 public:
 	HandSide getHand() {
@@ -72,6 +73,7 @@ public:
 	virtual void setActuationPoint(ActuationPoint ap) override {};
 };
 
+//! @brief Message related to a given hand and actuation point
 class WeArtMessageObjectSpecific : public WeArtMessage {
 protected:
 	HandSide handSide;

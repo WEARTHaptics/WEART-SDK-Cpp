@@ -349,10 +349,10 @@ float TrackingMessage::GetAbduction(HandSide handSide, ActuationPoint actuationP
 	float maxAbductionValue = 255;
 	switch (handSide) {
 		case HandSide::Left:
-			if(actuationPoint == ActuationPoint::Thumb)  return ((float)LeftThumbAbduction) / maxAbductionValue;
+			if (actuationPoint == ActuationPoint::Thumb)  return ((float)LeftThumbAbduction) / maxAbductionValue;
 			break;
 		case HandSide::Right:
-			if(actuationPoint == ActuationPoint::Thumb)  return ((float)RightThumbAbduction) / maxAbductionValue;
+			if (actuationPoint == ActuationPoint::Thumb)  return ((float)RightThumbAbduction) / maxAbductionValue;
 			break;
 	}
 	return 0.0f;
