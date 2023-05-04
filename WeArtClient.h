@@ -10,6 +10,8 @@
 #include "WeArtThimbleTrackingObject.h"
 #include "WeArtRawSensorsData.h"
 #include <winsock2.h>
+#include <future>
+#include <forward_list>
 
 //! @brief Weart client, used to connect to the Weart middleware, perform operations and receive messages
 class WeArtClient {
@@ -24,6 +26,10 @@ public:
 
 	//! @brief Starts and runs the network connection thread
 	void Run();
+
+	//! @brief Tells whether the client is connected to the Weart middleware
+	//! @return true if the client is connected, false otherwise
+	bool IsConnected();
 
 	//! @brief Close the network connection
 	void Close();
@@ -57,20 +63,31 @@ public:
 	//! @param listener The listener to remove from the client
 	void RemoveMessageListener(WeArtMessageListener* listener);
 
+	//! @brief Adds a callback for the connection status (true = connected, false = disconnected)
+	//! @param callback The callback to be called whenever the connection status changes
+	void AddConnectionStatusCallback(std::function<void(bool)> callback);
+
 protected:
 	WeArtMessageSerializer messageSerializer;
 
 	void OnReceive();
 
 private:
-	bool IsConnected = false;
+	bool Connected = false;
 
 	SOCKET ConnectSocket;
 
 	std::vector<WeArtThimbleTrackingObject*> thimbleTrackingObjects;
 	std::vector<WeArtMessageListener*> messageListeners;
+	
 
 	void ForwardingMessages(std::vector<WeArtMessage*> messages);
+
+	// Connection status callbacks management
+	std::vector<std::function<void(bool)>> connectionStatusCallbacks;
+	std::forward_list<std::future<void>> pendingConnectionStatusCallbacks;
+	void NotifyConnectionStatus(bool connected);
+	
 
 	PCSTR IP_ADDESS;
 	PCSTR PORT;

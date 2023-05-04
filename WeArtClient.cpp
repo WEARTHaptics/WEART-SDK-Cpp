@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <windows.h>
+#include <future>
 
 #include <ppltasks.h>
 using namespace Windows::Foundation;
@@ -52,7 +53,7 @@ void WeArtClient::Run() {
     // Initialize Winsock
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
-        IsConnected = false;
+        Connected = false;
         printf("WSAStartup failed with error: %d\n", iResult);
         return;
     }
@@ -65,7 +66,7 @@ void WeArtClient::Run() {
     // Resolve the server address and port
     iResult = getaddrinfo(IP_ADDESS, PORT, &hints, &result);
     if (iResult != 0) {
-        IsConnected = false;
+        Connected = false;
         printf("getaddrinfo failed with error: %d\n", iResult);
         WSACleanup();
         return;
@@ -78,7 +79,7 @@ void WeArtClient::Run() {
         ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,
             ptr->ai_protocol);
         if (ConnectSocket == INVALID_SOCKET) {
-            IsConnected = false;
+            Connected = false;
             printf("socket failed with error: %ld\n", WSAGetLastError());
             WSACleanup();
             return;
@@ -87,7 +88,7 @@ void WeArtClient::Run() {
         // Connect to server.
         iResult = connect(ConnectSocket, ptr->ai_addr, (int)ptr->ai_addrlen);
         if (iResult == SOCKET_ERROR) {
-            IsConnected = false;
+            Connected = false;
             closesocket(ConnectSocket);
             ConnectSocket = INVALID_SOCKET;
             continue;
@@ -99,12 +100,13 @@ void WeArtClient::Run() {
 
     if (ConnectSocket == INVALID_SOCKET) {
         printf("Unable to connect to server!\n");
-        IsConnected = false;
+        Connected = false;
         WSACleanup();
         return;
     }
 
-    IsConnected = true;
+    Connected = true;
+    NotifyConnectionStatus(true);
     
     
     // receive data in background 
@@ -114,6 +116,10 @@ void WeArtClient::Run() {
         });
 
     auto asyncAction = Windows::System::Threading::ThreadPool::RunAsync(workItem);
+}
+
+bool WeArtClient::IsConnected() {
+    return Connected;
 }
 
 
@@ -167,6 +173,7 @@ void WeArtClient::OnReceive() {
             printf("Closing socket %d\n", ConnectSocket);
             closesocket(ConnectSocket);
             WSACloseEvent(EventArray[Index - WSA_WAIT_EVENT_0]);
+            NotifyConnectionStatus(false);
             return;
         }
 
@@ -236,14 +243,16 @@ void WeArtClient::Close() {
         printf("shutdown failed with error: %d\n", WSAGetLastError());
         closesocket(ConnectSocket);
         WSACleanup();
+        NotifyConnectionStatus(false);
         return;
     }
 
     // cleanup
     closesocket(ConnectSocket);
     WSACleanup();
+    NotifyConnectionStatus(false);
 
-    IsConnected = false;
+    Connected = false;
 }
 
 void WeArtClient::StartCalibration() {
@@ -257,8 +266,7 @@ void WeArtClient::StopCalibration() {
 }
 
 void WeArtClient::SendMessage(WeArtMessage* message) {
-
-    if (!IsConnected) {
+    if (!Connected) {
         return;
     }
 
@@ -272,10 +280,11 @@ void WeArtClient::SendMessage(WeArtMessage* message) {
     // Send an initial buffer
     int iResult = send(ConnectSocket, sendbuf, (int)strlen(sendbuf), 0);
     if (iResult == SOCKET_ERROR) {
-        IsConnected = false;
+        Connected = false;
         printf("send failed with error: %d\n", WSAGetLastError());
         closesocket(ConnectSocket);
         WSACleanup();
+        NotifyConnectionStatus(false);
         return;
     }
 }
@@ -294,6 +303,20 @@ void WeArtClient::ForwardingMessages(std::vector<WeArtMessage*> messages)
     }
 }
 
+void WeArtClient::NotifyConnectionStatus(bool connected) {
+    // Call all registered callbacks (asynchronously and without waiting for the result)
+    for (auto callback : connectionStatusCallbacks) {
+        auto calledCallback = std::async(callback, connected);
+        pendingConnectionStatusCallbacks.emplace_front(std::move(calledCallback));
+    }
+
+    // Remove processed callbacks from vector (garbage collection)
+    // Futures must be kept in a list to avoid their premature deletion because of scope
+    pendingConnectionStatusCallbacks.remove_if([](const std::future<void>& f) {
+        return f.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+        });
+}
+
 int WeArtClient::SizeThimbles() {
     return thimbleTrackingObjects.size();
 }
@@ -306,6 +329,10 @@ void WeArtClient::RemoveMessageListener(WeArtMessageListener* listener) {
     auto it = std::find(messageListeners.begin(), messageListeners.end(), listener);
     if (it != messageListeners.end())
         messageListeners.erase(it);
+}
+
+void WeArtClient::AddConnectionStatusCallback(std::function<void(bool)> callback) {
+    connectionStatusCallbacks.push_back(callback);
 }
 
 void WeArtClient::AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects) {
