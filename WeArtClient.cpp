@@ -333,6 +333,10 @@ void WeArtClient::AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects
 	AddMessageListener(trackingObjects);
 }
 
+void WeArtClient::AddThimbleRawSensors(WeArtRawSensorsData* rawSensorsData) {
+	AddMessageListener(rawSensorsData);
+}
+
 std::string WSAGetLastErrorString() {
 	int errorCode = WSAGetLastError();
 

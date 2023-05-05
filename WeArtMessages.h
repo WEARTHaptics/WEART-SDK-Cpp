@@ -371,3 +371,24 @@ private:
 	uint8 RightThumbAbduction;
 	uint8 LeftThumbAbduction;
 };
+
+
+class RawSensorsData : public WeArtMessageObjectSpecific {
+public:
+	static constexpr const char* ID = "SensorsData";
+
+	float accX;
+	float accY;
+	float accZ;
+	float gyroX;
+	float gyroY;
+	float gyroZ;
+	int TOF;
+
+	virtual std::string getID() override {
+		return ID;
+	};
+
+	virtual std::vector<std::string> getValues() override;
+	virtual void setValues(std::vector<std::string>& values) override;
+};

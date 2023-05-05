@@ -15,6 +15,7 @@ WeArtMessage* WeArtMessageSerializer::createMessage(std::string& ID) {
 		case HashStringToInt(SetTextureMessage::ID): return new SetTextureMessage();
 		case HashStringToInt(StopTextureMessage::ID): return new StopTextureMessage();
 		case HashStringToInt(TrackingMessage::ID): return new TrackingMessage();
+		case HashStringToInt(RawSensorsData::ID): return new RawSensorsData();
 		default: return nullptr;
 	}
 }
