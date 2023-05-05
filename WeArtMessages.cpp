@@ -360,11 +360,26 @@ float TrackingMessage::GetAbduction(HandSide handSide, ActuationPoint actuationP
 
 
 // Raw Sensors Data
-
 std::vector<std::string> RawSensorsData::getValues() {
 	std::vector<std::string> ret;
-	ret.push_back(std::to_string(handSide));
-	ret.push_back(std::to_string(actuationPoint));
+
+	int handSideNum = 0;
+	switch (handSide) {
+		case HandSide::Right: handSideNum = 0; break;
+		case HandSide::Left: handSideNum = 1; break;
+	}
+	ret.push_back(std::to_string(handSideNum));
+
+	int actuationPointNum = 0;
+	switch (actuationPoint) {
+		case ActuationPoint::Index: actuationPointNum = 0; break;
+		case ActuationPoint::Thumb: actuationPointNum = 1; break;
+		case ActuationPoint::Middle: actuationPointNum = 2; break;
+		case ActuationPoint::Palm: actuationPointNum = 3; break;
+	}
+	ret.push_back(std::to_string(actuationPointNum));
+
+
 	ret.push_back(std::to_string(accX));
 	ret.push_back(std::to_string(accY));
 	ret.push_back(std::to_string(accZ));
@@ -377,8 +392,23 @@ std::vector<std::string> RawSensorsData::getValues() {
 
 void RawSensorsData::setValues(std::vector<std::string>& values) {
 	assert(values.size() == 9);
-	handSide = std::stoi(values[0]);
-	actuationPoint = std::stoi(values[1]);
+
+	int handSideNum = std::stoi(values[0]);
+	switch (handSideNum) {
+		case 0: handSide = HandSide::Right; break;
+		case 1: handSide = HandSide::Left; break;
+		default: handSide = HandSide::Right; break;
+	}
+
+	int actuationPointNum = std::stoi(values[1]);
+	switch (actuationPointNum) {
+		case 0: actuationPoint = ActuationPoint::Index; break;
+		case 1: actuationPoint = ActuationPoint::Thumb; break;
+		case 2: actuationPoint = ActuationPoint::Middle; break;
+		case 3: actuationPoint = ActuationPoint::Palm; break;
+		default: actuationPoint = ActuationPoint::Index; break;
+	}
+
 	accX = std::stof(values[2]);
 	accY = std::stof(values[3]);
 	accZ = std::stof(values[4]);
@@ -386,31 +416,4 @@ void RawSensorsData::setValues(std::vector<std::string>& values) {
 	gyroY = std::stof(values[6]);
 	gyroZ = std::stof(values[7]);
 	TOF = std::stoi(values[8]);
-}
-
-HandSide RawSensorsData::GetHandSide() {
-	switch (handSide) {
-		case 0:
-			return HandSide::Right;
-		case 1:
-			return HandSide::Left;
-		default:
-			return HandSide::Right;
-	}
-}
-
-ActuationPoint RawSensorsData::GetActuationPoint() {
-	switch (actuationPoint) {
-		case 0:
-			return ActuationPoint::Index;
-		case 1:
-			return ActuationPoint::Thumb;
-		case 2:
-			return ActuationPoint::Middle;
-		case 3:
-			return ActuationPoint::Palm;
-		default:
-			break;
-	}
-	return ActuationPoint::Index;
 }
