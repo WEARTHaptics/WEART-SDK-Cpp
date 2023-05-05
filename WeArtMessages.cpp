@@ -355,7 +355,7 @@ float TrackingMessage::GetAbduction(HandSide handSide, ActuationPoint actuationP
 			if (actuationPoint == ActuationPoint::Thumb)  return ((float)RightThumbAbduction) / maxAbductionValue;
 			break;
 	}
-	return 0.0f;
+	return WeArtConstants::defaultAbduction;
 }
 
 
