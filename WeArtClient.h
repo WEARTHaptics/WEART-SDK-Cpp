@@ -8,8 +8,9 @@
 #include "WeArtMessages.h"
 #include "WeArtMessageSerializer.h"
 #include "WeArtThimbleTrackingObject.h"
-#include "WeArtRawSensorsData.h"
 #include <winsock2.h>
+#include <future>
+#include <forward_list>
 
 //! @brief Weart client, used to connect to the Weart middleware, perform operations and receive messages
 class WeArtClient {
@@ -24,6 +25,10 @@ public:
 
 	//! @brief Starts and runs the network connection thread
 	void Run();
+
+	//! @brief Tells whether the client is connected to the Weart middleware
+	//! @return true if the client is connected, false otherwise
+	bool IsConnected();
 
 	//! @brief Close the network connection
 	void Close();
@@ -42,10 +47,6 @@ public:
 	//! @param trackingObjects Thimble tracking object to add
 	void AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects);
 
-	//! @brief Adds a raw data sensors observer to the client, allowing it to receive messages
-	//! @param trackingObjects Raw sensors data object to add
-	void AddThimbleRawSensors(WeArtRawSensorsData* rawSensorData);
-
 	//! @return The number of thimbles added to the connection
 	int SizeThimbles();
 
@@ -57,21 +58,45 @@ public:
 	//! @param listener The listener to remove from the client
 	void RemoveMessageListener(WeArtMessageListener* listener);
 
+	//! @brief Adds a callback for the connection status (true = connected, false = disconnected)
+	//! @param callback The callback to be called whenever the connection status changes
+	void AddConnectionStatusCallback(std::function<void(bool)> callback);
+
+	enum ErrorType {
+		ConnectionError,
+		SendMessageError,
+		ReceiveMessageError
+	};
+
+	//! @brief Adds a callback for errors (connection, send or receive errors)
+	//! @param callback The callback to be called whenever an error occurs
+	void AddErrorCallback(std::function<void(ErrorType)> callback);
+
 protected:
 	WeArtMessageSerializer messageSerializer;
 
 	void OnReceive();
 
 private:
-	bool IsConnected = false;
+	bool Connected = false;
 
 	SOCKET ConnectSocket;
 
 	std::vector<WeArtThimbleTrackingObject*> thimbleTrackingObjects;
 	std::vector<WeArtMessageListener*> messageListeners;
+	
 
 	void ForwardingMessages(std::vector<WeArtMessage*> messages);
 
+	// Connection status and errors callbacks management
+	std::vector<std::function<void(bool)>> connectionStatusCallbacks;
+	std::vector<std::function<void(ErrorType)>> errorCallbacks;
+	std::forward_list<std::future<void>> pendingCallbacks;
+
+	void NotifyConnectionStatus(bool connected);
+	void NotifyError(ErrorType errorType);
+	void ClearProcessedCallbacks();
+	
 	PCSTR IP_ADDESS;
 	PCSTR PORT;
 };

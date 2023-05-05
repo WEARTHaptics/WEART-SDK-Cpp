@@ -349,68 +349,11 @@ float TrackingMessage::GetAbduction(HandSide handSide, ActuationPoint actuationP
 	float maxAbductionValue = 255;
 	switch (handSide) {
 		case HandSide::Left:
-			if(actuationPoint == ActuationPoint::Thumb)  return ((float)LeftThumbAbduction) / maxAbductionValue;
+			if (actuationPoint == ActuationPoint::Thumb)  return ((float)LeftThumbAbduction) / maxAbductionValue;
 			break;
 		case HandSide::Right:
-			if(actuationPoint == ActuationPoint::Thumb)  return ((float)RightThumbAbduction) / maxAbductionValue;
+			if (actuationPoint == ActuationPoint::Thumb)  return ((float)RightThumbAbduction) / maxAbductionValue;
 			break;
 	}
-	return 0.0f;
-}
-
-
-// Raw Sensors Data
-
-std::vector<std::string> RawSensorsData::getValues() {
-	std::vector<std::string> ret;
-	ret.push_back(std::to_string(handSide));
-	ret.push_back(std::to_string(actuationPoint));
-	ret.push_back(std::to_string(accX));
-	ret.push_back(std::to_string(accY));
-	ret.push_back(std::to_string(accZ));
-	ret.push_back(std::to_string(gyroX));
-	ret.push_back(std::to_string(gyroY));
-	ret.push_back(std::to_string(gyroZ));
-	ret.push_back(std::to_string(TOF));
-	return ret;
-}
-
-void RawSensorsData::setValues(std::vector<std::string>& values) {
-	assert(values.size() == 9);
-	handSide = std::stoi(values[0]);
-	actuationPoint = std::stoi(values[1]);
-	accX = std::stof(values[2]);
-	accY = std::stof(values[3]);
-	accZ = std::stof(values[4]);
-	gyroX = std::stof(values[5]);
-	gyroY = std::stof(values[6]);
-	gyroZ = std::stof(values[7]);
-	TOF = std::stoi(values[8]);
-}
-
-HandSide RawSensorsData::GetHandSide() {
-	switch (handSide) {
-		case 0:
-			return HandSide::Right;
-		case 1:
-			return HandSide::Left;
-		default:
-			return HandSide::Right;
-	}
-}
-
-ActuationPoint RawSensorsData::GetActuationPoint() {
-	switch (actuationPoint) {
-		case 0:
-			return ActuationPoint::Index;
-		case 1:
-			return ActuationPoint::Thumb;
-		case 2:
-			return ActuationPoint::Middle;
-		case 3:
-			return ActuationPoint::Palm;
-		default:
-			break;
-	}
-	return ActuationPoint::Index;
+	return WeArtConstants::defaultAbduction;
 }

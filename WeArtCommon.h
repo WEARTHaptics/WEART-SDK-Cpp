@@ -85,6 +85,8 @@ namespace WeArtConstants {
 	const float minClosure = 0.0f;
 	const float maxClosure = 1.0f;
 
+	const float defaultAbduction = 0.442f;
+
 	const int defaultTextureIndex = 0;
 	const int minTextureIndex = 0;
 	const int maxTextureIndex = 21;

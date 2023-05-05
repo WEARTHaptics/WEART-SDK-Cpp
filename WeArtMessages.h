@@ -45,6 +45,7 @@ public:
 };
 
 
+//! @brief Message without handside or actuation point parameters
 class WeArtMessageNoParams : public WeArtMessage {
 public:
 	virtual void setHandSide(HandSide hs) override {};
@@ -57,7 +58,7 @@ public:
 	virtual void setValues(std::vector<std::string>& values) override {};
 };
 
-
+//! @brief Message related to a given handside
 class WeArtMessageHandSpecific : public WeArtMessage {
 public:
 	HandSide getHand() {
@@ -72,17 +73,29 @@ public:
 	virtual void setActuationPoint(ActuationPoint ap) override {};
 };
 
+//! @brief Message related to a given hand and actuation point
 class WeArtMessageObjectSpecific : public WeArtMessage {
-protected:
-	HandSide handSide;
-	ActuationPoint actuationPoint;
 public:
+	HandSide getHand() {
+		return handSide;
+	}
+
 	virtual void setHandSide(HandSide hs) override {
 		handSide = hs;
 	};
+
+	ActuationPoint getActuationPoint() {
+		return actuationPoint;
+	}
+
 	virtual void setActuationPoint(ActuationPoint ap) override {
 		actuationPoint = ap;
 	};
+
+
+protected:
+	HandSide handSide;
+	ActuationPoint actuationPoint;
 };
 
 
@@ -95,9 +108,6 @@ public:
 	virtual std::string getID() override {
 		return ID;
 	};
-
-	virtual void setHandSide(HandSide hs) override {};
-	virtual void setActuationPoint(ActuationPoint ap) override {};
 
 	virtual std::vector<std::string> getValues() override;
 	virtual void setValues(std::vector<std::string>& values) override;
@@ -345,32 +355,4 @@ private:
 	// Abductions
 	uint8 RightThumbAbduction;
 	uint8 LeftThumbAbduction;
-};
-
-
-class RawSensorsData : public WeArtMessageNoParams {
-public:
-	static constexpr const char* ID = "SensorsData";
-
-	int handSide;
-	int actuationPoint;
-	float accX;
-	float accY;
-	float accZ;
-	float gyroX;
-	float gyroY;
-	float gyroZ;
-	int TOF;
-
-	virtual std::string getID() override {
-		return ID;
-	};
-
-	virtual std::vector<std::string> getValues() override;
-
-	virtual void setValues(std::vector<std::string>& values) override;
-
-	HandSide GetHandSide();
-
-	ActuationPoint GetActuationPoint();
 };
