@@ -1,7 +1,3 @@
-/**
-*	WEART - HapticObject component
-*	https://www.weart.it/
-*/
 #pragma once
 
 #include "WeArtCommon.h"
@@ -14,15 +10,14 @@
 #include "WeArtMessages.h"
 #include "WeArtClient.h"
 
-
-//! A haptic object class, representing player-controller objects able to interact
-//! with objects of the @TouchableObject class.
+//! @brief A haptic object class, representing one or multiple thimbles and hand with which the user interacts.
 //!
+//! The interaction is represented by the use of effects (WeArtEffect).
+//! 
 //! The communication with the lower layers is triggered by adding and removing effects
-//! (see @AddEffect() and @RemoveEffect()), which subsequently triggers an @UpdateEffects() event.
+//! (see WeArtHapticObject::AddEffect() and WeArtHapticObject::RemoveEffect()), which subsequently triggers an WeArtHapticObject::UpdateEffects() event.
 //!
-//! Such event then sends foward (to, presumably, the middleware)
-//! messages representing the processed events
+//! Such event then sends foward messages representing the processed events.
 class WeArtHapticObject {
 public:
 	// Sets default values for this component's properties

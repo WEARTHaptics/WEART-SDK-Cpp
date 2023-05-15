@@ -1,7 +1,4 @@
-/**
-*	WEART - Common utility
-*	https://www.weart.it/
-*/
+//! @brief Collection of constants used throughout the SDK
 
 #pragma once
 #include <vector>

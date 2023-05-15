@@ -5,6 +5,7 @@
 #pragma once
 #include <WEART_SDK/WeArtCommon.h>
 
+//! @brief Temperature value to be applied to an effect
 struct WeArtTexture {
 public:
 	WeArtTexture() : active(false),
