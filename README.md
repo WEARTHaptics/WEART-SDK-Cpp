@@ -1,108 +1,71 @@
-# Introduction
+# Low-Level C++ SDK
 
-This is the C++ SDK for Weart. It allows to communicate with the Weart Middleware application and use the TouchDiver devices.
+Welcome to the Weart Low-Level C++ SDK documentation.
 
-## Architecture
+The SDK allows to connect to the Weart middleware and perform various actions with the TouchDIVER devices:
+* Start and Stop the middleware operations
+* Calibrate the device
+* Receive tracking data from the devices
+* Send haptic effects to the devices
+
+# Architecture
 ![C++ SDK Architecture](./architecture.png)
 
-## Setup
+# Setup
+The minimum setup to use the weart SDK consists of:
+* A PC with the Middleware installed
+* A TouchDIVER device
+* A C++ project using the Low-Level SDK 
 
-Turn on the Middleware and connect it to the TouchDiver
-Create a header file and Include the following headers
+The SDK can be downloaded as a zip file containing all the necessary files.
+To use it in your C++ project, unzip it and move the files in a folder inside your project.
+Then, add the folder with the sdk files to the project's include path, and the .cpp files to your project's sources.
 
+To start using the SDK in your project, start the Middleware application and connect a TouchDIVER device to it.
+Then, create a header file and Include the following headers:
 ~~~~~~~~~~~~~{.cpp}
 	#include <WEART_SDK/WeArtClient.h>
 	#include <WEART_SDK/WeArtHapticObject.h>
 	#include <WEART_SDK/WeArtThimbleTrackingObject.h>
 	#include <WEART_SDK/WeArtTrackingCalibration.h>
-	#include "TouchEffect.h"
 ~~~~~~~~~~~~~
 
-In the same header file add these variables
+Finally, create the WeArtClient and start the communication with the middleware:
 
 ~~~~~~~~~~~~~{.cpp}
-	WeArtClient* weArtClient;
-	WeArtHapticObject* hapticObject;
-	TouchEffect* touchEffect;
-	WeArtThimbleTrackingObject* indexThimbleTracking;
-~~~~~~~~~~~~~
+	// Instantiate SDK client object
+	WeArtClient* weArtClient = new WeArtClient("127.0.0.1", WeArtConstants::DEFAULT_TCP_PORT);
 
-Create the “.cpp” file for the newly created header file. inside it you can use the following:
-
-Create the client
-
-~~~~~~~~~~~~~{.cpp}
-	// Create a client giving IP and port of the middleware
-	weArtClient = new WeArtClient("127.0.0.1", WeArtConstants::DEFAULT_TCP_PORT);
-~~~~~~~~~~~~~
-
-Setting the haptic objects
-
-~~~~~~~~~~~~~{.cpp}
-	// create haptic object to manage actuation on Right hand and Index Thimble
-	hapticObject = new WeArtHapticObject(weArtClient);
-	hapticObject->handSideFlag = HandSide::Right;
-	hapticObject->actuationPointFlag = ActuationPoint::Index;
-~~~~~~~~~~~~~
-
-The values handSideFlag and actuationPointFlag accept multiple values, the next example presents a single haptic object that, when applied a WeArtEffect, will affect both hands and set the haptic feeling to all fingers.
-
-~~~~~~~~~~~~~{.cpp}
-	hapticObject->handSideFlag = HandSide::Right | HandSide::Left;
-	hapticObject->actuationPointFlag = ActuationPoint::Index | ActuationPoint::Middle | ActuationPoint::Thumb;
-~~~~~~~~~~~~~
-
-Creating and applying an initial WeArtTouchEffect
-
-~~~~~~~~~~~~~{.cpp}
-	// define feeling properties to create an effect
-	WeArtTemperature temperature = WeArtTemperature();
-	WeArtForce force = WeArtForce();
-	WeArtTexture texture = WeArtTexture();
-
-	// instance a new effect with feeling properties and add effect to thimble
-	touchEffect = new TouchEffect(temperature, force, texture);
-	hapticObject->AddEffect(touchEffect);
-~~~~~~~~~~~~~
-
-Set a thimble tracker object for monitoring the closure value of the finger
-
-~~~~~~~~~~~~~{.cpp}
-	// reference a thimble tracking object to read closure value
-	indexThimbleTracking = new WeArtThimbleTrackingObject(HandSide::Right, ActuationPoint::Index);
-	weArtClient->AddThimbleTracking(indexThimbleTracking);
-~~~~~~~~~~~~~
-
-Accessing the WeArtThimbleTrackingObject closure value (form 0 to 1)
-
-~~~~~~~~~~~~~{.cpp}
-	indexThimbleTracking->GetClosure();
-~~~~~~~~~~~~~
-
-Initiate the client communication
-
-~~~~~~~~~~~~~{.cpp}
-	// run socket communication 
+	// Run communication thread
 	weArtClient->Run();
 ~~~~~~~~~~~~~
 
-### Client Management
-After the setup is finished, you can start the client communication with the Middleware 
+@note The network thread created by the  ```Run``` method will stop once the connection is closed. To keep the connection open, call the method again upon disconnection or error (they can be notified with WeArtClient::AddConnectionStatusCallback and WeArtClient::AddErrorCallback).
+
+# Features
+
+## Start/Stop Client
+Once connected to the middleware, it's still not possible to receive tracking data and send haptic commands to the devices.
+In order to do so, it's important to start the middleware with the proper command.
+
+To start the middleware operations, call the Start() method.
 
 ~~~~~~~~~~~~~{.cpp}
 	weArtClient->Start();
 ~~~~~~~~~~~~~
 
-Stopping the connection
+To stop the middleware, call the Stop() method.
 
 ~~~~~~~~~~~~~{.cpp}
 	weArtClient->Stop();
 ~~~~~~~~~~~~~
 
-### Devices calibration
-After starting the communication with the middleware, to receive the tracking data (closures, abduction), you need to calibrate the device.
+## Devices calibration
+After starting the communication with the middleware, it's now possible to calibrate the TouchDIVER devices.
+The calibration allows to set the initial offsets of each thimble relative to the control unit position, in order to improve the finger tracking output.
 
-First, create the calibration tracking object and add it to the client
+First, create the calibration tracking object and add it to the client. The WeArtTrackingCalibration object allows to listen for calibration messages
+from the middleware, and get notified when the calibration process ends.
 
 ~~~~~~~~~~~~~{.cpp}
 	// Create calibration tracker and add to client
@@ -110,13 +73,13 @@ First, create the calibration tracking object and add it to the client
 	weArtClient->AddMessageListener(calibration);
 ~~~~~~~~~~~~~
 
-Then, start the calibration procedure
+Then, start the calibration procedure. This will allow the middleware to calibrate the hand sensor offsets based on the current setup (thimbles and control device position, hand inclination, personal differences in the fingers etc..).
 
 ~~~~~~~~~~~~~{.cpp}
 	weArtClient->StartCalibration();
 ~~~~~~~~~~~~~
 
-It’s possible to get the calibration status and result from the tracker object itself, or through callbacks
+It’s possible to get the calibration status and result from the tracker object itself, or through callbacks (in the form of std::function).
 
 ~~~~~~~~~~~~~{.cpp}
 	// Get hand, status and result from tracking object
@@ -130,8 +93,75 @@ It’s possible to get the calibration status and result from the tracker object
 		}); 
 ~~~~~~~~~~~~~
 
-### Create and manage Effects programmatically
-#### Add or update Effect
+## Haptic feedback
+
+The TouchDIVER allows to perform haptic feedback on the user's finger through its *thimbles*.
+Every thimble can apply a certain amount of pressure, temperature and vibration based on the processed object and texture.
+
+### Haptic Object
+
+A WeArtHapticObject is the basic object used to apply haptic feedback.
+To create one, use the following code:
+
+~~~~~~~~~~~~~{.cpp}
+	// create haptic object to manage actuation on Right hand and Index Thimble
+	hapticObject = new WeArtHapticObject(weArtClient);
+	hapticObject->handSideFlag = HandSide::Right;
+	hapticObject->actuationPointFlag = ActuationPoint::Index;
+~~~~~~~~~~~~~
+
+The values handSideFlag and actuationPointFlag accept multiple values.
+The next example presents a single haptic object that, when applied a WeArtEffect, will affect both hands and all fingers.
+
+~~~~~~~~~~~~~{.cpp}
+	hapticObject->handSideFlag = HandSide::Right | HandSide::Left;
+	hapticObject->actuationPointFlag = ActuationPoint::Index | ActuationPoint::Middle | ActuationPoint::Thumb;
+~~~~~~~~~~~~~
+
+### Create Effect
+
+In order to send haptic feedback to the device, an effect must be created by extending the WeArtEffect class.
+The class shown here contains the effects without any processing, but it might be extended for other use cases
+(e.g. values not directly set, but computed from other parameters).
+
+~~~~~~~~~~~~~{.cpp}
+public class TouchEffect : public WeArtEffect {
+public:
+	TouchEffect(WeArtTemperature temp, WeArtForce force, WeArtTexture texture)
+		: _temperature(temp),  _force(force), _texture(texture) {}
+
+	bool Set(WeArtTemperature temp, WeArtForce force, WeArtTexture texture) {
+		_temperature = temp;
+		_force = force;
+		_texture = texture;
+	}
+
+	WeArtTemperature getTemperature(void) override { return _temperature; }
+
+	WeArtForce getForce(void) override { return _force; }
+	
+	WeArtTexture getTexture(void) override { return _texture; }
+
+private:
+	WeArtTemperature _temperature;
+	WeArtForce _force;
+	WeArtTexture _texture;
+};
+~~~~~~~~~~~~~
+
+After defining the effect class, create the object on which the temperature, force and texture values will be applied:
+
+~~~~~~~~~~~~~{.cpp}
+TouchEffect* touchEffect = new TouchEffect(WeArtTemperature(), WeArtForce(), WeArtTexture());
+~~~~~~~~~~~~~
+
+### Add or Update Effect
+
+It's possible to add a new effect to an haptic object, or to update an existing one.
+
+In the example below, the effect created in the previous section is updated with a new temperature, force and texture.
+It is then added to the haptic object if not already present, otherwise the haptic object is updated in order to send the new 
+effect parameters to the middleware and then to the device.
 
 ~~~~~~~~~~~~~{.cpp}
     // define temperature
@@ -160,8 +190,33 @@ It’s possible to get the calibration status and result from the tracker object
 		hapticObject->UpdateEffects();
 ~~~~~~~~~~~~~
 
-#### Remove Effect
+### Remove Effect
+
+If an effect is not needed anymore, it can be removed from the haptic object with the WeArtHapticObject::RemoveEffect method.
 
 ~~~~~~~~~~~~~{.cpp}
 	hapticObject->RemoveEffect(touchEffect);
+~~~~~~~~~~~~~
+
+## Tracking
+
+After starting the middleware and performing the device calibration, it's possible to receive tracking data
+related to the TouchDIVER thimbles.
+
+To read these values, create and set a thimble tracker object for monitoring the closure/abduction value of a given finger:
+~~~~~~~~~~~~~{.cpp}
+	WeArtThimbleTrackingObject* indexThimbleTracking = new WeArtThimbleTrackingObject(HandSide::Right, ActuationPoint::Index);
+	weArtClient->AddThimbleTracking(indexThimbleTracking);
+~~~~~~~~~~~~~
+
+Once this object is added to the client, it will start receiving the tracking values.
+To access the closure and abduction values, simply use the getters provided by the thimble tracking object.
+
+The closure value ranges from 0 (opened) to 1 (closed).
+
+The abduction value ranges from 0 (finger near the hand's central axis) to 1 (finger far from the hand central axis).
+
+~~~~~~~~~~~~~{.cpp}
+	float closure = indexThimbleTracking->GetClosure();
+	float abduction = indexThimbleTracking->GetAbduction();
 ~~~~~~~~~~~~~
