@@ -61,7 +61,7 @@ PROJECT_BRIEF          =
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           = ./docs/weart.png
+PROJECT_LOGO           = ./docs/img/logo/weart_dark.png
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -1389,7 +1389,9 @@ HTML_EXTRA_FILES       = ./docs/doxygen-awesome/doxygen-awesome-darkmode-toggle.
                          ./docs/doxygen-awesome/doxygen-awesome-paragraph-link.js \
                          ./docs/doxygen-awesome/doxygen-custom/toggle-alternative-theme.js \
                          ./docs/doxygen-awesome/doxygen-awesome-interactive-toc.js \
-                         ./docs/doxygen-awesome/doxygen-awesome-tabs.js
+                         ./docs/doxygen-awesome/doxygen-awesome-tabs.js \
+                         ./docs/img/logo/weart_dark.png \
+                         ./docs/img/logo/weart_light.png 
 
 # The HTML_COLORSTYLE tag can be used to specify if the generated HTML output
 # should be rendered with a dark or light theme.

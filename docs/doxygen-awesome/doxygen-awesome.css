@@ -404,6 +404,15 @@ a.anchor {
     margin-right: var(--spacing-small);
 }
 
+/* Manage logo in dark and light mode */
+html.dark-mode #projectlogo img {
+    content: url("./weart_light.png")
+}
+
+html.light-mode #projectlogo img {
+    content: url("./weart_dark.png")
+}
+
 .sm-dox, .tabs, .tabs2, .tabs3 {
     background: none;
     padding: 0;
@@ -2519,4 +2528,20 @@ h2:hover a.anchorlink, h1:hover a.anchorlink, h3:hover a.anchorlink, h4:hover a.
 
 html.dark-mode .tabs-overview button.tab-button:hover .tab-title {
     color: var(--page-foreground-color);
+}
+
+
+/* Manage responsive video */
+.rwd-video {
+    filter: none; /* Remove dark mode issues */
+    overflow: hidden;
+    width: 80%;
+    margin: auto;
+    aspect-ratio: 16 / 9;
+}
+.rwd-video iframe,
+.rwd-video object,
+.rwd-video embed {
+    height: 100%;
+    width: 100%;
 }
