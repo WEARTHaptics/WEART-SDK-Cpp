@@ -9,7 +9,7 @@ The SDK allows to connect to the Weart middleware and perform various actions wi
 * Send haptic effects to the devices
 
 # Architecture
-![C++ SDK Architecture](./architecture.png)
+<img src="./architecture.svg" width="100%" alt="C++ SDK Architecture" />
 
 # Setup
 The minimum setup to use the weart SDK consists of:
