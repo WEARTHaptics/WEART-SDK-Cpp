@@ -20,6 +20,7 @@ The minimum setup to use the weart SDK consists of:
 The SDK can be downloaded as a zip file containing all the necessary files.
 To use it in your C++ project, unzip it and move the files in a folder inside your project.
 Then, add the folder with the sdk files to the project's include path, and the .cpp files to your project's sources.
+In Visual Studio, this can be done by including the sdk directory into the project (Right Click on Solution -> Add -> Existing Directory).
 
 To start using the SDK in your project, start the Middleware application and connect a TouchDIVER device to it.
 Then, create a header file and Include the following headers:
