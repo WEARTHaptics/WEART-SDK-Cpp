@@ -1,7 +1,4 @@
-/**
-*	WEART - Message composer
-*	https://www.weart.it/
-*/
+/// @private
 #pragma once
 
 #include "WeArtCommon.h"
@@ -27,6 +24,7 @@ TrackingType StringToTrackingType(const std::string& str);
 std::string TrackingTypeToString(TrackingType trackType);
 
 //! @brief Generic Weart message
+//! @private
 class WeArtMessage {
 public:
 	//! @brief Allows to get the message ID, used to deserialize the correct message type
@@ -46,6 +44,7 @@ public:
 
 
 //! @brief Message without handside or actuation point parameters
+//! @private
 class WeArtMessageNoParams : public WeArtMessage {
 public:
 	virtual void setHandSide(HandSide hs) override {};
@@ -59,6 +58,7 @@ public:
 };
 
 //! @brief Message related to a given handside
+//! @private
 class WeArtMessageHandSpecific : public WeArtMessage {
 public:
 	HandSide getHand() {
@@ -74,6 +74,7 @@ public:
 };
 
 //! @brief Message related to a given hand and actuation point
+//! @private
 class WeArtMessageObjectSpecific : public WeArtMessage {
 public:
 	HandSide getHand() {
@@ -99,6 +100,7 @@ protected:
 };
 
 
+//! @private
 class StartFromClientMessage : public WeArtMessageNoParams {
 public:
 	static constexpr const char* ID = "StartFromClient";
@@ -115,6 +117,7 @@ private:
 	TrackingType _trackType;
 };
 
+//! @private
 class StopFromClientMessage : public WeArtMessageNoParams {
 public:
 	static constexpr const char* ID = "StopFromClient";
@@ -124,6 +127,7 @@ public:
 	};
 };
 
+//! @private
 class StartCalibrationMessage : public WeArtMessageNoParams {
 public:
 	static constexpr const char* ID = "StartCalibration";
@@ -133,6 +137,7 @@ public:
 	}
 };
 
+//! @private
 class StopCalibrationMessage : public WeArtMessageNoParams {
 public:
 	static constexpr const char* ID = "StopCalibration";
@@ -142,6 +147,7 @@ public:
 	}
 };
 
+//! @private
 class CalibrationStatusMessage : public WeArtMessageHandSpecific {
 public:
 	static constexpr const char* ID = "CalibrationStatus";
@@ -162,6 +168,7 @@ protected:
 	CalibrationStatus status;
 };
 
+//! @private
 class CalibrationResultMessage : public WeArtMessageHandSpecific {
 public:
 	static constexpr const char* ID = "CalibrationResult";
@@ -182,7 +189,7 @@ protected:
 	bool success;
 };
 
-
+//! @private
 class ExitMessage : public WeArtMessageNoParams {
 public:
 	static constexpr const char* ID = "exit";
@@ -192,6 +199,7 @@ public:
 	};
 };
 
+//! @private
 class DisconnectMessage : public WeArtMessageNoParams {
 public:
 	static constexpr const char* ID = "disconnect";
@@ -201,6 +209,7 @@ public:
 	};
 };
 
+//! @private
 class SetTemperatureMessage : public WeArtMessageObjectSpecific {
 public:
 	static constexpr const char* ID = "temperature";
@@ -219,6 +228,7 @@ protected:
 	float temperature;
 };
 
+//! @private
 class StopTemperatureMessage : public WeArtMessageObjectSpecific {
 public:
 	static constexpr const char* ID = "stopTemperature";
@@ -232,6 +242,7 @@ public:
 	virtual void setValues(std::vector<std::string>& values) override;
 };
 
+//! @private
 class SetForceMessage : public WeArtMessageObjectSpecific {
 public:
 	static constexpr const char* ID = "force";
@@ -250,6 +261,7 @@ protected:
 	float force[3];
 };
 
+//! @private
 class StopForceMessage : public WeArtMessageObjectSpecific {
 public:
 	static constexpr const char* ID = "stopForce";
@@ -263,11 +275,12 @@ public:
 	virtual void setValues(std::vector<std::string>& values) override;
 };
 
+//! @private
 class SetTextureMessage : public WeArtMessageObjectSpecific {
 public:
 	static constexpr const char* ID = "texture";
 
-	SetTextureMessage(const int idx, const float vel[3], const float vol) : index(idx), velocity{ vel[0], vel[1], vel[2] }, volume(vol) {};
+	SetTextureMessage(const int idx, const float vel, const float vol) : index(idx), velocity{ 0.5f, 0.0f, vel }, volume(vol) {};
 	SetTextureMessage() {};
 	virtual std::string getID() override {
 		return ID;
@@ -279,10 +292,11 @@ public:
 
 protected:
 	int index;
-	float velocity[3];
+	float velocity[3] = { 0.5f, 0.0f, 0.0f };
 	float volume;
 };
 
+//! @private
 class StopTextureMessage : public WeArtMessageObjectSpecific {
 public:
 	static constexpr const char* ID = "stopTexture";
@@ -297,7 +311,8 @@ public:
 };
 
 //! @brief Generic Tracking message, contains information on closure and abduction (based on tracking type)
-//! 
+//! @private 
+//!
 //! Message containing the closure and abduction values of the different actuation points (thimbles and palm)
 //! The abduction values available depends on the tracking type selected when the connection started.
 //! 

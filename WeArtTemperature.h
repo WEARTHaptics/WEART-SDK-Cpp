@@ -1,10 +1,7 @@
-/**
-*	WEART - Temperature component
-*	https://www.weart.it/
-*/
 #pragma once
 #include <WEART_SDK/WeArtCommon.h>
 
+//! @brief Temperature value to be applied to an effect
 struct WeArtTemperature {
 public:
 	WeArtTemperature() : active(false), _value(DefaultValue) {};

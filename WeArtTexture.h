@@ -5,16 +5,17 @@
 #pragma once
 #include <WEART_SDK/WeArtCommon.h>
 
+//! @brief Temperature value to be applied to an effect
 struct WeArtTexture {
 public:
 	WeArtTexture() : active(false),
 		_textureType(DefaultTextureType),
-		_textureVelocity{ WeArtConstants::defaultTextureVelocity[0], WeArtConstants::defaultTextureVelocity[1], WeArtConstants::defaultTextureVelocity[2] },
+		_textureVelocity{ DefaultVelocity },
 		_volume(DefaultVolume) {};
 
-	WeArtTexture(bool active, TextureType type, float vx, float vy, float vz, float textureVolume)
+	WeArtTexture(bool active, TextureType type, float velocity, float textureVolume)
 		: active(active), _textureType(type) {
-		textureVelocity(vx, vy, vz);
+		textureVelocity(velocity);
 		volume(textureVolume);
 	}
 
@@ -24,26 +25,22 @@ public:
 	static constexpr float MinVolume = 0.0f;
 	static constexpr float MaxVolume = 100.0f;
 
+	static constexpr float DefaultVelocity = 0.0f;
 	static constexpr float MinVelocity = 0.0f;
-	static constexpr float MaxVelocity = 0.0f;
+	static constexpr float MaxVelocity = 0.5f;
 
 	bool active;
 
-	//! @brief Texture velocity getter
+	//! @brief Gets the texture velocity
 	//! @return current texture velocity value
-	std::vector<float> textureVelocity() const {
+	float textureVelocity() const {
 		return _textureVelocity;
 	}
 
-	//! @brief Texture velocity setter
-	//! @param Vx Texture velocity on X axis
-	//! @param Vy Texture velocity on Y axis
-	//! @param Vz Texture velocity on Z axis
-	void textureVelocity(float Vx, float Vy, float Vz) {
-		float vx = Vx <= MinVelocity ? MinVelocity : Vx >= MaxVelocity ? MaxVelocity : Vx;
-		float vy = Vy <= MinVelocity ? MinVelocity : Vy >= MaxVelocity ? MaxVelocity : Vy;
-		float vz = Vz <= MinVelocity ? MinVelocity : Vz >= MaxVelocity ? MaxVelocity : Vz;
-		_textureVelocity = { vx, vy, vz };
+	//! @brief Sets the texture velocity (speed at which the vibration is emitted, between 0 and 0.5)
+	//! @param velocity Texture velocity
+	void textureVelocity(float velocity) {
+		_textureVelocity = velocity <= MinVelocity ? MinVelocity : velocity >= MaxVelocity ? MaxVelocity : velocity;
 	}
 
 	//! @brief Texture type getter
@@ -79,6 +76,6 @@ public:
 private:
 	float _volume;
 	TextureType _textureType;
-	std::vector<float> _textureVelocity;
+	float _textureVelocity;
 };
 

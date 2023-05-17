@@ -1,7 +1,4 @@
-/**
-*	WEART - Common utility
-*	https://www.weart.it/
-*/
+//! @brief Collection of constants used throughout the SDK
 
 #pragma once
 #include <vector>
@@ -68,6 +65,7 @@ enum class TextureType : uint8 {
 
 // Constants shared by the WeArt components
 namespace WeArtConstants {
+	const PCSTR DEFAULT_IP_ADDRESS = "127.0.0.1";
 	const PCSTR DEFAULT_TCP_PORT = "13031";
 
 	const std::string WEART_SDK_VERSION = "1.0.0";
@@ -91,10 +89,6 @@ namespace WeArtConstants {
 	const int minTextureIndex = 0;
 	const int maxTextureIndex = 21;
 	const int nullTextureIndex = 255;
-
-	const float defaultTextureVelocity[3] = { 0.5f, 0.0f, 0.0f };
-	const float minTextureVelocity[3] = { 0.0f, 0.0f, 0.0f };
-	const float maxTextureVelocity[3] = { 1.0f, 1.0f, 1.0f };
 
 	const float defaultCollisionMultiplier = 20.0f;
 	const float minCollisionMultiplier = 0.0f;

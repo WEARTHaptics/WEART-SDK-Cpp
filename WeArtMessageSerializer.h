@@ -1,12 +1,9 @@
-/**
-*	WEART - Message serializer
-*	https://www.weart.it/
-*/
 #pragma once
 
 #include "WeArtMessages.h"
 #include <sstream>
 
+//! @private
 class WeArtMessageSerializer {
 public:
 	const char separator = ':';
