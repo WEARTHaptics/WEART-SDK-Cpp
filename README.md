@@ -184,7 +184,7 @@ effect parameters to the middleware and then to the device.
 	WeArtTexture texture = WeArtTexture();
 	texture.active = true;
 	texture.textureType(TextureType::TextileMeshMedium);
-	texture.textureVelocity(0.5, 0, 0.5); // maximum recommended speed
+	texture.textureVelocity(0.5f);
 
 	// set properties to effect
 	touchEffect->Set(temperature, force, texture);
@@ -195,6 +195,8 @@ effect parameters to the middleware and then to the device.
 	else
 		hapticObject->UpdateEffects();
 ~~~~~~~~~~~~~
+
+@note When multiple effects are added to a WeArtHapticObject, which effect is applied depends on the order in which the effects are added. In particular, for each value (temperature, force, texture) only the latest active one will be applied.
 
 ### Remove Effect
 
@@ -211,8 +213,8 @@ related to the TouchDIVER thimbles.
 
 To read these values, create and set a thimble tracker object for monitoring the closure/abduction value of a given finger:
 ~~~~~~~~~~~~~{.cpp}
-	WeArtThimbleTrackingObject* indexThimbleTracking = new WeArtThimbleTrackingObject(HandSide::Right, ActuationPoint::Index);
-	weArtClient->AddThimbleTracking(indexThimbleTracking);
+	WeArtThimbleTrackingObject* thumbThimbleTracking = new WeArtThimbleTrackingObject(HandSide::Right, ActuationPoint::Thumb);
+	weArtClient->AddThimbleTracking(thumbThimbleTracking);
 ~~~~~~~~~~~~~
 
 Once this object is added to the client, it will start receiving the tracking values.
@@ -223,6 +225,8 @@ The closure value ranges from 0 (opened) to 1 (closed).
 The abduction value ranges from 0 (finger near the hand's central axis) to 1 (finger far from the hand central axis).
 
 ~~~~~~~~~~~~~{.cpp}
-	float closure = indexThimbleTracking->GetClosure();
-	float abduction = indexThimbleTracking->GetAbduction();
+	float closure = thumbThimbleTracking->GetClosure();
+	float abduction = thumbThimbleTracking->GetAbduction();
 ~~~~~~~~~~~~~
+
+@note The **closure** value is available for all thimbles, while the **abduction** value is available only for the thumb (other thimbles will have a value of 0).
