@@ -8,12 +8,24 @@
 //! @brief General effect function interface
 class WeArtEffect {
 public:
-	virtual WeArtTemperature	getTemperature(void) = 0;
-	virtual WeArtForce			getForce(void) = 0;
-	virtual WeArtTexture		getTexture(void) = 0;
+	//! @brief Get temperature value 
+	//! @return current effect temperature value
+	virtual WeArtTemperature getTemperature() = 0;
+
+	//! @brief Get force value 
+	//! @return current effect forcevalue
+	virtual WeArtForce getForce() = 0;
+
+	//! @brief Get texture value 
+	//! @return current effect texture value
+	virtual WeArtTexture getTexture() = 0;
 };
 
-//! @brief Basic touch effect object to apply effects
+//! @brief Basic object to apply effects
+//! 
+//! The TouchEffect object allows to apply simple effect to an haptic object.
+//! The temperature and force values are applied as set in the object, while 
+//! the texture velocity is forced to its maximum value if active.
 class TouchEffect : public WeArtEffect {
 public:
 	TouchEffect(WeArtTemperature temp, WeArtForce force, WeArtTexture texture)
@@ -26,15 +38,15 @@ public:
 	//! @return true if one of the parameters changed, false otherwise
 	bool Set(WeArtTemperature temp, WeArtForce force, WeArtTexture texture);
 
-	virtual WeArtTemperature getTemperature(void) override {
+	virtual WeArtTemperature getTemperature() override {
 		return _temperature;
 	}
 
-	virtual WeArtForce getForce(void) override {
+	virtual WeArtForce getForce() override {
 		return _force;
 	}
 
-	virtual WeArtTexture getTexture(void) override {
+	virtual WeArtTexture getTexture() override {
 		return _texture;
 	}
 

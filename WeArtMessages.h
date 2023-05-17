@@ -280,7 +280,7 @@ class SetTextureMessage : public WeArtMessageObjectSpecific {
 public:
 	static constexpr const char* ID = "texture";
 
-	SetTextureMessage(const int idx, const float vel[3], const float vol) : index(idx), velocity{ vel[0], vel[1], vel[2] }, volume(vol) {};
+	SetTextureMessage(const int idx, const float vel, const float vol) : index(idx), velocity{ 0.5f, 0.0f, vel }, volume(vol) {};
 	SetTextureMessage() {};
 	virtual std::string getID() override {
 		return ID;
@@ -292,7 +292,7 @@ public:
 
 protected:
 	int index;
-	float velocity[3];
+	float velocity[3] = { 0.5f, 0.0f, 0.0f };
 	float volume;
 };
 

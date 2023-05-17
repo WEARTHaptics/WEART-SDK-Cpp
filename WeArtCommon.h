@@ -90,10 +90,6 @@ namespace WeArtConstants {
 	const int maxTextureIndex = 21;
 	const int nullTextureIndex = 255;
 
-	const float defaultTextureVelocity[3] = { 0.5f, 0.0f, 0.0f };
-	const float minTextureVelocity[3] = { 0.0f, 0.0f, 0.0f };
-	const float maxTextureVelocity[3] = { 1.0f, 1.0f, 1.0f };
-
 	const float defaultCollisionMultiplier = 20.0f;
 	const float minCollisionMultiplier = 0.0f;
 	const float maxCollisionMultiplier = 100.0f;

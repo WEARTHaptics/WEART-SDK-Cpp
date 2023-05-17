@@ -42,7 +42,7 @@ void WeArtHapticObject::UpdateEffects(void) {
 		weArtTemperature.value(WeArtConstants::defaultTemperature);
 		weArtTemperature.active = false;
 		weArtTexture.textureType((TextureType)WeArtConstants::defaultTextureIndex);
-		weArtTexture.textureVelocity(WeArtConstants::defaultTextureVelocity[0], WeArtConstants::defaultTextureVelocity[1], WeArtConstants::defaultTextureVelocity[2]);
+		weArtTexture.textureVelocity(WeArtTexture::DefaultVelocity);
 		weArtTexture.active = false;
 
 		StopTemperatureMessage msg1;
@@ -107,8 +107,7 @@ void WeArtHapticObject::UpdateEffects(void) {
 				StopTextureMessage msg;
 				SendMessage(&msg);
 			} else {
-				const float texValue[3] = { newTex.textureVelocity()[0], newTex.textureVelocity()[1], newTex.textureVelocity()[2] };
-				SetTextureMessage msg((int)newTex.textureType(), texValue, newTex.volume());
+				SetTextureMessage msg((int)newTex.textureType(), newTex.textureVelocity(), newTex.volume());
 				SendMessage(&msg);
 			}
 			weArtTexture = newTex;
