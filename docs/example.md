@@ -1,10 +1,8 @@
 # Example Project
 
-An example application is available for download together with the C# and C++ SDK [here](https://weart.it/repository/downloads/samples/weart-integration-cpp-sdk-1.1.zip).
+An example application is available for download together with the C# and C++ SDK [here](https://weart.it/repository/downloads/samples/weart-integration-cpp-sdk-v1.1.zip).
 
-The application is implemented as a Universal Windows app in C++. The Visual Studio Solution is present inside an archive, at ```C++/WEART_C++_API_Integration_v1.1.zip```.
-
-To execute the application, just open the solution with Visual Studio and Run it (by clicking the play button or pressing F5).
+The application is implemented as a Universal Windows app in C++. To execute the application, just open the solution with Visual Studio and Run it (by clicking the play button or pressing F5).
 
 ![Example application](./example_app/ExampleApp_Screen.png)
 
