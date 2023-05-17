@@ -88,10 +88,15 @@ It’s possible to get the calibration status and result from the tracker object
 	CalibrationStatus status = calibration->getStatus();
 	bool result = calibration->getResult();
 
+	// Be notified by callbacks when the calibration status changes
+	calibration->AddStatusCallback([](HandSide hand, CalibrationStatus status) {
+		...
+		});
+
 	// Be notified by callbacks when a calibration result is available
 	calibration->AddResultCallback([](HandSide hand, bool result) {
 		... insert code here
-		}); 
+		});
 ~~~~~~~~~~~~~
 
 ## Haptic feedback
