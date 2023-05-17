@@ -65,6 +65,7 @@ enum class TextureType : uint8 {
 
 // Constants shared by the WeArt components
 namespace WeArtConstants {
+	const PCSTR DEFAULT_IP_ADDRESS = "127.0.0.1";
 	const PCSTR DEFAULT_TCP_PORT = "13031";
 
 	const std::string WEART_SDK_VERSION = "1.0.0";
