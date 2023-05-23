@@ -1390,6 +1390,7 @@ HTML_EXTRA_FILES       = ./docs/doxygen-awesome/doxygen-awesome-darkmode-toggle.
                          ./docs/doxygen-awesome/doxygen-custom/toggle-alternative-theme.js \
                          ./docs/doxygen-awesome/doxygen-awesome-interactive-toc.js \
                          ./docs/doxygen-awesome/doxygen-awesome-tabs.js \
+                         ./docs/doxygen-awesome/img-zoom-modal.js \
                          ./docs/img/logo/weart_dark.png \
                          ./docs/img/logo/weart_light.png 
 

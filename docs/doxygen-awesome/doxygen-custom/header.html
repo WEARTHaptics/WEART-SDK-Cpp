@@ -31,6 +31,7 @@
 <script type="text/javascript" src="$relpath^doxygen-awesome-interactive-toc.js"></script>
 <script type="text/javascript" src="$relpath^doxygen-awesome-tabs.js"></script>
 <script type="text/javascript" src="$relpath^toggle-alternative-theme.js"></script>
+<script type="text/javascript" src="$relpath^img-zoom-modal.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 <script type="text/javascript">
     DoxygenAwesomeFragmentCopyButton.init()
@@ -58,6 +59,11 @@ $extrastylesheet
 <body>
 
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+
+<div id="myModal" class="modal">
+  <img class="modal-content" id="img01">
+  <div id="caption"></div>
+</div>
 
 <!--BEGIN TITLEAREA-->
 <div id="titlearea">
