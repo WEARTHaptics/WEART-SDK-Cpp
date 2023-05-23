@@ -7,17 +7,18 @@
 #include "WeArtThimbleTrackingObject.h"
 #include "WeArtController.h"
 
-WeArtThimbleTrackingObject::WeArtThimbleTrackingObject(HandSide side, ActuationPoint actuation) {
+WeArtThimbleTrackingObject::WeArtThimbleTrackingObject(HandSide side, ActuationPoint actuation)
+	: WeArtMessageListener({ TrackingMessage::ID }) {
 	handSide = side;
 	actuationPoint = actuation;
-	Closure = 0.0f;
+	_closure = WeArtConstants::defaultClosure;
+	_abduction = WeArtConstants::defaultAbduction;
 }
 
-void WeArtThimbleTrackingObject::OnMessageReceived(WeArtMessage* msg)
-{
-	
-	if (msg->getID() == "Tracking") {
+void WeArtThimbleTrackingObject::OnMessageReceived(WeArtMessage* msg) {
+	if (msg->getID() == TrackingMessage::ID) {
 		TrackingMessage* trackingMsg = static_cast<TrackingMessage*>(msg);
-		Closure = trackingMsg->GetClosure(handSide, actuationPoint);
+		_closure = trackingMsg->GetClosure(handSide, actuationPoint);
+		_abduction = trackingMsg->GetAbduction(handSide, actuationPoint);
 	}
 }

@@ -3,18 +3,22 @@
 #include "WeArtMessageSerializer.h"
 #include <string>
 
+//! @private
 enum WeArtMessageType
 {
 	MessageSent, MessageReceived
 };
 
+//! @private
 enum WeArtError
 {
 	ConnectionError, SendMessageError, ReceiveMessageError
 };
 
+//! @private
 static char messagesSeparator = '~';
 
+//! @private
 class  UWeArtController 
 {
 

@@ -1,29 +1,39 @@
-/**
-*	WEART - Temperature component
-*	https://www.weart.it/
-*/
 #pragma once
 #include <WEART_SDK/WeArtCommon.h>
 
+//! @brief Temperature value to be applied to an effect
 struct WeArtTemperature {
-private:
-	float _value;
 public:
-	bool active;
+	WeArtTemperature() : active(false), _value(DefaultValue) {};
 
-	float value() const { return _value; }
-
-	void value(float v) {
-		float lower = 0.0f;
-		float upper = 1.0f;
-		_value = v <= lower ? lower : v >= upper ? upper : v;
+	WeArtTemperature(bool active, float temperature) : active(active) {
+		value(temperature);
 	}
 
-	WeArtTemperature() : active(false), _value(WeArtConstants::defaultTemperature) {};
+	static constexpr float DefaultValue = 0.5f;
+	static constexpr float MinValue = 0.0f;
+	static constexpr float MaxValue = 1.0f;
+
+	bool active;
+
+	//! @brief Temperature value getter
+	//! @return the temperature value
+	float value() const {
+		return _value;
+	}
+
+	//! @brief Temperature value setter
+	//! @param temperature The temperature value to set
+	void value(float temperature) {
+		_value = temperature <= MinValue ? MinValue : temperature >= MaxValue ? MaxValue : temperature;
+	}
 
 	bool operator==(const WeArtTemperature& other) const {
 		return (active == other.active && _value == other.value());
 	};
+
+private:
+	float _value;
 };
 
 

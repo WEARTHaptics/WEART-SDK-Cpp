@@ -1,46 +1,48 @@
-/**
-*	WEART - Common utility 
-*	https://www.weart.it/
-*/
+//! @brief Collection of constants used throughout the SDK
 
 #pragma once
 #include <vector>
 
-enum HandSide
-{
+enum class TrackingType {
+	DEFAULT,	//!< Deprecated, contains only closure values 
+	WEART_HAND,	//!< Tracking with closures, and abduction value for thumb
+};
+
+enum HandSide {
 	//HSnone = 0	
-	Left	= 1 << 0,
-	Right	= 1 << 1,
+	Left = 1 << 0,
+	Right = 1 << 1,
 };
 
 
-enum ActuationPoint
-{
+enum ActuationPoint {
 	//APnone	= 0
-	Thumb	= 1 << 0,
-	Index	= 1 << 1,
-	Middle	= 1 << 2,
-	Palm	= 1 << 3,
+	Thumb = 1 << 0,
+	Index = 1 << 1,
+	Middle = 1 << 2,
+	Palm = 1 << 3,
 };
 
 
-enum HandClosingState
-{
+enum HandClosingState {
 	Open = 0,
 	Closing = 1,
 	Closed = 2
 };
 
 
-enum GraspingState
-{
+enum GraspingState {
 	Grabbed = 0,
 	Released = 1
 };
 
+enum CalibrationStatus {
+	IDLE = 0,
+	Calibrating = 1,
+	Running = 2,
+};
 
-enum class TextureType : uint8
-{
+enum class TextureType : uint8 {
 	ClickNormal = 0, ClickSoft = 1, DoubleClick = 2,
 	AluminiumFineMeshSlow = 3, AluminiumFineMeshFast = 4,
 	PlasticMeshSlow = 5, ProfiledAluminiumMeshMedium = 6, ProfiledAluminiumMeshFast = 7,
@@ -62,9 +64,12 @@ enum class TextureType : uint8
 
 
 // Constants shared by the WeArt components
-namespace WeArtConstants
-{
+namespace WeArtConstants {
+	const PCSTR DEFAULT_IP_ADDRESS = "127.0.0.1";
 	const PCSTR DEFAULT_TCP_PORT = "13031";
+
+	const std::string WEART_SDK_VERSION = "1.0.0";
+	const std::string WEART_SDK_TYPE = "SdkLLCPP";
 
 	const float defaultTemperature = 0.5f;
 	const float minTemperature = 0.0f;
@@ -78,14 +83,12 @@ namespace WeArtConstants
 	const float minClosure = 0.0f;
 	const float maxClosure = 1.0f;
 
+	const float defaultAbduction = 0.442f;
+
 	const int defaultTextureIndex = 0;
 	const int minTextureIndex = 0;
 	const int maxTextureIndex = 21;
 	const int nullTextureIndex = 255;
-
-	const float defaultTextureVelocity[3] = { 0.5f, 0.0f, 0.0f };
-	const float minTextureVelocity[3] = { 0.0f, 0.0f, 0.0f };
-	const float maxTextureVelocity[3] = { 1.0f, 1.0f, 1.0f };
 
 	const float defaultCollisionMultiplier = 20.0f;
 	const float minCollisionMultiplier = 0.0f;

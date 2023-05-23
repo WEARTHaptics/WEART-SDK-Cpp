@@ -5,55 +5,77 @@
 #pragma once
 #include <WEART_SDK/WeArtCommon.h>
 
+//! @brief Temperature value to be applied to an effect
 struct WeArtTexture {
-
-private:
-	float _volume;
-	TextureType _textureType;
-	std::vector<float> _textureVelocity;
-
 public:
+	WeArtTexture() : active(false),
+		_textureType(DefaultTextureType),
+		_textureVelocity{ DefaultVelocity },
+		_volume(DefaultVolume) {};
+
+	WeArtTexture(bool active, TextureType type, float velocity, float textureVolume)
+		: active(active), _textureType(type) {
+		textureVelocity(velocity);
+		volume(textureVolume);
+	}
+
+	static constexpr TextureType DefaultTextureType = TextureType::ClickNormal;
+
+	static constexpr float DefaultVolume = 100.0f;
+	static constexpr float MinVolume = 0.0f;
+	static constexpr float MaxVolume = 100.0f;
+
+	static constexpr float DefaultVelocity = 0.0f;
+	static constexpr float MinVelocity = 0.0f;
+	static constexpr float MaxVelocity = 0.5f;
 
 	bool active;
 
-	std::vector<float> textureVelocity() const { return _textureVelocity; }
-	void textureVelocity(float Vx, float Vy, float Vz) {
-		float lower = 0.0f;
-		float upper = 1.0f;
-		
-		float _vx = 0;
-		float _vy = 0;
-		float _vz = 0;
-
-		_vx = Vx <= lower ? lower : Vx >= upper ? upper : Vx;
-		_vy = Vy <= lower ? lower : Vy >= upper ? upper : Vy;
-		_vz = Vz <= lower ? lower : Vz >= upper ? upper : Vz;
-
-		_textureVelocity = { _vx, _vy, _vz };
+	//! @brief Gets the texture velocity
+	//! @return current texture velocity value
+	float textureVelocity() const {
+		return _textureVelocity;
 	}
-	
-	TextureType textureType() const { return _textureType; }
-	void textureType(TextureType v) {
+
+	//! @brief Sets the texture velocity (speed at which the vibration is emitted, between 0 and 0.5)
+	//! @param velocity Texture velocity
+	void textureVelocity(float velocity) {
+		_textureVelocity = velocity <= MinVelocity ? MinVelocity : velocity >= MaxVelocity ? MaxVelocity : velocity;
+	}
+
+	//! @brief Texture type getter
+	//! @return current texture type value
+	TextureType textureType() const {
+		return _textureType;
+	}
+
+	//! @brief Texture type setter
+	//! @param type Texture type value to set
+	void textureType(TextureType type) {
 		TextureType lower = TextureType::ClickNormal;
 		TextureType upper = TextureType::DoubleSidedTape;
-		_textureType = v <= lower ? lower : v >= upper ? upper : v;
+		_textureType = type <= lower ? lower : type >= upper ? upper : type;
 	}
 
-	float volume() const { return _volume; }
+	//! @brief Volume value getter
+	//! @return current texture volume
+	float volume() const {
+		return _volume;
+	}
+
+	//! @brief Volume value setter
+	//! @param v Volume to set
 	void volume(float v) {
-		float lower = 0.0f;
-		float upper = 100.0f;
-		_volume = v <= lower ? lower : v >= upper ? upper : v;
+		_volume = v <= MinVolume ? MinVolume : v >= MaxVolume ? MaxVolume : v;
 	}
-
-	WeArtTexture() : active(false),
-		_textureType((TextureType)WeArtConstants::defaultTextureIndex),
-		_textureVelocity { WeArtConstants::defaultTextureVelocity[0], WeArtConstants::defaultTextureVelocity[1], WeArtConstants::defaultTextureVelocity[2] },
-		_volume(WeArtConstants::defaultVolumeTexture)
-	{};
 
 	bool operator==(const WeArtTexture& other) const {
 		return (active == other.active && _textureType == other.textureType() && _textureVelocity == other.textureVelocity() && _volume == other.volume());
 	};
+
+private:
+	float _volume;
+	TextureType _textureType;
+	float _textureVelocity;
 };
 
