@@ -4,7 +4,7 @@
 */
 
 #pragma once
-#include <WEART_SDK/WeArtCommon.h>
+#include "WeArtCommon.h"
 
 //! @brief Force value to be applied to an effect
 struct WeArtForce {

@@ -3,7 +3,7 @@
 *	https://www.weart.it/
 */
 #pragma once
-#include <WEART_SDK/WeArtCommon.h>
+#include "WeArtCommon.h"
 
 //! @brief Temperature value to be applied to an effect
 struct WeArtTexture {

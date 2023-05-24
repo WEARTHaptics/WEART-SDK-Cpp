@@ -4,6 +4,7 @@
 */
 
 #pragma once
+#include "WeArtCommon.h"
 #include "WeArtMessageListener.h"
 #include "WeArtMessages.h"
 #include "WeArtMessageSerializer.h"
@@ -70,7 +71,7 @@ public:
 
 	//! @brief Adds a callback for errors (connection, send or receive errors)
 	//! @param callback The callback to be called whenever an error occurs
-	void AddErrorCallback(std::function<void(ErrorType)> callback);
+	void AddErrorCallback(std::function<void(WeArtClient::ErrorType)> callback);
 
 protected:
 	WeArtMessageSerializer messageSerializer;

@@ -3,6 +3,11 @@
 #pragma once
 #include <vector>
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#include <string>
+
 enum class TrackingType {
 	DEFAULT,	//!< Deprecated, contains only closure values 
 	WEART_HAND,	//!< Tracking with closures, and abduction value for thumb

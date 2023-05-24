@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "WeArtMessages.h"
 
 // Util / Conversion methods

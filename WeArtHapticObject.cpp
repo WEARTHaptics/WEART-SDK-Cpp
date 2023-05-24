@@ -4,7 +4,6 @@
 */
 
 
-#include "pch.h"
 #include "WeArtHapticObject.h"
 #include "WeArtController.h"
 #include <algorithm>

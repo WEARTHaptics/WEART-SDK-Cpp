@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "WeArtEffect.h"
 
 bool TouchEffect::Set(WeArtTemperature temp, WeArtForce force, WeArtTexture texture) {

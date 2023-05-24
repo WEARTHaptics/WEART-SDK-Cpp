@@ -3,8 +3,7 @@
 *	https://www.weart.it/
 */
 
-#include "pch.h"
-#include <WEART_SDK/WeArtClient.h>
+#include "WeArtClient.h"
 #include <iostream>
 
 #define WIN32_LEAN_AND_MEAN
@@ -15,8 +14,6 @@
 
 #include <ppltasks.h>
 using namespace Windows::Foundation;
-using namespace concurrency;
-using namespace Windows::Devices::Enumeration;
 
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
 #pragma comment (lib, "Ws2_32.lib")

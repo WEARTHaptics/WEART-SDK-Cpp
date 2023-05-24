@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "WeArtMessageSerializer.h"
 
 WeArtMessage* WeArtMessageSerializer::createMessage(std::string& ID) {

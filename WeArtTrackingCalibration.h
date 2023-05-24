@@ -1,6 +1,6 @@
 #pragma once
-#include "WeArtMessageListener.h"
 #include "WeArtCommon.h"
+#include "WeArtMessageListener.h"
 #include <functional>
 
 //! @brief Calibration status/result observer
