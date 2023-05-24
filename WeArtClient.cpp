@@ -327,6 +327,10 @@ void WeArtClient::AddConnectionStatusCallback(std::function<void(bool)> callback
 	connectionStatusCallbacks.push_back(callback);
 }
 
+void WeArtClient::AddErrorCallback(std::function<void(WeArtClient::ErrorType)> callback) {
+	errorCallbacks.push_back(callback);
+}
+
 void WeArtClient::AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects) {
 	thimbleTrackingObjects.push_back(trackingObjects);
 	AddMessageListener(trackingObjects);
