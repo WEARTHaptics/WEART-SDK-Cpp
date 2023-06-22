@@ -1,4 +1,5 @@
 #include "WeArtMessages.h"
+#include <sstream>
 
 // Util / Conversion methods
 
@@ -83,6 +84,72 @@ std::string TrackingTypeToString(TrackingType trackType) {
 	}
 	return "";
 }
+
+// CSV message
+
+std::string WeArtCsvMessage::serialize()
+{
+	// Unlike C#, C++ does not allow dynamic runtime
+	// reflection, hence we have to use dedicated functions
+	// to get the values of the class members.
+	std::string messageID = getID();
+	std::vector<std::string> serializedValues = getValues();
+
+	// Join the string arrays.
+	serializedValues.insert(serializedValues.begin(), messageID);
+
+	// Then merge using our separator.
+	std::stringstream ss;
+	auto it = serializedValues.begin();
+	ss << *it++;
+	for (; it != serializedValues.end(); it++) {
+		ss << field_separator;
+		ss << *it;
+	}
+	return ss.str();
+}
+
+void WeArtCsvMessage::deserialize(std::string message)
+{
+	// Split strings
+	std::vector<std::string> strings;
+	std::istringstream dataStream(message);
+	std::string s;
+	while (std::getline(dataStream, s, field_separator)) {
+		strings.push_back(s);
+	}
+
+	// Set message values
+	strings.erase(strings.begin());
+	setValues(strings);
+}
+
+
+// JSON message
+
+std::string WeArtJsonMessage::serialize()
+{
+	nlohmann::json j;
+	j["type"] = getID();
+	j["ts"] = 12345632;
+
+	nlohmann::json payload = serializePayload();
+	if (payload != nullptr)
+		j["data"] = payload;
+
+	return j.dump();
+}
+
+void WeArtJsonMessage::deserialize(std::string message)
+{
+	nlohmann::json j = nlohmann::json::parse(message);
+
+	// TODO parse timestamp
+
+	if (j["data"] != nullptr)
+		deserializePayload(j["data"]);
+}
+
 
 // StartFromClient message
 
@@ -355,64 +422,4 @@ float TrackingMessage::GetAbduction(HandSide handSide, ActuationPoint actuationP
 			break;
 	}
 	return WeArtConstants::defaultAbduction;
-}
-
-
-// Raw Sensors Data
-std::vector<std::string> RawSensorsData::getValues() {
-	std::vector<std::string> ret;
-
-	int handSideNum = 0;
-	switch (handSide) {
-		case HandSide::Right: handSideNum = 0; break;
-		case HandSide::Left: handSideNum = 1; break;
-	}
-	ret.push_back(std::to_string(handSideNum));
-
-	int actuationPointNum = 0;
-	switch (actuationPoint) {
-		case ActuationPoint::Index: actuationPointNum = 0; break;
-		case ActuationPoint::Thumb: actuationPointNum = 1; break;
-		case ActuationPoint::Middle: actuationPointNum = 2; break;
-		case ActuationPoint::Palm: actuationPointNum = 3; break;
-	}
-	ret.push_back(std::to_string(actuationPointNum));
-
-
-	ret.push_back(std::to_string(accX));
-	ret.push_back(std::to_string(accY));
-	ret.push_back(std::to_string(accZ));
-	ret.push_back(std::to_string(gyroX));
-	ret.push_back(std::to_string(gyroY));
-	ret.push_back(std::to_string(gyroZ));
-	ret.push_back(std::to_string(TOF));
-	return ret;
-}
-
-void RawSensorsData::setValues(std::vector<std::string>& values) {
-	assert(values.size() == 9);
-
-	int handSideNum = std::stoi(values[0]);
-	switch (handSideNum) {
-		case 0: handSide = HandSide::Right; break;
-		case 1: handSide = HandSide::Left; break;
-		default: handSide = HandSide::Right; break;
-	}
-
-	int actuationPointNum = std::stoi(values[1]);
-	switch (actuationPointNum) {
-		case 0: actuationPoint = ActuationPoint::Index; break;
-		case 1: actuationPoint = ActuationPoint::Thumb; break;
-		case 2: actuationPoint = ActuationPoint::Middle; break;
-		case 3: actuationPoint = ActuationPoint::Palm; break;
-		default: actuationPoint = ActuationPoint::Index; break;
-	}
-
-	accX = std::stof(values[2]);
-	accY = std::stof(values[3]);
-	accZ = std::stof(values[4]);
-	gyroX = std::stof(values[5]);
-	gyroY = std::stof(values[6]);
-	gyroZ = std::stof(values[7]);
-	TOF = std::stoi(values[8]);
 }
