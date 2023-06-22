@@ -5,7 +5,8 @@
 using json = nlohmann::json;
 
 WeArtMessage* WeArtMessageSerializer::Deserialize(std::string data) {
-	WeArtMessage* msg = createMessage(data);
+	std::string id = extractID(data);
+	WeArtMessage* msg = createMessage(id);
 	if (msg != nullptr)
 		msg->deserialize(data);
 	return msg;

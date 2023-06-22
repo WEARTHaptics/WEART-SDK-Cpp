@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <cassert>
+#include <map>
 #include "nlohmann/json.hpp"
 
 // Utility Methods, called to serialize/deserialize types
@@ -395,21 +396,43 @@ private:
 	uint8 LeftThumbAbduction;
 };
 
+//! @private
+class RawDataOn : public WeArtJsonMessage {
+public:
+	static constexpr const char* ID = "RAW_DATA_ON";
+
+	virtual std::string getID() override { return ID; }
+	virtual void setHandSide(HandSide hs) override {}
+	virtual void setActuationPoint(ActuationPoint ap) override {}
+};
+
+//! @private
+class RawDataOff : public WeArtJsonMessage {
+public:
+	static constexpr const char* ID = "RAW_DATA_OFF";
+
+	virtual std::string getID() override { return ID; }
+	virtual void setHandSide(HandSide hs) override {}
+	virtual void setActuationPoint(ActuationPoint ap) override {}
+};
 
 //! @private
 class RawSensorsData : public WeArtJsonMessage {
 public:
-	static constexpr const char* ID = "SensorsData";
-
-	float accX;
-	float accY;
-	float accZ;
-	float gyroX;
-	float gyroY;
-	float gyroZ;
-	int TOF;
+	static constexpr const char* ID = "RAW_DATA";
 
 	virtual std::string getID() override { return ID; };
-	virtual void setHandSide(HandSide hs) override {}
+	virtual void setHandSide(HandSide hs) override { hand = hs; }
 	virtual void setActuationPoint(ActuationPoint ap) override {}
+
+	HandSide getHand() { return hand; }
+	bool hasSensor(ActuationPoint ap);
+	SensorData getSensor(ActuationPoint ap);
+
+protected:
+	virtual nlohmann::json serializePayload() override;
+	virtual void deserializePayload(nlohmann::json payload) override;
+
+	HandSide hand;
+	std::map<ActuationPoint, SensorData> sensors;
 };
