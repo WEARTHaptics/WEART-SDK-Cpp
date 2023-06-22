@@ -41,6 +41,12 @@ public:
 	//! @brief Stops the device calibration procedure
 	void StopCalibration();
 
+	//! @brief Ask the middleware to send raw sensors data to the sdk
+	void StartRawData();
+
+	//! @brief Ask the middleware to stop sending raw sensors data to the sdk
+	void StopRawData();
+
 	//! @brief Sends a message to the Weart middleware
 	//! @param message Message to send
 	void SendMessage(WeArtMessage* message);

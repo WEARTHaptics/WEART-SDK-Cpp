@@ -249,6 +249,16 @@ void WeArtClient::StopCalibration() {
 	SendMessage(&stopCalibration);
 }
 
+void WeArtClient::StartRawData() {
+	RawDataOn message;
+	SendMessage(&message);
+}
+
+void WeArtClient::StopRawData() {
+	RawDataOff message;
+	SendMessage(&message);
+}
+
 void WeArtClient::SendMessage(WeArtMessage* message) {
 	if (!Connected)
 		return;

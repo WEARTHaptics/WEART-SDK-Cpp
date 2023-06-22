@@ -13,42 +13,26 @@ WeArtRawSensorsData::WeArtRawSensorsData(HandSide side, ActuationPoint actuation
 	actuationPoint = actuation;
 }
 
-WeArtRawSensorsData::Sample* WeArtRawSensorsData::GetLastSample() {
-	if (this->samples.size() > 0) {
-		Sample* lastSample = this->samples.back();
-		return lastSample;
-	} else {
-		Sample* sample = new Sample();
-		return sample;
-
-	}
-
+SensorData WeArtRawSensorsData::GetLastSample() {
+	if (samples.size() == 0)
+		return SensorData();
+	return samples.back();
 }
 
 void WeArtRawSensorsData::OnMessageReceived(WeArtMessage* msg) {
-	if (msg->getID() == RawSensorsData::ID) {
-		RawSensorsData* rawSensorsData = static_cast<RawSensorsData*>(msg);
-		if (rawSensorsData->getHand() == handSide && rawSensorsData->getActuationPoint() == actuationPoint) {
+	RawSensorsData* rawSensorsData = static_cast<RawSensorsData*>(msg);
+	if (rawSensorsData == nullptr)
+		return;
 
-			Sample* dataSample = new Sample();
+	if (rawSensorsData->getHand() != handSide)
+		return;
 
-			dataSample->AccX = rawSensorsData->accX;
-			dataSample->AccY = rawSensorsData->accY;
-			dataSample->AccZ = rawSensorsData->accZ;
+	if (!rawSensorsData->hasSensor(actuationPoint))
+		return;
+	
+	SensorData sample = rawSensorsData->getSensor(actuationPoint);
 
-			dataSample->GyroX = rawSensorsData->gyroX;
-			dataSample->GyroY = rawSensorsData->gyroY;
-			dataSample->GyroZ = rawSensorsData->gyroZ;
-
-			dataSample->TOF = rawSensorsData->TOF;
-
-			if (this->samples.size() <= K_NUM_SAMPLES) {
-				samples.push_back(dataSample);
-			} else {
-				samples.clear();
-				samples.push_back(dataSample);
-			}
-		}
-
-	}
+	samples.push(sample);
+	while (samples.size() > K_NUM_SAMPLES)
+		samples.pop();
 }
