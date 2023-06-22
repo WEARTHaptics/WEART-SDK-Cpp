@@ -58,12 +58,18 @@ public:
 
 class WeArtJsonMessage : public WeArtMessage {
 public:
+	WeArtJsonMessage();
+
 	virtual std::string serialize() override;
 	virtual void deserialize(std::string message) override;
+	long unsigned int timestamp() { return _timestamp; }
 
 protected:
 	virtual nlohmann::json serializePayload() { return nlohmann::json(); }
 	virtual void deserializePayload(nlohmann::json payload) {}
+
+private:
+	long unsigned int _timestamp;
 };
 
 

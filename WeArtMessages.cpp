@@ -1,5 +1,6 @@
 #include "WeArtMessages.h"
 #include <sstream>
+#include <chrono>
 
 // Util / Conversion methods
 
@@ -127,11 +128,19 @@ void WeArtCsvMessage::deserialize(std::string message)
 
 // JSON message
 
+WeArtJsonMessage::WeArtJsonMessage()
+{
+	std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::system_clock::now().time_since_epoch()
+	);
+	_timestamp = ms.count();
+}
+
 std::string WeArtJsonMessage::serialize()
 {
 	nlohmann::json j;
 	j["type"] = getID();
-	j["ts"] = 12345632;
+	j["ts"] = _timestamp;
 
 	nlohmann::json payload = serializePayload();
 	if (payload != nullptr)
@@ -143,9 +152,7 @@ std::string WeArtJsonMessage::serialize()
 void WeArtJsonMessage::deserialize(std::string message)
 {
 	nlohmann::json j = nlohmann::json::parse(message);
-
-	// TODO parse timestamp
-
+	_timestamp = j["ts"].template get<unsigned long int>();
 	if (j["data"] != nullptr)
 		deserializePayload(j["data"]);
 }
