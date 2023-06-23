@@ -13,10 +13,14 @@ WeArtRawSensorsData::WeArtRawSensorsData(HandSide side, ActuationPoint actuation
 	actuationPoint = actuation;
 }
 
-SensorData WeArtRawSensorsData::GetLastSample() {
+WeArtRawSensorsData::Sample WeArtRawSensorsData::GetLastSample() {
 	if (samples.size() == 0)
-		return SensorData();
+		return WeArtRawSensorsData::Sample();
 	return samples.back();
+}
+
+void WeArtRawSensorsData::AddSampleCallback(std::function<void(Sample)> callback) {
+	callbacks.push_back(callback);
 }
 
 void WeArtRawSensorsData::OnMessageReceived(WeArtMessage* msg) {
@@ -30,9 +34,14 @@ void WeArtRawSensorsData::OnMessageReceived(WeArtMessage* msg) {
 	if (!rawSensorsData->hasSensor(actuationPoint))
 		return;
 	
-	SensorData sample = rawSensorsData->getSensor(actuationPoint);
+	Sample sample;
+	sample.timestamp = rawSensorsData->timestamp();
+	sample.data = rawSensorsData->getSensor(actuationPoint);
 
 	samples.push(sample);
 	while (samples.size() > K_NUM_SAMPLES)
 		samples.pop();
+
+	for (std::function<void(Sample)> callback : callbacks)
+		callback(sample);
 }

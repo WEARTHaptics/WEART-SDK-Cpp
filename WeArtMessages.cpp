@@ -152,7 +152,7 @@ std::string WeArtJsonMessage::serialize()
 void WeArtJsonMessage::deserialize(std::string message)
 {
 	nlohmann::json j = nlohmann::json::parse(message);
-	_timestamp = j["ts"].template get<unsigned long int>();
+	_timestamp = j["ts"].template get<std::uint64_t>();
 	if (j["data"] != nullptr)
 		deserializePayload(j["data"]);
 }
