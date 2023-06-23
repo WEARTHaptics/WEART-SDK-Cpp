@@ -45,6 +45,7 @@ public:
 	virtual void deserialize(std::string message) = 0;
 };
 
+//! @private
 class WeArtCsvMessage : public WeArtMessage {
 public:
 	const char field_separator = ':';
@@ -56,6 +57,7 @@ public:
 	virtual void deserialize(std::string message) override;
 };
 
+//! @private
 class WeArtJsonMessage : public WeArtMessage {
 public:
 	WeArtJsonMessage();

@@ -20,7 +20,9 @@ public:
 
 	//! @brief Sensor data sample
 	struct Sample {
+		//! @brief Timestamp when the sample was created (in milliseconds unix epoch time)
 		std::uint64_t timestamp;
+		//! @brief Sampled sensor data
 		SensorData data;
 	};
 
