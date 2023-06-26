@@ -231,3 +231,13 @@ The sample contains the accelerometer, gyroscope and time of flight data, in add
 ~~~~~~~~~~~~~
 
 @note The Palm (control unit) doesn't contain a Time-Of-Flight sensor, so its value is always set to 0.
+
+In addition to getting the latest sample by polling the tracking object, it's possible to add a callback called whenever a new sensor data sample is
+received from the TouchDIVER.
+
+~~~~~~~~~~~~~{.cpp}
+	std::function<void(WeArtRawSensorsData::Sample)> callback = (WeArtRawSensorsData::Sample sample) => {
+		// process the sensor data sample
+	};
+	rawSensorData.AddSampleCallback(callback);
+~~~~~~~~~~~~~
