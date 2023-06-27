@@ -13,7 +13,10 @@ The new SDK version is mostly compatible with the older version.
 The only breaking change introduced relates to the WeArtTexture class, in which the ```textureVelocity``` methods and parameter has been reduced from three values (x, y and z) to a single one, representing the speed at which the texture vibration is played by the thimble.
 
 ## Changelog
-### Version 1.1 (latest)
+### Version 1.2 (latest)
+* Add raw sensors data tracking object
+
+### Version 1.1
 * Add calibration procedure start/stop and listener
 * Add new default tracking message and values for closure
 * Add callback for connection status changed in WeArtClient class
