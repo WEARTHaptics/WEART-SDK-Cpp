@@ -189,7 +189,9 @@ void WeArtClient::OnReceive() {
 		// Deserialize WeArtMessages
 		messages.resize(splitStrings.size());
 		for (int i = 0; i < messages.size(); i++) {
-			messages[i] = messageSerializer.Deserialize(splitStrings[i]);
+			WeArtMessage* msg = messageSerializer.Deserialize(splitStrings[i]);
+			if (msg != nullptr)
+				messages[i] = msg;
 		}
 
 		ForwardingMessages(messages);
@@ -247,13 +249,25 @@ void WeArtClient::StopCalibration() {
 	SendMessage(&stopCalibration);
 }
 
+void WeArtClient::StartRawData() {
+	RawDataOn message;
+	SendMessage(&message);
+}
+
+void WeArtClient::StopRawData() {
+	RawDataOff message;
+	SendMessage(&message);
+}
+
 void WeArtClient::SendMessage(WeArtMessage* message) {
-	if (!Connected) {
+	if (!Connected)
 		return;
-	}
+
+	if (message == nullptr)
+		return;
 
 	// WeArt message to string
-	std::string text = messageSerializer.Serialize(message);
+	std::string text = message->serialize();
 	text += messagesSeparator;
 
 	char sendbuf[120];
@@ -331,6 +345,10 @@ void WeArtClient::AddErrorCallback(std::function<void(WeArtClient::ErrorType)> c
 void WeArtClient::AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects) {
 	thimbleTrackingObjects.push_back(trackingObjects);
 	AddMessageListener(trackingObjects);
+}
+
+void WeArtClient::AddThimbleRawSensors(WeArtRawSensorsData* rawSensorsData) {
+	AddMessageListener(rawSensorsData);
 }
 
 std::string WSAGetLastErrorString() {

@@ -235,3 +235,41 @@ void WEART_C___API_Integration::MainPage::ButtonEffectSample1_Click(Platform::Ob
 		hapticObject->UpdateEffects();
 }
 ~~~~~~~~~~~~~
+
+### Raw Sensors Data tracking
+
+In the right section of the window, the application displays the raw data of the different sensors aboard the TouchDIVER.
+In particular, it's possible to choose the hand and actuation point from which to visualize:
+* Timestamp of the last sample received
+* Accelerometer data (on the x,y,z axis)
+* Gyroscope data (on the x,y,z axis)
+* Time of Flight distance (in mm)
+
+To start receiving raw data, click on the "Start Raw Data" button, and to stop click on the "Stop Raw Data" button.
+
+When it's loaded, the application creates a WeArt.Components.WeArtRawSensorsDataTrackingObject for each pair of (HandSide, ActuationPoint).
+Using a timer, the application polls the chosen sensor and displays its data:
+
+~~~~~~~~~~~~~{.cs}
+void MainPage::RenderRawSensorsData() {	
+	// Get chosen sensor
+	std::pair<std::string, std::string> sensorChoice = GetSensorChoice();
+	if (sensors.find(sensorChoice) == sensors.end())
+		return;
+	WeArtRawSensorsData* sensor = sensors[sensorChoice];
+
+	// Render raw data to screen
+	WeArtRawSensorsData::Sample sample = sensor->GetLastSample();
+	Acc_X->Text = sample.data.accelerometer.x.ToString();
+	Acc_Y->Text = sample.data.accelerometer.y.ToString();
+	Acc_Z->Text = sample.data.accelerometer.z.ToString();
+
+	Gyro_X->Text = sample.data.gyroscope.x.ToString();
+	Gyro_Y->Text = sample.data.gyroscope.y.ToString();
+	Gyro_Z->Text = sample.data.gyroscope.z.ToString();
+
+	TimeOfFlight->Text = sample.data.timeOfFlight.distance.ToString();
+
+	LastSampleTime->Text = sample.timestamp.ToString();
+}
+~~~~~~~~~~~~~

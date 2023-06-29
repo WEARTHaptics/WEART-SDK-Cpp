@@ -1,4 +1,6 @@
 #include "WeArtMessages.h"
+#include <sstream>
+#include <chrono>
 
 // Util / Conversion methods
 
@@ -83,6 +85,78 @@ std::string TrackingTypeToString(TrackingType trackType) {
 	}
 	return "";
 }
+
+// CSV message
+
+std::string WeArtCsvMessage::serialize()
+{
+	// Unlike C#, C++ does not allow dynamic runtime
+	// reflection, hence we have to use dedicated functions
+	// to get the values of the class members.
+	std::string messageID = getID();
+	std::vector<std::string> serializedValues = getValues();
+
+	// Join the string arrays.
+	serializedValues.insert(serializedValues.begin(), messageID);
+
+	// Then merge using our separator.
+	std::stringstream ss;
+	auto it = serializedValues.begin();
+	ss << *it++;
+	for (; it != serializedValues.end(); it++) {
+		ss << field_separator;
+		ss << *it;
+	}
+	return ss.str();
+}
+
+void WeArtCsvMessage::deserialize(std::string message)
+{
+	// Split strings
+	std::vector<std::string> strings;
+	std::istringstream dataStream(message);
+	std::string s;
+	while (std::getline(dataStream, s, field_separator)) {
+		strings.push_back(s);
+	}
+
+	// Set message values
+	strings.erase(strings.begin());
+	setValues(strings);
+}
+
+
+// JSON message
+
+WeArtJsonMessage::WeArtJsonMessage()
+{
+	std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::system_clock::now().time_since_epoch()
+	);
+	_timestamp = ms.count();
+}
+
+std::string WeArtJsonMessage::serialize()
+{
+	nlohmann::json j;
+	j["type"] = getID();
+	j["ts"] = _timestamp;
+
+	nlohmann::json payload = serializePayload();
+	if (payload != nullptr)
+		j["data"] = payload;
+
+	return j.dump();
+}
+
+void WeArtJsonMessage::deserialize(std::string message)
+{
+	nlohmann::json j = nlohmann::json::parse(message);
+	_timestamp = j["ts"].template get<std::uint64_t>();
+	if (j["data"] != nullptr)
+		deserializePayload(j["data"]);
+}
+
 
 // StartFromClient message
 
@@ -355,4 +429,38 @@ float TrackingMessage::GetAbduction(HandSide handSide, ActuationPoint actuationP
 			break;
 	}
 	return WeArtConstants::defaultAbduction;
+}
+
+bool RawSensorsData::hasSensor(ActuationPoint ap)
+{
+	return sensors.find(ap) != sensors.end();
+}
+
+SensorData RawSensorsData::getSensor(ActuationPoint ap)
+{
+	return sensors[ap];
+}
+
+nlohmann::json RawSensorsData::serializePayload()
+{
+	nlohmann::json j;
+	j["handSide"] = hand;
+	for (const auto &s : sensors) {
+		std::string actuationPoint = ActuationPointToString(s.first);
+		std::transform(actuationPoint.begin(), actuationPoint.end(), actuationPoint.begin(),
+			[](unsigned char c) { return std::tolower(c); });
+
+		j[actuationPoint] = s.second;
+	}
+	return j;
+}
+
+void RawSensorsData::deserializePayload(nlohmann::json payload)
+{
+	std::string hs = payload["handSide"].template get<std::string>();
+	hand = StringToHandside(hs);
+	if (payload["index"] != nullptr) sensors[ActuationPoint::Index] = payload["index"].template get<SensorData>();
+	if (payload["thumb"] != nullptr) sensors[ActuationPoint::Thumb] = payload["thumb"].template get<SensorData>();
+	if (payload["middle"] != nullptr) sensors[ActuationPoint::Middle] = payload["middle"].template get<SensorData>();
+	if (payload["palm"] != nullptr) sensors[ActuationPoint::Palm] = payload["palm"].template get<SensorData>();
 }

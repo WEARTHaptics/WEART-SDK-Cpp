@@ -7,6 +7,7 @@
 #include <windows.h>
 
 #include <string>
+#include "nlohmann/json.hpp"
 
 enum class TrackingType {
 	DEFAULT,	//!< Deprecated, contains only closure values 
@@ -18,6 +19,11 @@ enum HandSide {
 	Left = 1 << 0,
 	Right = 1 << 1,
 };
+
+NLOHMANN_JSON_SERIALIZE_ENUM(HandSide, {
+	{Left, "LEFT"},
+	{Right, "RIGHT"},
+})
 
 
 enum ActuationPoint {
@@ -67,6 +73,32 @@ enum class TextureType : uint8 {
 	DoubleSidedTape = 21
 };
 
+
+struct AccelerometerData {
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AccelerometerData, x, y, z)
+
+struct GyroscopeData {
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GyroscopeData, x,y,z)
+
+struct TofData {
+	int distance = 0;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TofData, distance)
+
+struct SensorData {
+	AccelerometerData accelerometer;
+	GyroscopeData gyroscope;
+	TofData timeOfFlight;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SensorData, accelerometer, gyroscope, timeOfFlight)
 
 // Constants shared by the WeArt components
 namespace WeArtConstants {
