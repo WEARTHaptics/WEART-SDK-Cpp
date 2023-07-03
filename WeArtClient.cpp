@@ -120,7 +120,11 @@ void WeArtClient::Run() {
 	auto asyncAction = Windows::System::Threading::ThreadPool::RunAsync(workItem);
 
 	// Ask first middleware status
-	SendMessage(new GetMiddlewareStatus());
+	GetMiddlewareStatus getStatusMessage;
+	SendMessage(&getStatusMessage);
+
+	GetDevicesStatusMessage getDevicesMessage;
+	SendMessage(&getDevicesMessage);
 }
 
 bool WeArtClient::IsConnected() {

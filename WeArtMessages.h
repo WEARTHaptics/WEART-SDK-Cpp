@@ -474,3 +474,29 @@ protected:
 private:
 	MiddlewareStatusData _data;	
 };
+
+//! @private 
+class GetDevicesStatusMessage : public WeArtJsonMessage {
+public:
+	GetDevicesStatusMessage() : WeArtJsonMessage() {}
+	static constexpr const char* ID = "DEVICES_GET_STATUS";
+	virtual std::string getID() override { return ID; };
+};
+
+//! @private 
+class DevicesStatusMessage : public WeArtJsonMessage {
+public:
+	DevicesStatusMessage() : WeArtJsonMessage() {}
+
+	static constexpr const char* ID = "DEVICES_STATUS";
+	virtual std::string getID() override { return ID; };
+
+	std::vector<ConnectedDeviceStatus> devices() { return _devices; }
+
+protected:
+	virtual nlohmann::json serializePayload() override;
+	virtual void deserializePayload(nlohmann::json payload) override;
+
+private:
+	std::vector<ConnectedDeviceStatus> _devices;
+};

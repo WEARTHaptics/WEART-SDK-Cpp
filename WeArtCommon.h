@@ -14,18 +14,18 @@ enum class TrackingType {
 	WEART_HAND,	//!< Tracking with closures, and abduction value for thumb
 };
 
-enum HandSide {
+enum class HandSide {
 	//HSnone = 0	
 	Left = 1 << 0,
 	Right = 1 << 1,
 };
 NLOHMANN_JSON_SERIALIZE_ENUM(HandSide, {
-	{Left, "LEFT"},
-	{Right, "RIGHT"},
+	{HandSide::Left, "LEFT"},
+	{HandSide::Right, "RIGHT"},
 })
 
 
-enum ActuationPoint {
+enum class ActuationPoint {
 	//APnone	= 0
 	Thumb = 1 << 0,
 	Index = 1 << 1,
@@ -33,10 +33,10 @@ enum ActuationPoint {
 	Palm = 1 << 3,
 };
 NLOHMANN_JSON_SERIALIZE_ENUM(ActuationPoint, {
-	{Thumb, "THUMB"},
-	{Index, "INDEX"},
-	{Middle, "MIDDLE"},
-	{Palm, "PALM"},
+	{ActuationPoint::Thumb, "THUMB"},
+	{ActuationPoint::Index, "INDEX"},
+	{ActuationPoint::Middle, "MIDDLE"},
+	{ActuationPoint::Palm, "PALM"},
 })
 
 
@@ -143,6 +143,22 @@ struct MiddlewareStatusData {
 	std::vector<MiddlewareConnectedDevice> connectedDevices;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MiddlewareStatusData, status, version, statusCode, errorDesc, actuationsEnabled, connectedDevices);
+
+struct ThimbleStatus {
+	ActuationPoint id;
+	bool connected;
+	int statusCode;
+	std::string errorDesc;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ThimbleStatus, id, connected, statusCode, errorDesc);
+
+struct ConnectedDeviceStatus {
+	std::string macAddress;
+	HandSide handSide;
+	int batteryLevel;
+	std::vector<ThimbleStatus> thimbles;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConnectedDeviceStatus, macAddress, handSide, batteryLevel, thimbles);
 
 // Constants shared by the WeArt components
 namespace WeArtConstants {

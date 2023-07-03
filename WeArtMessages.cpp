@@ -503,3 +503,17 @@ void MiddlewareStatusMessage::deserializePayload(nlohmann::json payload)
 	_data = payload.template get<MiddlewareStatusData>();
 	_data.timestamp = _timestamp;
 }
+
+nlohmann::json DevicesStatusMessage::serializePayload()
+{
+	nlohmann::json json;
+	json["devices"] = _devices;
+	return json;
+}
+
+void DevicesStatusMessage::deserializePayload(nlohmann::json payload)
+{
+	if (payload["devices"] == nullptr)
+		return;
+	_devices = payload["devices"].get<std::vector<ConnectedDeviceStatus>>();
+}
