@@ -14,18 +14,25 @@ WeArtMessage* WeArtMessageSerializer::Deserialize(std::string data) {
 
 std::string WeArtMessageSerializer::extractID(std::string& data)
 {
+	// Get first non-whitespace character to check
+	size_t first_char_idx = data.find_first_not_of(" \n\r\t");
+	if (first_char_idx < 0 || first_char_idx >= data.size())
+		return "";
+	char first_char = data[first_char_idx];
+
+	// Try parse JSON message
+	if (first_char == '{' || first_char == '[') {
+		try {
+			json j = json::parse(data);
+			return j["type"].template get<std::string>();
+		}
+		catch (json::parse_error) {}
+	}
+
+	// Parse CSV message, get first field
 	std::string id = "";
-	try {
-		// JSON message
-		json j = json::parse(data);
-		id = j["type"].template get<std::string>();
-	}
-	catch (json::parse_error& ex)
-	{
-		// CSV message, get first field
-		std::istringstream dataStream(data);
-		std::getline(dataStream, id, ':');
-	}
+	std::istringstream dataStream(data);
+	std::getline(dataStream, id, ':');
 	return id;
 }
 
@@ -45,6 +52,8 @@ WeArtMessage* WeArtMessageSerializer::createMessage(std::string& id) {
 		case HashStringToInt(StopTextureMessage::ID): return new StopTextureMessage();
 		case HashStringToInt(TrackingMessage::ID): return new TrackingMessage();
 		case HashStringToInt(RawSensorsData::ID): return new RawSensorsData();
+		case HashStringToInt(GetMiddlewareStatus::ID): return new GetMiddlewareStatus();
+		case HashStringToInt(MiddlewareStatusMessage::ID): return new MiddlewareStatusMessage();
 		default: return nullptr;
 	}
 }

@@ -19,7 +19,6 @@ enum HandSide {
 	Left = 1 << 0,
 	Right = 1 << 1,
 };
-
 NLOHMANN_JSON_SERIALIZE_ENUM(HandSide, {
 	{Left, "LEFT"},
 	{Right, "RIGHT"},
@@ -33,6 +32,12 @@ enum ActuationPoint {
 	Middle = 1 << 2,
 	Palm = 1 << 3,
 };
+NLOHMANN_JSON_SERIALIZE_ENUM(ActuationPoint, {
+	{Thumb, "THUMB"},
+	{Index, "INDEX"},
+	{Middle, "MIDDLE"},
+	{Palm, "PALM"},
+})
 
 
 enum HandClosingState {
@@ -52,6 +57,28 @@ enum CalibrationStatus {
 	Calibrating = 1,
 	Running = 2,
 };
+
+enum class MiddlewareStatus {
+	DISCONNECTED,
+	IDLE,
+	STARTING,
+	RUNNING,
+	STOPPING,
+	UPLOADING_TEXTURES,
+	CONNECTING_DEVICE,
+	CALIBRATION,
+};
+NLOHMANN_JSON_SERIALIZE_ENUM(MiddlewareStatus, {
+	{MiddlewareStatus::DISCONNECTED, "DISCONNECTED"},
+	{MiddlewareStatus::IDLE, "IDLE"},
+	{MiddlewareStatus::STARTING, "STARTING"},
+	{MiddlewareStatus::RUNNING, "RUNNING"},
+	{MiddlewareStatus::STOPPING, "STOPPING"},
+	{MiddlewareStatus::UPLOADING_TEXTURES, "UPLOADING_TEXTURES"},
+	{MiddlewareStatus::CONNECTING_DEVICE, "CONNECTING_DEVICE"},
+	{MiddlewareStatus::CALIBRATION, "CALIBRATION"},
+})
+
 
 enum class TextureType : uint8 {
 	ClickNormal = 0, ClickSoft = 1, DoubleClick = 2,
@@ -99,6 +126,23 @@ struct SensorData {
 	TofData timeOfFlight;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SensorData, accelerometer, gyroscope, timeOfFlight)
+
+struct MiddlewareConnectedDevice {
+	std::string macAddress;
+	HandSide handSide;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MiddlewareConnectedDevice, macAddress, handSide)
+
+struct MiddlewareStatusData {
+	std::uint64_t timestamp;
+	MiddlewareStatus status;
+	std::string version;
+	int statusCode;
+	std::string errorDesc;
+	bool actuationsEnabled;
+	std::vector<MiddlewareConnectedDevice> connectedDevices;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MiddlewareStatusData, status, version, statusCode, errorDesc, actuationsEnabled, connectedDevices);
 
 // Constants shared by the WeArt components
 namespace WeArtConstants {

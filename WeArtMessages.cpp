@@ -7,9 +7,11 @@
 HandSide StringToHandside(std::string& str) {
 	if (str == "LEFT") {
 		return HandSide::Left;
-	} else if (str == "RIGHT") {
+	}
+	else if (str == "RIGHT") {
 		return HandSide::Right;
-	} else {
+	}
+	else {
 		assert(false);
 		return HandSide::Left;
 	}
@@ -18,9 +20,11 @@ HandSide StringToHandside(std::string& str) {
 std::string HandsideToString(HandSide hs) {
 	if (hs == HandSide::Left) {
 		return "LEFT";
-	} else if (hs == HandSide::Right) {
+	}
+	else if (hs == HandSide::Right) {
 		return "RIGHT";
-	} else {
+	}
+	else {
 		assert(false);
 		return "";
 	}
@@ -43,13 +47,17 @@ HandSide StringToCalibrationHandSide(std::string& str) {
 ActuationPoint StringToActuationPoint(std::string& str) {
 	if (str == "THUMB") {
 		return ActuationPoint::Thumb;
-	} else if (str == "INDEX") {
+	}
+	else if (str == "INDEX") {
 		return ActuationPoint::Index;
-	} else if (str == "MIDDLE") {
+	}
+	else if (str == "MIDDLE") {
 		return ActuationPoint::Middle;
-	} else if (str == "PALM") {
+	}
+	else if (str == "PALM") {
 		return ActuationPoint::Palm;
-	} else {
+	}
+	else {
 		assert(false);
 		return ActuationPoint::Thumb;
 	}
@@ -58,13 +66,17 @@ ActuationPoint StringToActuationPoint(std::string& str) {
 std::string ActuationPointToString(ActuationPoint ap) {
 	if (ap == ActuationPoint::Thumb) {
 		return "THUMB";
-	} else if (ap == ActuationPoint::Index) {
+	}
+	else if (ap == ActuationPoint::Index) {
 		return "INDEX";
-	} else if (ap == ActuationPoint::Middle) {
+	}
+	else if (ap == ActuationPoint::Middle) {
 		return "MIDDLE";
-	} else if (ap == ActuationPoint::Palm) {
+	}
+	else if (ap == ActuationPoint::Palm) {
 		return "PALM";
-	} else {
+	}
+	else {
 		assert(false);
 		return "";
 	}
@@ -78,12 +90,27 @@ TrackingType StringToTrackingType(const std::string& str) {
 
 std::string TrackingTypeToString(TrackingType trackType) {
 	switch (trackType) {
-		case TrackingType::DEFAULT:
-			return "";
-		case TrackingType::WEART_HAND:
-			return "TrackType1";
+	case TrackingType::DEFAULT:
+		return "";
+	case TrackingType::WEART_HAND:
+		return "TrackType1";
 	}
 	return "";
+}
+
+std::string MiddlewareStatusToString(MiddlewareStatus status)
+{
+	switch (status) {
+		case MiddlewareStatus::IDLE: return "IDLE";
+		case MiddlewareStatus::CONNECTING_DEVICE: return "CONNECTING_DEVICE";
+		case MiddlewareStatus::STARTING: return "STARTING";
+		case MiddlewareStatus::RUNNING: return "RUNNING";
+		case MiddlewareStatus::STOPPING: return "STOPPING";
+		case MiddlewareStatus::CALIBRATION: return "CALIBRATION";
+		case MiddlewareStatus::DISCONNECTED: return "DISCONNECTED";
+		case MiddlewareStatus::UPLOADING_TEXTURES: return "UPLOADING_TEXTURES";
+	}
+	return "NONE";
 }
 
 // CSV message
@@ -325,32 +352,32 @@ std::vector<std::string> TrackingMessage::getValues() {
 	std::vector<std::string> ret;
 	ret.push_back(TrackingTypeToString(_trackingType));
 	switch (_trackingType) {
-		case TrackingType::DEFAULT:
-		{
-			ret.push_back(std::to_string(RightThumbClosure));
-			ret.push_back(std::to_string(RightIndexClosure));
-			ret.push_back(std::to_string(RightMiddleClosure));
-			ret.push_back(std::to_string(RightPalmClosure));
-			ret.push_back(std::to_string(LeftThumbClosure));
-			ret.push_back(std::to_string(LeftIndexClosure));
-			ret.push_back(std::to_string(LeftMiddleClosure));
-			ret.push_back(std::to_string(LeftPalmClosure));
-			break;
-		}
-		case TrackingType::WEART_HAND:
-		{
-			// Right
-			ret.push_back(std::to_string(RightIndexClosure));
-			ret.push_back(std::to_string(RightThumbClosure));
-			ret.push_back(std::to_string(RightThumbAbduction));
-			ret.push_back(std::to_string(RightMiddleClosure));
+	case TrackingType::DEFAULT:
+	{
+		ret.push_back(std::to_string(RightThumbClosure));
+		ret.push_back(std::to_string(RightIndexClosure));
+		ret.push_back(std::to_string(RightMiddleClosure));
+		ret.push_back(std::to_string(RightPalmClosure));
+		ret.push_back(std::to_string(LeftThumbClosure));
+		ret.push_back(std::to_string(LeftIndexClosure));
+		ret.push_back(std::to_string(LeftMiddleClosure));
+		ret.push_back(std::to_string(LeftPalmClosure));
+		break;
+	}
+	case TrackingType::WEART_HAND:
+	{
+		// Right
+		ret.push_back(std::to_string(RightIndexClosure));
+		ret.push_back(std::to_string(RightThumbClosure));
+		ret.push_back(std::to_string(RightThumbAbduction));
+		ret.push_back(std::to_string(RightMiddleClosure));
 
-			// Left
-			ret.push_back(std::to_string(LeftIndexClosure));
-			ret.push_back(std::to_string(LeftThumbClosure));
-			ret.push_back(std::to_string(LeftThumbAbduction));
-			ret.push_back(std::to_string(LeftMiddleClosure));
-		}
+		// Left
+		ret.push_back(std::to_string(LeftIndexClosure));
+		ret.push_back(std::to_string(LeftThumbClosure));
+		ret.push_back(std::to_string(LeftThumbAbduction));
+		ret.push_back(std::to_string(LeftMiddleClosure));
+	}
 	}
 
 	return ret;
@@ -359,56 +386,56 @@ std::vector<std::string> TrackingMessage::getValues() {
 void TrackingMessage::setValues(std::vector<std::string>& values) {
 	_trackingType = StringToTrackingType(values[0]);
 	switch (_trackingType) {
-		case TrackingType::DEFAULT:
-		{
-			assert(values.size() == 8);
-			RightThumbClosure = std::stoi(values[0]);
-			RightIndexClosure = std::stoi(values[1]);
-			RightMiddleClosure = std::stoi(values[2]);
-			RightPalmClosure = std::stoi(values[3]);
-			LeftThumbClosure = std::stoi(values[4]);
-			LeftIndexClosure = std::stoi(values[5]);
-			LeftMiddleClosure = std::stoi(values[6]);
-			LeftPalmClosure = std::stoi(values[7]);
-			break;
-		}
-		case TrackingType::WEART_HAND:
-		{
-			assert(values.size() == 9);
-			// Right
-			RightIndexClosure = std::stoi(values[1]);
-			RightThumbClosure = std::stoi(values[2]);
-			RightThumbAbduction = std::stoi(values[3]);
-			RightMiddleClosure = std::stoi(values[4]);
+	case TrackingType::DEFAULT:
+	{
+		assert(values.size() == 8);
+		RightThumbClosure = std::stoi(values[0]);
+		RightIndexClosure = std::stoi(values[1]);
+		RightMiddleClosure = std::stoi(values[2]);
+		RightPalmClosure = std::stoi(values[3]);
+		LeftThumbClosure = std::stoi(values[4]);
+		LeftIndexClosure = std::stoi(values[5]);
+		LeftMiddleClosure = std::stoi(values[6]);
+		LeftPalmClosure = std::stoi(values[7]);
+		break;
+	}
+	case TrackingType::WEART_HAND:
+	{
+		assert(values.size() == 9);
+		// Right
+		RightIndexClosure = std::stoi(values[1]);
+		RightThumbClosure = std::stoi(values[2]);
+		RightThumbAbduction = std::stoi(values[3]);
+		RightMiddleClosure = std::stoi(values[4]);
 
-			// Left
-			LeftIndexClosure = std::stoi(values[5]);
-			LeftThumbClosure = std::stoi(values[6]);
-			LeftThumbAbduction = std::stoi(values[7]);
-			LeftMiddleClosure = std::stoi(values[8]);
-		}
+		// Left
+		LeftIndexClosure = std::stoi(values[5]);
+		LeftThumbClosure = std::stoi(values[6]);
+		LeftThumbAbduction = std::stoi(values[7]);
+		LeftMiddleClosure = std::stoi(values[8]);
+	}
 	}
 }
 
 float TrackingMessage::GetClosure(HandSide handSide, ActuationPoint actuationPoint) {
 	uint8 byteValue = 0x00;
 	switch (handSide) {
-		case HandSide::Left:
-			switch (actuationPoint) {
-				case ActuationPoint::Thumb:  byteValue = LeftThumbClosure;  break;
-				case ActuationPoint::Index:  byteValue = LeftIndexClosure;  break;
-				case ActuationPoint::Middle: byteValue = LeftMiddleClosure; break;
-				case ActuationPoint::Palm:   byteValue = LeftPalmClosure;   break;
-			}
-			break;
-		case HandSide::Right:
-			switch (actuationPoint) {
-				case ActuationPoint::Thumb:  byteValue = RightThumbClosure;  break;
-				case ActuationPoint::Index:  byteValue = RightIndexClosure;  break;
-				case ActuationPoint::Middle: byteValue = RightMiddleClosure; break;
-				case ActuationPoint::Palm:   byteValue = RightPalmClosure;   break;
-			}
-			break;
+	case HandSide::Left:
+		switch (actuationPoint) {
+		case ActuationPoint::Thumb:  byteValue = LeftThumbClosure;  break;
+		case ActuationPoint::Index:  byteValue = LeftIndexClosure;  break;
+		case ActuationPoint::Middle: byteValue = LeftMiddleClosure; break;
+		case ActuationPoint::Palm:   byteValue = LeftPalmClosure;   break;
+		}
+		break;
+	case HandSide::Right:
+		switch (actuationPoint) {
+		case ActuationPoint::Thumb:  byteValue = RightThumbClosure;  break;
+		case ActuationPoint::Index:  byteValue = RightIndexClosure;  break;
+		case ActuationPoint::Middle: byteValue = RightMiddleClosure; break;
+		case ActuationPoint::Palm:   byteValue = RightPalmClosure;   break;
+		}
+		break;
 	}
 
 	float num(byteValue);
@@ -421,12 +448,12 @@ float TrackingMessage::GetClosure(HandSide handSide, ActuationPoint actuationPoi
 float TrackingMessage::GetAbduction(HandSide handSide, ActuationPoint actuationPoint) {
 	float maxAbductionValue = 255;
 	switch (handSide) {
-		case HandSide::Left:
-			if (actuationPoint == ActuationPoint::Thumb)  return ((float)LeftThumbAbduction) / maxAbductionValue;
-			break;
-		case HandSide::Right:
-			if (actuationPoint == ActuationPoint::Thumb)  return ((float)RightThumbAbduction) / maxAbductionValue;
-			break;
+	case HandSide::Left:
+		if (actuationPoint == ActuationPoint::Thumb)  return ((float)LeftThumbAbduction) / maxAbductionValue;
+		break;
+	case HandSide::Right:
+		if (actuationPoint == ActuationPoint::Thumb)  return ((float)RightThumbAbduction) / maxAbductionValue;
+		break;
 	}
 	return WeArtConstants::defaultAbduction;
 }
@@ -445,7 +472,7 @@ nlohmann::json RawSensorsData::serializePayload()
 {
 	nlohmann::json j;
 	j["handSide"] = hand;
-	for (const auto &s : sensors) {
+	for (const auto& s : sensors) {
 		std::string actuationPoint = ActuationPointToString(s.first);
 		std::transform(actuationPoint.begin(), actuationPoint.end(), actuationPoint.begin(),
 			[](unsigned char c) { return std::tolower(c); });
@@ -463,4 +490,16 @@ void RawSensorsData::deserializePayload(nlohmann::json payload)
 	if (payload["thumb"] != nullptr) sensors[ActuationPoint::Thumb] = payload["thumb"].template get<SensorData>();
 	if (payload["middle"] != nullptr) sensors[ActuationPoint::Middle] = payload["middle"].template get<SensorData>();
 	if (payload["palm"] != nullptr) sensors[ActuationPoint::Palm] = payload["palm"].template get<SensorData>();
+}
+
+nlohmann::json MiddlewareStatusMessage::serializePayload()
+{
+	nlohmann::json json = _data;
+	return json;
+}
+
+void MiddlewareStatusMessage::deserializePayload(nlohmann::json payload)
+{
+	_data = payload.template get<MiddlewareStatusData>();
+	_data.timestamp = _timestamp;
 }

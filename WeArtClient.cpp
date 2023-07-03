@@ -118,6 +118,9 @@ void WeArtClient::Run() {
 		});
 
 	auto asyncAction = Windows::System::Threading::ThreadPool::RunAsync(workItem);
+
+	// Ask first middleware status
+	SendMessage(new GetMiddlewareStatus());
 }
 
 bool WeArtClient::IsConnected() {
@@ -188,7 +191,7 @@ void WeArtClient::OnReceive() {
 
 		// Deserialize WeArtMessages
 		messages.resize(splitStrings.size());
-		for (int i = 0; i < messages.size(); i++) {
+		for (unsigned int i = 0; i < messages.size(); i++) {
 			WeArtMessage* msg = messageSerializer.Deserialize(splitStrings[i]);
 			if (msg != nullptr)
 				messages[i] = msg;
