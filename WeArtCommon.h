@@ -142,7 +142,7 @@ struct MiddlewareStatusData {
 	bool actuationsEnabled;
 	std::vector<MiddlewareConnectedDevice> connectedDevices;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MiddlewareStatusData, status, version, statusCode, errorDesc, actuationsEnabled, connectedDevices);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MiddlewareStatusData, status, version, statusCode, errorDesc, actuationsEnabled, connectedDevices);
 
 struct ThimbleStatus {
 	ActuationPoint id;
@@ -150,7 +150,7 @@ struct ThimbleStatus {
 	int statusCode;
 	std::string errorDesc;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ThimbleStatus, id, connected, statusCode, errorDesc);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ThimbleStatus, id, connected, statusCode, errorDesc);
 
 struct ConnectedDeviceStatus {
 	std::string macAddress;
@@ -159,7 +159,7 @@ struct ConnectedDeviceStatus {
 	bool charging;
 	std::vector<ThimbleStatus> thimbles;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConnectedDeviceStatus, macAddress, handSide, batteryLevel, charging, thimbles);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ConnectedDeviceStatus, macAddress, handSide, batteryLevel, charging, thimbles);
 
 // Constants shared by the WeArt components
 namespace WeArtConstants {
