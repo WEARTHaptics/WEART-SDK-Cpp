@@ -156,9 +156,10 @@ struct ConnectedDeviceStatus {
 	std::string macAddress;
 	HandSide handSide;
 	int batteryLevel;
+	bool charging;
 	std::vector<ThimbleStatus> thimbles;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConnectedDeviceStatus, macAddress, handSide, batteryLevel, thimbles);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ConnectedDeviceStatus, macAddress, handSide, batteryLevel, charging, thimbles);
 
 // Constants shared by the WeArt components
 namespace WeArtConstants {
