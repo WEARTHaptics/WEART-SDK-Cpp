@@ -13,12 +13,15 @@ public:
 
 	void AddStatusCallback(std::function<void(MiddlewareStatusData)> callback);
 
+	void AddDevicesCallback(std::function<void(std::vector<ConnectedDeviceStatus>)> callback);
+
 	MiddlewareStatusData lastStatus();
 
 	std::vector<ConnectedDeviceStatus> devices();
 
 private:
-	std::vector<std::function<void(MiddlewareStatusData)>> _callbacks;
+	std::vector<std::function<void(MiddlewareStatusData)>> _statusCallbacks;
+	std::vector< std::function<void(std::vector<ConnectedDeviceStatus>)>> _devicesCallbacks;
 	MiddlewareStatusData _data;
 	std::vector<ConnectedDeviceStatus> _devices;
 };

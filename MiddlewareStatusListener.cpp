@@ -2,7 +2,12 @@
 
 void MiddlewareStatusListener::AddStatusCallback(std::function<void(MiddlewareStatusData)> callback)
 {
-	_callbacks.push_back(callback);
+	_statusCallbacks.push_back(callback);
+}
+
+void MiddlewareStatusListener::AddDevicesCallback(std::function<void(std::vector<ConnectedDeviceStatus>)> callback)
+{
+	_devicesCallbacks.push_back(callback);
 }
 
 MiddlewareStatusData MiddlewareStatusListener::lastStatus()
@@ -23,7 +28,7 @@ void MiddlewareStatusListener::OnMessageReceived(WeArtMessage* message)
 			MiddlewareStatusMessage* mwStatus = dynamic_cast<MiddlewareStatusMessage*>(message);
 			if (mwStatus != nullptr) {
 				_data = mwStatus->data();
-				for (auto callback : _callbacks) {
+				for (auto callback : _statusCallbacks) {
 					callback(_data);
 				}
 			}
@@ -32,6 +37,9 @@ void MiddlewareStatusListener::OnMessageReceived(WeArtMessage* message)
 			DevicesStatusMessage* devicesStatus = dynamic_cast<DevicesStatusMessage*>(message);
 			if (devicesStatus != nullptr) {
 				_devices = devicesStatus->devices();
+				for (auto callback : _devicesCallbacks) {
+					callback(_devices);
+				}
 			}
 		}
 	}
