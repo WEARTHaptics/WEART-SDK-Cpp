@@ -15,6 +15,8 @@ The only breaking change introduced relates to the WeArtTexture class, in which 
 ## Changelog
 ### Version 1.2 (latest)
 * Add raw sensors data tracking object
+* Add middleware status messages and event
+* Add connected devices status and event
 
 ### Version 1.1
 * Add calibration procedure start/stop and listener
