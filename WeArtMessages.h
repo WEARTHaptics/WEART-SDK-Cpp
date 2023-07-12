@@ -25,6 +25,8 @@ TrackingType StringToTrackingType(const std::string& str);
 
 std::string TrackingTypeToString(TrackingType trackType);
 
+std::string MiddlewareStatusToString(MiddlewareStatus status);
+
 //! @brief Generic Weart message
 //! @private
 class WeArtMessage {
@@ -66,11 +68,12 @@ public:
 	virtual void deserialize(std::string message) override;
 	std::uint64_t timestamp() { return _timestamp; }
 
+	virtual void setHandSide(HandSide hs) override {};
+	virtual void setActuationPoint(ActuationPoint ap) override {};
+
 protected:
 	virtual nlohmann::json serializePayload() { return nlohmann::json(); }
 	virtual void deserializePayload(nlohmann::json payload) {}
-
-private:
 	std::uint64_t _timestamp;
 };
 
@@ -443,4 +446,57 @@ protected:
 
 	HandSide hand;
 	std::map<ActuationPoint, SensorData> sensors;
+};
+
+//!@private
+class GetMiddlewareStatus : public WeArtJsonMessage {
+public:
+	GetMiddlewareStatus() : WeArtJsonMessage() {}
+
+	static constexpr const char* ID = "MW_GET_STATUS";
+	virtual std::string getID() override { return ID; };
+};
+
+//!@private
+class MiddlewareStatusMessage : public WeArtJsonMessage {
+public:
+	MiddlewareStatusMessage() : WeArtJsonMessage() {}
+
+	static constexpr const char* ID = "MW_STATUS";
+	virtual std::string getID() override { return ID; };
+
+	MiddlewareStatusData data() { return _data; }
+
+protected:
+	virtual nlohmann::json serializePayload() override;
+	virtual void deserializePayload(nlohmann::json payload) override;
+
+private:
+	MiddlewareStatusData _data;	
+};
+
+//! @private 
+class GetDevicesStatusMessage : public WeArtJsonMessage {
+public:
+	GetDevicesStatusMessage() : WeArtJsonMessage() {}
+	static constexpr const char* ID = "DEVICES_GET_STATUS";
+	virtual std::string getID() override { return ID; };
+};
+
+//! @private 
+class DevicesStatusMessage : public WeArtJsonMessage {
+public:
+	DevicesStatusMessage() : WeArtJsonMessage() {}
+
+	static constexpr const char* ID = "DEVICES_STATUS";
+	virtual std::string getID() override { return ID; };
+
+	std::vector<ConnectedDeviceStatus> devices() { return _devices; }
+
+protected:
+	virtual nlohmann::json serializePayload() override;
+	virtual void deserializePayload(nlohmann::json payload) override;
+
+private:
+	std::vector<ConnectedDeviceStatus> _devices;
 };

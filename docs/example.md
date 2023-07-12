@@ -238,6 +238,8 @@ void WEART_C___API_Integration::MainPage::ButtonEffectSample1_Click(Platform::Ob
 
 ### Raw Sensors Data tracking
 
+![Raw Sensors Data Panel](./example_app/ExampleApp_RawData.png)
+
 In the right section of the window, the application displays the raw data of the different sensors aboard the TouchDIVER.
 In particular, it's possible to choose the hand and actuation point from which to visualize:
 * Timestamp of the last sample received
@@ -250,7 +252,7 @@ To start receiving raw data, click on the "Start Raw Data" button, and to stop c
 When it's loaded, the application creates a WeArt.Components.WeArtRawSensorsDataTrackingObject for each pair of (HandSide, ActuationPoint).
 Using a timer, the application polls the chosen sensor and displays its data:
 
-~~~~~~~~~~~~~{.cs}
+~~~~~~~~~~~~~{.cpp}
 void MainPage::RenderRawSensorsData() {	
 	// Get chosen sensor
 	std::pair<std::string, std::string> sensorChoice = GetSensorChoice();
@@ -273,3 +275,46 @@ void MainPage::RenderRawSensorsData() {
 	LastSampleTime->Text = sample.timestamp.ToString();
 }
 ~~~~~~~~~~~~~
+
+### Middleware and connected devices status
+
+![Middleware/Devices Status Panel](./example_app/ExampleApp_MiddlewareStatus.png)
+
+In the leftmost section of the window, the application displays the middleware and the connected devices status, as sent by the middleware during the connection.
+
+To track and show the middleware and devices status, the example application uses a MiddlewareStatusListener object added as listener to the client:
+~~~~~~~~~~~~~{.cpp}
+// Add Middleware status listener
+mwListener = new MiddlewareStatusListener();
+weArtClient->AddMessageListener(mwListener);
+~~~~~~~~~~~~~
+
+It then employs a timer to render the status data every 100ms (along with other tracking data such as closures/abduction and other statuses):
+
+~~~~~~~~~~~~~{.cpp}
+void MainPage::TestTimer(Windows::System::Threading::ThreadPoolTimer^ timer)
+{
+	Dispatcher->RunAsync(CoreDispatcherPriority::High,
+		ref new DispatchedHandler([this]()
+			{
+				...
+				RenderMiddlewareStatus();
+				RenderDevicesStatus();
+				...
+			}));
+}
+
+void WEART_C___API_Integration::MainPage::RenderMiddlewareStatus() {
+	MiddlewareStatusUpdate mwStatus = mwListener->lastStatus();
+	...
+}
+
+void WEART_C___API_Integration::MainPage::RenderDevicesStatus() {
+	std::vector<ConnectedDeviceStatus> devices = mwListener->lastStatus().devices;
+	...
+}
+~~~~~~~~~~~~~
+
+The RenderMiddlewareStatus method sets buttons and text properties based on the data inside the middleware status message,
+while the RenderDevicesStatus method renders the TouchDIVER informations (e.g. connected, thimbles connected and/or errors, mac address, battery level, charging status etc..)
+using an additional custom UserControl contained in the HandStatus.xaml/h/cpp files.

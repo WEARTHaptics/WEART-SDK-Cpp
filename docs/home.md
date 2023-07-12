@@ -241,3 +241,55 @@ received from the TouchDIVER.
 	};
 	rawSensorData.AddSampleCallback(callback);
 ~~~~~~~~~~~~~
+
+## Middleware and Devices status tracking
+
+The SDK allows to track and receives updates about the middleware and the connected devices status.
+
+In particular, the information is available through a MiddlewareStatusListener object, that must be added as listener to the client object:
+~~~~~~~~~~~~~{.cpp}
+mwListener = new MiddlewareStatusListener();
+weArtClient->AddMessageListener(mwListener);
+~~~~~~~~~~~~~
+
+The MiddlewareListener tracks the messages from the middleware, saving and notifying about status changes.
+In particular, it's possible to register callbacks for the middleware and devices status.
+
+The status callback will receive a struct with the MiddlewareStatusUpdate type, which includes:
+* Middleware version
+* Middleware status (MiddlewareStatus)
+* Status code and description  
+* Whether actuations are enabled or not
+* List of the connected devices. For each device:
+	* Mac Address
+	* Assigned HandSide
+	* Overall battery level
+	* Status of each thimble (actuation point, connected or not, status code etc..)
+
+~~~~~~~~~~~~~{.cpp}
+std::function<void(MiddlewareStatusUpdate)> callback = [](MiddlewareStatusUpdate data) {
+	... access middleware status data ...	
+};
+mwListener->AddStatusCallback(callback);
+~~~~~~~~~~~~~
+
+The same information can be asked to the MiddlewareListener (in polling fashion) by calling the MiddlewareListener::lastStatus method.
+
+### Status Codes
+The MiddlewareListener object allows to get the middleware status, which includes the latest status code sent by the middleware while performing
+its operations.
+
+The current status codes (along with their description) are:
+
+| Status Code |   | Description |
+|---|---|---|
+| 0 | OK | Ok |
+| 100 | START_GENERIC_ERROR | Generic error while starting session |
+| 101 | CONNECT_THIMBLE | Unable to start, connect at least one thimble and retry |
+| 102 | WRONG_THIMBLES | Unable to start, connect the right thimbles matched to the bracelet and retry |
+| 103 | BATTERY_TOO_LOW | Battery is too low, cannot start |
+| 104 | RUNNING_DEVICE_CHARGING | Can't start while the devices are connected to the power supply |
+| 200 | CONSECUTIVE_TRACKING_ERRORS | Too many consecutive running sensor errors, stopping session |
+| 300 | STOP_GENERIC_ERROR | Generic error occurred while stopping session |
+
+@note The description of each status code might change between different Middleware versions, use the status code to check instead of the description.

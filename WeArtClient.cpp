@@ -118,6 +118,13 @@ void WeArtClient::Run() {
 		});
 
 	auto asyncAction = Windows::System::Threading::ThreadPool::RunAsync(workItem);
+
+	// Ask first middleware status
+	GetMiddlewareStatus getStatusMessage;
+	SendMessage(&getStatusMessage);
+
+	GetDevicesStatusMessage getDevicesMessage;
+	SendMessage(&getDevicesMessage);
 }
 
 bool WeArtClient::IsConnected() {
@@ -188,7 +195,7 @@ void WeArtClient::OnReceive() {
 
 		// Deserialize WeArtMessages
 		messages.resize(splitStrings.size());
-		for (int i = 0; i < messages.size(); i++) {
+		for (unsigned int i = 0; i < messages.size(); i++) {
 			WeArtMessage* msg = messageSerializer.Deserialize(splitStrings[i]);
 			if (msg != nullptr)
 				messages[i] = msg;
@@ -292,6 +299,9 @@ void WeArtClient::ForwardingMessages(std::vector<WeArtMessage*> messages) {
 		if (msg == NULL)
 			continue;
 
+		for (WeArtClient::MessageCallback callback : messageCallbacks)
+			callback(msg);
+
 		for (WeArtMessageListener* listener : messageListeners) {
 			if (listener->accept(msg->getID()))
 				listener->OnMessageReceived(msg);
@@ -328,10 +338,28 @@ void WeArtClient::AddMessageListener(WeArtMessageListener* listener) {
 	messageListeners.push_back(listener);
 }
 
+void WeArtClient::AddMessageCallback(WeArtClient::MessageCallback callback)
+{
+	messageCallbacks.push_back(callback);
+}
+
 void WeArtClient::RemoveMessageListener(WeArtMessageListener* listener) {
 	auto it = std::find(messageListeners.begin(), messageListeners.end(), listener);
 	if (it != messageListeners.end())
 		messageListeners.erase(it);
+}
+
+void WeArtClient::RemoveMessageCallback(WeArtClient::MessageCallback callback)
+{
+	// Find std::function with same target
+	auto target = callback.target<WeArtClient::MessageCallback>();
+	auto it = std::find_if(messageCallbacks.begin(), messageCallbacks.end(), 
+		[&target](WeArtClient::MessageCallback other) {
+			return other.target<WeArtClient::MessageCallback>() == target;
+		});
+
+	if (it != messageCallbacks.end())
+		messageCallbacks.erase(it);
 }
 
 void WeArtClient::AddConnectionStatusCallback(std::function<void(bool)> callback) {

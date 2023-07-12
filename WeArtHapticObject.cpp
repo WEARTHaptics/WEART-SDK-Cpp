@@ -120,9 +120,9 @@ void WeArtHapticObject::SendMessage(WeArtMessage* msg) {
 	const ActuationPoint actuation_points[] = { ActuationPoint::Thumb, ActuationPoint::Index, ActuationPoint::Middle, ActuationPoint::Palm };
 
 	for (HandSide hs : hand_sides) {
-		if (hs & handSideFlag) {
+		if ((uint32_t)hs & handSideFlag) {
 			for (ActuationPoint ap : actuation_points) {
-				if (ap & actuationPointFlag) {
+				if ((uint32_t)ap & actuationPointFlag) {
 					msg->setHandSide(hs);
 					msg->setActuationPoint(ap);
 					weArtclient->SendMessage(msg);

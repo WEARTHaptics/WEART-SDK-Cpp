@@ -17,9 +17,12 @@
 //! @brief Weart client, used to connect to the Weart middleware, perform operations and receive messages
 class WeArtClient {
 public:
+	using MessageCallback = std::function<void(WeArtMessage*)>;
+
 	WeArtClient(PCSTR ip_address, PCSTR port);
 
 	//! @brief Send a start command to the middleware
+	//! @param trackType Type of tracking requested
 	void Start(TrackingType trackType = TrackingType::WEART_HAND);
 
 	//! @brief Send a stop command to the middleware
@@ -66,9 +69,17 @@ public:
 	//! @param listener The listener to add
 	void AddMessageListener(WeArtMessageListener* listener);
 
+	//! @brief Adds a message callback called when a message is received 
+	//! @param callback Callback to add
+	void AddMessageCallback(MessageCallback callback);
+
 	//! @brief Removes the given listener from the client. From now on the listener will not receive messages
 	//! @param listener The listener to remove from the client
 	void RemoveMessageListener(WeArtMessageListener* listener);
+
+	//! @brief Remove a given callback from the client
+	//! @param callback Callback to remove
+	void RemoveMessageCallback(MessageCallback callback);
 
 	//! @brief Adds a callback for the connection status (true = connected, false = disconnected)
 	//! @param callback The callback to be called whenever the connection status changes
@@ -96,7 +107,7 @@ private:
 
 	std::vector<WeArtThimbleTrackingObject*> thimbleTrackingObjects;
 	std::vector<WeArtMessageListener*> messageListeners;
-	
+	std::vector<MessageCallback> messageCallbacks;
 
 	void ForwardingMessages(std::vector<WeArtMessage*> messages);
 

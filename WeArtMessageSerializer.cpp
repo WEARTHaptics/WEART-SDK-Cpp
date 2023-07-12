@@ -14,37 +14,50 @@ WeArtMessage* WeArtMessageSerializer::Deserialize(std::string data) {
 
 std::string WeArtMessageSerializer::extractID(std::string& data)
 {
+	// Get first non-whitespace character to check
+	size_t first_char_idx = data.find_first_not_of(" \n\r\t");
+	if (first_char_idx < 0 || first_char_idx >= data.size())
+		return "";
+	char first_char = data[first_char_idx];
+
+	// Try parse JSON message
+	if (first_char == '{' || first_char == '[') {
+		try {
+			json j = json::parse(data);
+			return j["type"].template get<std::string>();
+		}
+		catch (json::parse_error) {}
+	}
+
+	// Parse CSV message, get first field
 	std::string id = "";
-	try {
-		// JSON message
-		json j = json::parse(data);
-		id = j["type"].template get<std::string>();
-	}
-	catch (json::parse_error& ex)
-	{
-		// CSV message, get first field
-		std::istringstream dataStream(data);
-		std::getline(dataStream, id, ':');
-	}
+	std::istringstream dataStream(data);
+	std::getline(dataStream, id, ':');
 	return id;
 }
 
+#define CREATE_MESSAGE_ID(TYPE) case HashStringToInt(TYPE::ID): return new TYPE()
+
 WeArtMessage* WeArtMessageSerializer::createMessage(std::string& id) {
 	switch (HashStringToInt(id.c_str())) {
-		case HashStringToInt(StartFromClientMessage::ID): return new StartFromClientMessage();
-		case HashStringToInt(StopFromClientMessage::ID): return new StopFromClientMessage();
-		case HashStringToInt(CalibrationResultMessage::ID): return new CalibrationResultMessage();
-		case HashStringToInt(CalibrationStatusMessage::ID): return new CalibrationStatusMessage();
-		case HashStringToInt(ExitMessage::ID): return new ExitMessage();
-		case HashStringToInt(DisconnectMessage::ID): return new DisconnectMessage();
-		case HashStringToInt(SetTemperatureMessage::ID): return new SetTemperatureMessage();
-		case HashStringToInt(StopTemperatureMessage::ID): return new StopTemperatureMessage();
-		case HashStringToInt(SetForceMessage::ID): return new SetForceMessage();
-		case HashStringToInt(StopForceMessage::ID): return new StopForceMessage();
-		case HashStringToInt(SetTextureMessage::ID): return new SetTextureMessage();
-		case HashStringToInt(StopTextureMessage::ID): return new StopTextureMessage();
-		case HashStringToInt(TrackingMessage::ID): return new TrackingMessage();
-		case HashStringToInt(RawSensorsData::ID): return new RawSensorsData();
+		CREATE_MESSAGE_ID(StartFromClientMessage);
+		CREATE_MESSAGE_ID(StopFromClientMessage);
+		CREATE_MESSAGE_ID(CalibrationResultMessage);
+		CREATE_MESSAGE_ID(CalibrationStatusMessage);
+		CREATE_MESSAGE_ID(ExitMessage);
+		CREATE_MESSAGE_ID(DisconnectMessage);
+		CREATE_MESSAGE_ID(SetTemperatureMessage);
+		CREATE_MESSAGE_ID(StopTemperatureMessage);
+		CREATE_MESSAGE_ID(SetForceMessage);
+		CREATE_MESSAGE_ID(StopForceMessage);
+		CREATE_MESSAGE_ID(SetTextureMessage);
+		CREATE_MESSAGE_ID(StopTextureMessage);
+		CREATE_MESSAGE_ID(TrackingMessage);
+		CREATE_MESSAGE_ID(RawSensorsData);
+		CREATE_MESSAGE_ID(GetMiddlewareStatus);
+		CREATE_MESSAGE_ID(MiddlewareStatusMessage);
+		CREATE_MESSAGE_ID(GetDevicesStatusMessage);
+		CREATE_MESSAGE_ID(DevicesStatusMessage);
 		default: return nullptr;
 	}
 }

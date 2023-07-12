@@ -14,25 +14,30 @@ enum class TrackingType {
 	WEART_HAND,	//!< Tracking with closures, and abduction value for thumb
 };
 
-enum HandSide {
+enum class HandSide {
 	//HSnone = 0	
 	Left = 1 << 0,
 	Right = 1 << 1,
 };
-
 NLOHMANN_JSON_SERIALIZE_ENUM(HandSide, {
-	{Left, "LEFT"},
-	{Right, "RIGHT"},
+	{HandSide::Left, "LEFT"},
+	{HandSide::Right, "RIGHT"},
 })
 
 
-enum ActuationPoint {
+enum class ActuationPoint {
 	//APnone	= 0
 	Thumb = 1 << 0,
 	Index = 1 << 1,
 	Middle = 1 << 2,
 	Palm = 1 << 3,
 };
+NLOHMANN_JSON_SERIALIZE_ENUM(ActuationPoint, {
+	{ActuationPoint::Thumb, "THUMB"},
+	{ActuationPoint::Index, "INDEX"},
+	{ActuationPoint::Middle, "MIDDLE"},
+	{ActuationPoint::Palm, "PALM"},
+})
 
 
 enum HandClosingState {
@@ -52,6 +57,28 @@ enum CalibrationStatus {
 	Calibrating = 1,
 	Running = 2,
 };
+
+enum class MiddlewareStatus {
+	DISCONNECTED,
+	IDLE,
+	STARTING,
+	RUNNING,
+	STOPPING,
+	UPLOADING_TEXTURES,
+	CONNECTING_DEVICE,
+	CALIBRATION,
+};
+NLOHMANN_JSON_SERIALIZE_ENUM(MiddlewareStatus, {
+	{MiddlewareStatus::DISCONNECTED, "DISCONNECTED"},
+	{MiddlewareStatus::IDLE, "IDLE"},
+	{MiddlewareStatus::STARTING, "STARTING"},
+	{MiddlewareStatus::RUNNING, "RUNNING"},
+	{MiddlewareStatus::STOPPING, "STOPPING"},
+	{MiddlewareStatus::UPLOADING_TEXTURES, "UPLOADING_TEXTURES"},
+	{MiddlewareStatus::CONNECTING_DEVICE, "CONNECTING_DEVICE"},
+	{MiddlewareStatus::CALIBRATION, "CALIBRATION"},
+})
+
 
 enum class TextureType : uint8 {
 	ClickNormal = 0, ClickSoft = 1, DoubleClick = 2,
@@ -99,6 +126,55 @@ struct SensorData {
 	TofData timeOfFlight;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SensorData, accelerometer, gyroscope, timeOfFlight)
+
+struct MiddlewareConnectedDevice {
+	std::string macAddress;
+	HandSide handSide;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MiddlewareConnectedDevice, macAddress, handSide)
+
+struct MiddlewareStatusData {
+	std::uint64_t timestamp;
+	MiddlewareStatus status;
+	std::string version;
+	int statusCode;
+	std::string errorDesc;
+	bool actuationsEnabled;
+	std::vector<MiddlewareConnectedDevice> connectedDevices;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MiddlewareStatusData, status, version, statusCode, errorDesc, actuationsEnabled, connectedDevices);
+
+//! @brief Status of a single thimble connected to a device
+struct ThimbleStatus {
+	//! @brief Actuation Point to which the thimble is assigned
+	ActuationPoint id;
+	//! @brief Tells whether the thimble is connected to the device or not
+	bool connected;
+	//! @brief Current status code of the thimble (0 = OK)
+	int statusCode;
+	//! @brief Description of the thimble status code
+	std::string errorDesc;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ThimbleStatus, id, connected, statusCode, errorDesc);
+
+//! @brief Status of a connected TouchDIVER device
+struct ConnectedDeviceStatus {
+	//! @brief Device BLE mac address
+	std::string macAddress;
+
+	//! @brief Hand to which the device is assigned
+	HandSide handSide;
+
+	//! @brief Battery charge level (from 0 to 100)
+	int batteryLevel;
+
+	//! @brief Tells whether the device is under charge (true) or not (false)
+	bool charging;
+
+	//! @brief Status of the device thimbles
+	std::vector<ThimbleStatus> thimbles;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ConnectedDeviceStatus, macAddress, handSide, batteryLevel, charging, thimbles);
 
 // Constants shared by the WeArt components
 namespace WeArtConstants {

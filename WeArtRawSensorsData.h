@@ -41,7 +41,7 @@ private:
 	HandSide handSide;
 	ActuationPoint actuationPoint;
 
-	const int K_NUM_SAMPLES = 3;
+	const unsigned int K_NUM_SAMPLES = 3;
 	std::queue<Sample> samples;
 	std::vector<std::function<void(Sample)>> callbacks;
 };
