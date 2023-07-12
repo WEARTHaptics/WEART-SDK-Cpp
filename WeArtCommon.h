@@ -144,19 +144,34 @@ struct MiddlewareStatusData {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MiddlewareStatusData, status, version, statusCode, errorDesc, actuationsEnabled, connectedDevices);
 
+//! @brief Status of a single thimble connected to a device
 struct ThimbleStatus {
+	//! @brief Actuation Point to which the thimble is assigned
 	ActuationPoint id;
+	//! @brief Tells whether the thimble is connected to the device or not
 	bool connected;
+	//! @brief Current status code of the thimble (0 = OK)
 	int statusCode;
+	//! @brief Description of the thimble status code
 	std::string errorDesc;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ThimbleStatus, id, connected, statusCode, errorDesc);
 
+//! @brief Status of a connected TouchDIVER device
 struct ConnectedDeviceStatus {
+	//! @brief Device BLE mac address
 	std::string macAddress;
+
+	//! @brief Hand to which the device is assigned
 	HandSide handSide;
+
+	//! @brief Battery charge level (from 0 to 100)
 	int batteryLevel;
+
+	//! @brief Tells whether the device is under charge (true) or not (false)
 	bool charging;
+
+	//! @brief Status of the device thimbles
 	std::vector<ThimbleStatus> thimbles;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ConnectedDeviceStatus, macAddress, handSide, batteryLevel, charging, thimbles);

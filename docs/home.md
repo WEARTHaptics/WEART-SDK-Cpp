@@ -253,39 +253,27 @@ weArtClient->AddMessageListener(mwListener);
 ~~~~~~~~~~~~~
 
 The MiddlewareListener tracks the messages from the middleware, saving and notifying about status changes.
-In particular, it's possible to register callbacks for the middleware and for the devices status separately.
+In particular, it's possible to register callbacks for the middleware and devices status.
 
-The middleware status callback will receive a struct with the MiddlewareStatusData type, which includes:
+The status callback will receive a struct with the MiddlewareStatusUpdate type, which includes:
 * Middleware version
 * Middleware status (MiddlewareStatus)
-* List of the connected devices (mac address and hand side)
 * Status code and description  
 * Whether actuations are enabled or not
+* List of the connected devices. For each device:
+	* Mac Address
+	* Assigned HandSide
+	* Overall battery level
+	* Status of each thimble (actuation point, connected or not, status code etc..)
 
 ~~~~~~~~~~~~~{.cpp}
-std::function<void(MiddlewareStatusData)> callback = [](MiddlewareStatusData data) {
+std::function<void(MiddlewareStatusUpdate)> callback = [](MiddlewareStatusUpdate data) {
 	... access middleware status data ...	
 };
 mwListener->AddStatusCallback(callback);
 ~~~~~~~~~~~~~
 
 The same information can be asked to the MiddlewareListener (in polling fashion) by calling the MiddlewareListener::lastStatus method.
-
-The devices status callback allow to receive more detailed informations about the currently connected TouchDIVERs.
-In particular, for each connected device:
-* Mac Address
-* Assigned HandSide
-* Overall battery level
-* Status of each thimble (actuation point, connected or not, status code etc..)
-
-~~~~~~~~~~~~~{.cpp}
-std::function<void(std::vector<ConnectedDeviceStatus>))> callback = [](std::vector<ConnectedDeviceStatus> devices) {
-	... access connected devices status ...
-};
-mwListener->AddDevicesCallback(callback);
-~~~~~~~~~~~~~
-
-The same information can be asked to the MiddlewareListener (in polling fashion) by calling the MiddlewareListener::devices method.
 
 ### Status Codes
 The MiddlewareListener object allows to get the middleware status, which includes the latest status code sent by the middleware while performing

@@ -305,12 +305,12 @@ void MainPage::TestTimer(Windows::System::Threading::ThreadPoolTimer^ timer)
 }
 
 void WEART_C___API_Integration::MainPage::RenderMiddlewareStatus() {
-	MiddlewareStatusData mwStatus = mwListener->lastStatus();
+	MiddlewareStatusUpdate mwStatus = mwListener->lastStatus();
 	...
 }
 
 void WEART_C___API_Integration::MainPage::RenderDevicesStatus() {
-	std::vector<ConnectedDeviceStatus> devices = mwListener->devices();
+	std::vector<ConnectedDeviceStatus> devices = mwListener->lastStatus().devices;
 	...
 }
 ~~~~~~~~~~~~~
