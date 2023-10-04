@@ -20,7 +20,12 @@ For the documentation, go [here](https://weart.it/docs/sdkcpp/)
 
 ## Changelog
 
-### Version 1.1 (latest)
+### Version 1.2.0 (latest)
+* Add raw sensors data tracking object
+* Add middleware status messages and event
+* Add connected devices status and event
+
+### Version 1.1.0
 * Add calibration procedure start/stop and listener
 * Add new default tracking message and values for closure
 * Add callback for connection status changed in WeArtClient class
