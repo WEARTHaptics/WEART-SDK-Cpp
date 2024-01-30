@@ -25,10 +25,12 @@ In Visual Studio, this can be done by including the sdk directory into the proje
 To start using the SDK in your project, start the Middleware application and connect a TouchDIVER device to it.
 Then, create a header file and Include the following headers:
 ~~~~~~~~~~~~~{.cpp}
+	#include <WEART_SDK/WeArtCommon.h>
 	#include <WEART_SDK/WeArtClient.h>
 	#include <WEART_SDK/WeArtHapticObject.h>
 	#include <WEART_SDK/WeArtThimbleTrackingObject.h>
 	#include <WEART_SDK/WeArtTrackingCalibration.h>
+	#include <WEART_SDK/MiddlewareStatusListener.h>
 ~~~~~~~~~~~~~
 
 Finally, create the WeArtClient and start the communication with the middleware:
