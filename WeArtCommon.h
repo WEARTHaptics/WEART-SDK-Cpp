@@ -127,6 +127,14 @@ struct SensorData {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SensorData, accelerometer, gyroscope, timeOfFlight)
 
+struct AnalogSensorRawData {
+	float ntcTemperatureRaw;
+	float ntcTemperatureConverted;
+	float forceSensingRaw;
+	float forceSensingConverted;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnalogSensorRawData, ntcTemperatureRaw, ntcTemperatureConverted, forceSensingRaw, forceSensingConverted)
+
 struct MiddlewareConnectedDevice {
 	std::string macAddress;
 	HandSide handSide;

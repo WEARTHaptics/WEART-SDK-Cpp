@@ -1,5 +1,5 @@
 /**
-*	WEART - Raw Sensor Data thimble TD
+*	WEART - Raw Analog Sensor Data thimble TD
 *	https://www.weart.it/
 */
 #pragma once
@@ -9,21 +9,21 @@
 #include "WeArtMessages.h"
 #include <queue>
 
-//! @brief Object used to track the raw sensors data for a single thimble
-class WeArtRawSensorsData : public WeArtMessageListener {
-public:
 
-	//! @brief Create a WeArtRawSensorData tracking object
+class WeArtAnalogSensorData : public WeArtMessageListener
+{
+public:
+	//! @brief Create a WeArtAnalogSensorData tracking object
 	//! @param handSide			Hand side from which to take the sensor data
 	//! @param actuationPoint	Thimble from which to take the sensor data
-	WeArtRawSensorsData(HandSide handSide, ActuationPoint actuationPoint);
+	WeArtAnalogSensorData(HandSide handSide, ActuationPoint actuationPoint);
 
 	//! @brief Sensor data sample
 	struct Sample {
 		//! @brief Timestamp when the sample was created (in milliseconds unix epoch time)
 		std::uint64_t timestamp;
 		//! @brief Sampled sensor data
-		SensorData data;
+		AnalogSensorRawData data;
 	};
 
 	//! @brief Get the last sample received
@@ -41,8 +41,7 @@ private:
 	HandSide handSide;
 	ActuationPoint actuationPoint;
 
-	const unsigned int K_NUM_SAMPLES = 3;
-	std::queue<Sample> samples;
+	Sample lastSample;
 	std::vector<std::function<void(Sample)>> callbacks;
 };
 

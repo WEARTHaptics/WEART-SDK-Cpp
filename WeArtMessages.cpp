@@ -468,6 +468,17 @@ SensorData RawSensorsData::getSensor(ActuationPoint ap)
 	return sensors[ap];
 }
 
+bool AnalogSensorsData::hasSensor(ActuationPoint ap)
+{
+	return sensors.find(ap) != sensors.end();
+}
+
+AnalogSensorRawData AnalogSensorsData::getSensor(ActuationPoint ap)
+{
+	return sensors[ap];
+}
+
+
 nlohmann::json RawSensorsData::serializePayload()
 {
 	nlohmann::json j;
@@ -490,6 +501,30 @@ void RawSensorsData::deserializePayload(nlohmann::json payload)
 	if (payload["thumb"] != nullptr) sensors[ActuationPoint::Thumb] = payload["thumb"].template get<SensorData>();
 	if (payload["middle"] != nullptr) sensors[ActuationPoint::Middle] = payload["middle"].template get<SensorData>();
 	if (payload["palm"] != nullptr) sensors[ActuationPoint::Palm] = payload["palm"].template get<SensorData>();
+}
+
+nlohmann::json AnalogSensorsData::serializePayload()
+{
+	nlohmann::json j;
+	j["handSide"] = hand;
+	for (const auto& s : sensors) {
+		std::string actuationPoint = ActuationPointToString(s.first);
+		std::transform(actuationPoint.begin(), actuationPoint.end(), actuationPoint.begin(),
+			[](unsigned char c) { return std::tolower(c); });
+
+		j[actuationPoint] = s.second;
+	}
+	return j;
+}
+
+void AnalogSensorsData::deserializePayload(nlohmann::json payload)
+{
+	std::string hs = payload["handSide"].template get<std::string>();
+	hand = StringToHandside(hs);
+	if (payload["index"] != nullptr) sensors[ActuationPoint::Index] = payload["index"].template get<AnalogSensorRawData>();
+	if (payload["thumb"] != nullptr) sensors[ActuationPoint::Thumb] = payload["thumb"].template get<AnalogSensorRawData>();
+	if (payload["middle"] != nullptr) sensors[ActuationPoint::Middle] = payload["middle"].template get<AnalogSensorRawData>();
+	if (payload["palm"] != nullptr) sensors[ActuationPoint::Palm] = payload["palm"].template get<AnalogSensorRawData>();
 }
 
 nlohmann::json MiddlewareStatusMessage::serializePayload()

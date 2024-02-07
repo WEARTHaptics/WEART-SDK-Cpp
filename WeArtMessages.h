@@ -446,6 +446,28 @@ protected:
 
 	HandSide hand;
 	std::map<ActuationPoint, SensorData> sensors;
+
+};
+
+//! @private
+class AnalogSensorsData : public WeArtJsonMessage {
+public:
+	static constexpr const char* ID = "RAW_SENSOR_ON_MASK";
+
+	virtual std::string getID() override { return ID; };
+	virtual void setHandSide(HandSide hs) override { hand = hs; }
+	virtual void setActuationPoint(ActuationPoint ap) override {}
+
+	HandSide getHand() { return hand; }
+	bool hasSensor(ActuationPoint ap);
+	AnalogSensorRawData getSensor(ActuationPoint ap);
+
+protected:
+	virtual nlohmann::json serializePayload() override;
+	virtual void deserializePayload(nlohmann::json payload) override;
+
+	HandSide hand;
+	std::map<ActuationPoint, AnalogSensorRawData> sensors;
 };
 
 //!@private

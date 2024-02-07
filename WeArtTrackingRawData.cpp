@@ -4,26 +4,26 @@
 */
 
 #include "pch.h"
-#include "WeArtRawSensorsData.h"
+#include "WeArtTrackingRawData.h"
 #include "WeArtController.h"
 
-WeArtRawSensorsData::WeArtRawSensorsData(HandSide side, ActuationPoint actuation)
+WeArtTrackingRawData::WeArtTrackingRawData(HandSide side, ActuationPoint actuation)
 	: WeArtMessageListener({ RawSensorsData::ID }) {
 	handSide = side;
 	actuationPoint = actuation;
 }
 
-WeArtRawSensorsData::Sample WeArtRawSensorsData::GetLastSample() {
+WeArtTrackingRawData::Sample WeArtTrackingRawData::GetLastSample() {
 	if (samples.size() == 0)
-		return WeArtRawSensorsData::Sample();
+		return WeArtTrackingRawData::Sample();
 	return samples.back();
 }
 
-void WeArtRawSensorsData::AddSampleCallback(std::function<void(Sample)> callback) {
+void WeArtTrackingRawData::AddSampleCallback(std::function<void(Sample)> callback) {
 	callbacks.push_back(callback);
 }
 
-void WeArtRawSensorsData::OnMessageReceived(WeArtMessage* msg) {
+void WeArtTrackingRawData::OnMessageReceived(WeArtMessage* msg) {
 	RawSensorsData* rawSensorsData = static_cast<RawSensorsData*>(msg);
 	if (rawSensorsData == nullptr)
 		return;

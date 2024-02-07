@@ -9,7 +9,8 @@
 #include "WeArtMessages.h"
 #include "WeArtMessageSerializer.h"
 #include "WeArtThimbleTrackingObject.h"
-#include "WeArtRawSensorsData.h"
+#include "WeArtTrackingRawData.h"
+#include "WeArtAnalogSensorData.h"
 #include <winsock2.h>
 #include <future>
 #include <forward_list>
@@ -60,7 +61,11 @@ public:
 
 	//! @brief Adds a raw data sensors observer to the client, allowing it to receive messages
 	//! @param trackingObjects Raw sensors data object to add
-	void AddThimbleRawSensors(WeArtRawSensorsData* rawSensorData);
+	void AddThimbleRawSensors(WeArtTrackingRawData* rawSensorData);
+
+	//! @brief Adds a analog raw data sensors observer to the client, allowing it to receive messages
+	//! @param analogSensorData Raw sensors data object to add
+	void AddThimbleAnalogRawSensor(WeArtAnalogSensorData *analogRawSensorData);
 
 	//! @return The number of thimbles added to the connection
 	int SizeThimbles();

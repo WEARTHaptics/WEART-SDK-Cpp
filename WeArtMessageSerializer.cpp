@@ -58,6 +58,7 @@ WeArtMessage* WeArtMessageSerializer::createMessage(std::string& id) {
 		CREATE_MESSAGE_ID(MiddlewareStatusMessage);
 		CREATE_MESSAGE_ID(GetDevicesStatusMessage);
 		CREATE_MESSAGE_ID(DevicesStatusMessage);
+		CREATE_MESSAGE_ID(AnalogSensorsData);
 		default: return nullptr;
 	}
 }

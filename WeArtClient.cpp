@@ -375,8 +375,12 @@ void WeArtClient::AddThimbleTracking(WeArtThimbleTrackingObject* trackingObjects
 	AddMessageListener(trackingObjects);
 }
 
-void WeArtClient::AddThimbleRawSensors(WeArtRawSensorsData* rawSensorsData) {
+void WeArtClient::AddThimbleRawSensors(WeArtTrackingRawData* rawSensorsData) {
 	AddMessageListener(rawSensorsData);
+}
+
+void WeArtClient::AddThimbleAnalogRawSensor(WeArtAnalogSensorData* analogRawSensorData) {
+	AddMessageListener(analogRawSensorData);
 }
 
 std::string WSAGetLastErrorString() {
