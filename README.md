@@ -24,6 +24,8 @@ For the documentation, go [here](https://weart.it/docs/sdkcpp/)
 * Add raw sensors data tracking object
 * Add middleware status messages and event
 * Add connected devices status and event
+* WeArtSensorRawData become WeArtTrackingRawData
+* Add analog sensor raw data object - WeArtAnalogSensorData
 
 ### Version 1.1.0
 * Add calibration procedure start/stop and listener
