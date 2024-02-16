@@ -37,4 +37,4 @@ For the documentation, go [here](https://weart.it/docs/sdkcpp/)
 
 ## Copyright
 
-Copyright &copy; 2023 Weart S.r.l.
+Copyright &copy; 2024 Weart S.r.l.

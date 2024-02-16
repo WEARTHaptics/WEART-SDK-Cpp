@@ -1,6 +1,6 @@
 # Example Project
 
-An example application is available for download together with the C# and C++ SDK [here](https://www.weart.it/repository/downloads/samples/weart-integration-cpp-sdk-v1.1.zip).
+An example application is available for download together with the C# and C++ SDK [here](https://www.weart.it/repository/downloads/samples/weart-integration-cpp-sdk-v1.2.zip).
 
 The application is implemented as a Universal Windows app in C++. To execute the application, just open the solution with Visual Studio and Run it (by clicking the play button or pressing F5).
 
@@ -24,7 +24,7 @@ The callback enables or disables UI elements based on the status, and tries to r
 // Initialise client and attach callback
 MainPage::MainPage()
 {
-	weArtClient = new WeArtClient("127.0.0.1", WeArtConstants::DEFAULT_TCP_PORT); //IP ADDRESS and PORT of Middleware PC	
+	weArtClient = new WeArtClient(WeArtConstants::DEFAULT_IP_ADDRESS, WeArtConstants::DEFAULT_TCP_PORT); //IP ADDRESS and PORT of Middleware PC	
 
 	// Add connection status callback to get notified when the client connects and disconnects from the middleware
 	weArtClient->AddConnectionStatusCallback([this](bool connected) { OnConnectionStatusChanged(connected); });
@@ -153,25 +153,50 @@ declared when the application is opened.
 ~~~~~~~~~~~~~{.cpp}
 MainPage::MainPage()
 {
-	// Create and register all thimbles (index, middle and thumb for right and left hands)
+	... 
 
-	indexRightThimbleTracking = new WeArtThimbleTrackingObject(HandSide::Right, ActuationPoint::Index);
-	weArtClient->AddThimbleTracking(indexRightThimbleTracking);
-
-	thumbRightThimbleTracking = new WeArtThimbleTrackingObject(HandSide::Right, ActuationPoint::Thumb);
-	weArtClient->AddThimbleTracking(thumbRightThimbleTracking);
+	// Add all sensor data trackers
+	AddSensor("LEFT", "INDEX");
+	AddSensor("LEFT", "MIDDLE");
+	AddSensor("LEFT", "THUMB");
+	AddSensor("LEFT", "PALM");
+	AddSensor("RIGHT", "INDEX");
+	AddSensor("RIGHT", "MIDDLE");
+	AddSensor("RIGHT", "THUMB");
+	AddSensor("RIGHT", "PALM");
 
 	...
 }
 
-// Render calibration and tracking data
+// Add sensor to the listener
+void MainPage::AddSensor(std::string handSide, std::string actuationPoint) {
+
+	HandSide hs = StringToHandside(handSide);
+	ActuationPoint ap = StringToActuationPoint(actuationPoint);
+
+	//Tracking data
+	auto sensor = new WeArtTrackingRawData(hs, ap);
+	trackingSensors[std::make_pair(handSide, actuationPoint)] = sensor;
+	weArtClient->AddMessageListener(sensor);
+
+	// Analog sensor data
+	auto analogSensor = new WeArtAnalogSensorData(hs, ap);
+	analogSensors[std::make_pair(handSide, actuationPoint)] = analogSensor;
+	weArtClient->AddMessageListener(analogSensor);
+}
+
+// Render data
 void MainPage::TestTimer(Windows::System::Threading::ThreadPoolTimer^ timer)
 {
 	Dispatcher->RunAsync(CoreDispatcherPriority::High,
 		ref new DispatchedHandler([this]()
 			{
 				RenderCalibrationStatus();
-				RenderClosureAndAbductionValues();
+				RenderClosureAbduction();
+				RenderTrackingRawSensorsData();
+				RenderAnalogRawSensorData();
+				RenderMiddlewareStatus();
+				RenderDevicesStatus();
 			}));
 }
 
@@ -253,15 +278,15 @@ When it's loaded, the application creates a WeArt.Components.WeArtRawSensorsData
 Using a timer, the application polls the chosen sensor and displays its data:
 
 ~~~~~~~~~~~~~{.cpp}
-void MainPage::RenderRawSensorsData() {	
+void MainPage::RenderTrackingRawSensorsData() {
 	// Get chosen sensor
 	std::pair<std::string, std::string> sensorChoice = GetSensorChoice();
-	if (sensors.find(sensorChoice) == sensors.end())
+	if (trackingSensors.find(sensorChoice) == trackingSensors.end())
 		return;
-	WeArtRawSensorsData* sensor = sensors[sensorChoice];
+	WeArtTrackingRawData* sensor = trackingSensors[sensorChoice];
 
 	// Render raw data to screen
-	WeArtRawSensorsData::Sample sample = sensor->GetLastSample();
+	WeArtTrackingRawData::Sample sample = sensor->GetLastSample();
 	Acc_X->Text = sample.data.accelerometer.x.ToString();
 	Acc_Y->Text = sample.data.accelerometer.y.ToString();
 	Acc_Z->Text = sample.data.accelerometer.z.ToString();
@@ -273,6 +298,43 @@ void MainPage::RenderRawSensorsData() {
 	TimeOfFlight->Text = sample.data.timeOfFlight.distance.ToString();
 
 	LastSampleTime->Text = sample.timestamp.ToString();
+}
+~~~~~~~~~~~~~
+
+### Analog Raw Sensors Data 
+
+![Analog Sensors Data Panel](./example_app/ExampleApp_AnalogSensorData.png)
+
+In the right section of the window, the application displays the anlog raw data of the different sensors aboard the TouchDIVER.
+In particular, it's possible to choose the hand and actuation point from which to visualize:
+* Timestamp of the last sample received
+* NTC - Negative Temperature Coefficient (raw data and converted degree)
+* FSR - force sensing resistor (raw adata and converted newton)
+
+To start receiving analogo sensor data, active this function on the Middleware and click on the "Start Raw Data" button, and to stop click on the "Stop Raw Data" button. In this modality the other tracking data will not received by the SDK.
+
+When it's loaded, the application creates a WeArt.Components.WeArtAnalogSensorData for each pair of (HandSide, ActuationPoint).
+Using a timer, the application polls the chosen sensor and displays its data:
+
+~~~~~~~~~~~~~{.cpp}
+void MainPage::RenderAnalogRawSensorData() {
+	// Get chosen sensor
+	std::pair<std::string, std::string> sensorChoice = GetSensorChoice();
+	if (trackingSensors.find(sensorChoice) == trackingSensors.end())
+		return;
+	WeArtAnalogSensorData* sensor = analogSensors[sensorChoice];
+
+	// Render raw data to screen
+	WeArtAnalogSensorData::Sample sample = sensor->GetLastSample();
+
+	LastSampleTime->Text = sample.timestamp.ToString();
+
+	// raw data
+	//sample.data.ntcTemperatureRaw.ToString();
+	//sample.data.forceSensingRaw.ToString();
+
+	NTCTemperature->Text = sample.data.ntcTemperatureConverted.ToString();
+	FSR->Text = sample.data.forceSensingConverted.ToString();
 }
 ~~~~~~~~~~~~~
 
