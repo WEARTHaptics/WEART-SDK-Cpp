@@ -208,7 +208,7 @@ The abduction value ranges from 0 (finger near the hand's central axis) to 1 (fi
 
 @note The **closure** value is available for all thimbles, while the **abduction** value is available only for the thumb (other thimbles will have a value of 0).
 
-## Tracking Raw Sensors Data
+## Tracking Raw Data
 
 It's possible to receive the raw data from the tracking sensors on each thimble (and the control unit), in addition to the tracking data.
 Each sensor has:
@@ -253,8 +253,7 @@ Each sensor has:
 
 To read these values, create a WeArtAnalogSensorData object and add it to the client.
 ~~~~~~~~~~~~~{.cpp}
-	WeArtAnalogSensorData* anlogSensorData = new WeArtAnalogSensorData(HandSide::Right, ActuationPoint::Index);
-	weArtClient->AddMessageListener(rawSensorData);
+WeArtAnalogSensorData* analogSensorData = new WeArtAnalogSensorData(HandSide::Right, ActuationPoint::Index);weArtClient->AddMessageListener(analogSensorData);
 ~~~~~~~~~~~~~
 
 Once this object is added to the client, it will listen for raw data messages as soon the Middleware is on start.

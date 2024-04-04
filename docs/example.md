@@ -311,7 +311,7 @@ In particular, it's possible to choose the hand and actuation point from which t
 * NTC - Negative Temperature Coefficient (raw data and converted degree)
 * FSR - force sensing resistor (raw adata and converted newton)
 
-To start receiving analogo sensor data, active this function on the Middleware and click on the "Start Raw Data" button, and to stop click on the "Stop Raw Data" button. In this modality the other tracking data will not received by the SDK.
+To start receiving analog sensor data, active this function on the Middleware and click on the "Start Raw Data" button, and to stop click on the "Stop Raw Data" button. In this modality the other tracking data will not received by the SDK.
 
 When it's loaded, the application creates a WeArt.Components.WeArtAnalogSensorData for each pair of (HandSide, ActuationPoint).
 Using a timer, the application polls the chosen sensor and displays its data:
