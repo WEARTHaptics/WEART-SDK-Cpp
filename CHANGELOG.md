@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 
 * Documentation and changelog
  
-## [1.2.0] - 2024-02-16
+## [1.2.0]
  
 ### Added
 

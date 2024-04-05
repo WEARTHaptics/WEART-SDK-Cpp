@@ -1,6 +1,6 @@
 # Example Project
 
-An example application is available for download together with the C# and C++ SDK [here](https://www.weart.it/repository/downloads/samples/weart-integration-cpp-sdk-v1.2.0.zip).
+An example source code application is available [here](https://github.com/WEARTHaptics/WEART-SDK-Cpp-Example).
 
 The application is implemented as a Universal Windows app in C++. To execute the application, just open the solution with Visual Studio and Run it (by clicking the play button or pressing F5).
 
