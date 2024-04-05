@@ -13,6 +13,11 @@ The SDK allows to connect to the Weart middleware and perform various actions wi
 # Architecture
 <img src="./architecture.svg" width="100%" alt="C++ SDK Architecture" />
 
+## Links
+
+* Github source code repository, go [here](https://github.com/WEARTHaptics/WEART-SDK-Cpp)
+* An example source code application is available [here](https://github.com/WEARTHaptics/WEART-SDK-Cpp-Example).
+
 # Setup
 The minimum setup to use the weart SDK consists of:
 * A PC with the Middleware installed
