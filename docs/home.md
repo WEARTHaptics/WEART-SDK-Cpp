@@ -6,6 +6,8 @@ The SDK allows to connect to the Weart middleware and perform various actions wi
 * Start and Stop the middleware operations
 * Calibrate the device
 * Receive tracking data from the devices
+* Receive raw data from the thimble's motion sensors 
+* Receive analog raw data from the thimble's senosrs
 * Send haptic effects to the devices
 
 # Architecture
