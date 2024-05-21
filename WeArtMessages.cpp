@@ -418,7 +418,7 @@ void TrackingMessage::setValues(std::vector<std::string>& values) {
 }
 
 float TrackingMessage::GetClosure(HandSide handSide, ActuationPoint actuationPoint) {
-	uint8 byteValue = 0x00;
+	uint8_t byteValue = 0x00;
 	switch (handSide) {
 	case HandSide::Left:
 		switch (actuationPoint) {

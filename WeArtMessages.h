@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <cassert>
+#include <cstdint>
 #include <map>
 #include "nlohmann/json.hpp"
 
@@ -393,18 +394,18 @@ private:
 	TrackingType _trackingType;
 
 	// Closures
-	uint8 RightThumbClosure;
-	uint8 RightIndexClosure;
-	uint8 RightMiddleClosure;
-	uint8 RightPalmClosure;
-	uint8 LeftThumbClosure;
-	uint8 LeftIndexClosure;
-	uint8 LeftMiddleClosure;
-	uint8 LeftPalmClosure;
+	uint8_t RightThumbClosure;
+	uint8_t RightIndexClosure;
+	uint8_t RightMiddleClosure;
+	uint8_t RightPalmClosure;
+	uint8_t LeftThumbClosure;
+	uint8_t LeftIndexClosure;
+	uint8_t LeftMiddleClosure;
+	uint8_t LeftPalmClosure;
 
 	// Abductions
-	uint8 RightThumbAbduction;
-	uint8 LeftThumbAbduction;
+	uint8_t RightThumbAbduction;
+	uint8_t LeftThumbAbduction;
 };
 
 //! @private

@@ -6,6 +6,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#include <cstdint>
 #include <string>
 #include "nlohmann/json.hpp"
 
@@ -80,7 +81,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(MiddlewareStatus, {
 })
 
 
-enum class TextureType : uint8 {
+enum class TextureType : uint8_t {
 	ClickNormal = 0, ClickSoft = 1, DoubleClick = 2,
 	AluminiumFineMeshSlow = 3, AluminiumFineMeshFast = 4,
 	PlasticMeshSlow = 5, ProfiledAluminiumMeshMedium = 6, ProfiledAluminiumMeshFast = 7,

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "WeArtMessageSerializer.h"
+
+#include <cstdint>
 #include <string>
 
 //! @private
@@ -46,7 +48,7 @@ protected:
 
 	bool isCancellationRequested = false;
 	WeArtMessageSerializer messageSerializer;
-	uint8* messageReceivedBuffer[1024];
+	uint8_t* messageReceivedBuffer[1024];
 	std::string trailingText;
 	bool IsConnected = false;
 	bool IsPaused = false;
