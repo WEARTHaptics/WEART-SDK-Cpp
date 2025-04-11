@@ -408,6 +408,77 @@ private:
 	uint8_t LeftThumbAbduction;
 };
 
+//! @brief TouchDiver Pro Tracking message, contains information on closure and abduction (based on tracking type)
+//! @private 
+//!
+//! Message containing the closure and abduction values of the different actuation points (thimbles and palm)
+//! The abduction values available depends on the tracking type selected when the connection started.
+//! 
+//! In particular:
+//! * DEFAULT: no abduction values (deprecated)
+//! * CLAP_HAND: 3 angles (X,Y,Z) for the thumb, and a single abduction value for other thimbles
+//! * WEART_HAND: single abduction value only for the thumb
+//! 
+class TrackingBendingG2Message : public WeArtJsonMessage {
+	public:
+		static constexpr const char* ID = "TRACKING_BENDING_G2";
+	
+		virtual std::string getID() override {
+			return std::string(ID);
+		};
+	
+		struct Orientation {
+			float W;
+			float X;
+			float Y;
+			float Z;
+		};
+	
+		//! @brief Getter for abduction value (based on tracking type and given point)
+		//! @param handSide			Hand from which to get the value
+		//! @param actuationPoint	Actuation Point from which to get the value
+		//! @return the requested abduction value
+		float GetAbduction(HandSide handSide, ActuationPoint actuationPoint);
+	
+		//! @brief Getter for closure value
+		//! @param handSide			Hand from which to get the value
+		//! @param actuationPoint	Actuation Point from which to get the value
+		//! @return the requested closure value (from 0 to 1)
+		float GetClosure(HandSide handSide, ActuationPoint actuationPoint);
+
+		//! @brief Getter for hand side
+		//! @return The hand side
+		HandSide GetHandSide() {
+			return _handSide;
+		}
+
+	protected:
+		virtual nlohmann::json serializePayload() override;
+		virtual void deserializePayload(nlohmann::json payload) override;
+
+	private:
+		HandSide _handSide;
+	
+		// Closures
+		float RightThumbClosure;
+		float RightIndexClosure;
+		float RightMiddleClosure;
+		float RightAnnularClosure;
+		float RightPinkyClosure;
+		float RightPalmClosure;
+		float LeftThumbClosure;
+		float LeftIndexClosure;
+		float LeftMiddleClosure;
+		float LeftAnnularClosure;
+		float LeftPinkyClosure;
+		float LeftPalmClosure;
+	
+		// Abductions
+		float RightThumbAbduction;
+		float LeftThumbAbduction;
+	
+	};
+	
 //! @private
 class RawDataOn : public WeArtJsonMessage {
 public:
@@ -450,6 +521,28 @@ protected:
 
 };
 
+//! @private
+class RawSensorsDataTDPro : public WeArtJsonMessage {
+	public:
+		static constexpr const char* ID = "RAW_DATA_TD_PRO";
+	
+		virtual std::string getID() override { return ID; };
+		virtual void setHandSide(HandSide hs) override { hand = hs; }
+		virtual void setActuationPoint(ActuationPoint ap) override {}
+	
+		HandSide getHand() { return hand; }
+		bool hasSensor(ActuationPoint ap);
+		SensorData getSensor(ActuationPoint ap);
+	
+	protected:
+		virtual nlohmann::json serializePayload() override;
+		virtual void deserializePayload(nlohmann::json payload) override;
+	
+		HandSide hand;
+		std::map<ActuationPoint, SensorData> sensors;
+	
+	};
+	
 //! @private
 class AnalogSensorsData : public WeArtJsonMessage {
 public:
@@ -498,6 +591,33 @@ private:
 	MiddlewareStatusData _data;	
 };
 
+//!@private
+class GetWeArtAppStatus : public WeArtJsonMessage {
+public:
+	GetWeArtAppStatus() : WeArtJsonMessage() {}
+
+	static constexpr const char* ID = "WA_GET_STATUS";
+	virtual std::string getID() override { return ID; };
+};
+
+//!@private
+class WeArtAppStatusMessage : public WeArtJsonMessage {
+public:
+	WeArtAppStatusMessage() : WeArtJsonMessage() {}
+
+	static constexpr const char* ID = "WA_STATUS";
+	virtual std::string getID() override { return ID; };
+
+	MiddlewareStatusData data() { return _data; }
+
+protected:
+	virtual nlohmann::json serializePayload() override;
+	virtual void deserializePayload(nlohmann::json payload) override;
+
+private:
+	MiddlewareStatusData _data;	
+};
+
 //! @private 
 class GetDevicesStatusMessage : public WeArtJsonMessage {
 public:
@@ -522,4 +642,22 @@ protected:
 
 private:
 	std::vector<ConnectedDeviceStatus> _devices;
+};
+
+//! @private 
+class TDProStatusMessage : public WeArtJsonMessage {
+public:
+	TDProStatusMessage() : WeArtJsonMessage() {}
+
+	static constexpr const char* ID = "WEART_TD_PRO_STATUS";
+	virtual std::string getID() override { return ID; };
+
+	std::vector<ConnectedG2DeviceStatus> devices() { return _devices; }
+
+protected:
+	virtual nlohmann::json serializePayload() override;
+	virtual void deserializePayload(nlohmann::json payload) override;
+
+private:
+	std::vector<ConnectedG2DeviceStatus> _devices;
 };

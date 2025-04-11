@@ -54,6 +54,12 @@ ActuationPoint StringToActuationPoint(std::string& str) {
 	else if (str == "MIDDLE") {
 		return ActuationPoint::Middle;
 	}
+	else if (str == "ANNULAR") {
+		return ActuationPoint::Annular;
+	}
+	else if (str == "PINKY") {
+		return ActuationPoint::Pinky;
+	}
 	else if (str == "PALM") {
 		return ActuationPoint::Palm;
 	}
@@ -72,6 +78,12 @@ std::string ActuationPointToString(ActuationPoint ap) {
 	}
 	else if (ap == ActuationPoint::Middle) {
 		return "MIDDLE";
+	}
+	else if (ap == ActuationPoint::Annular) {
+		return "ANNULAR";
+	}
+	else if (ap == ActuationPoint::Pinky) {
+		return "PINKY";
 	}
 	else if (ap == ActuationPoint::Palm) {
 		return "PALM";
@@ -458,12 +470,155 @@ float TrackingMessage::GetAbduction(HandSide handSide, ActuationPoint actuationP
 	return WeArtConstants::defaultAbduction;
 }
 
+float TrackingBendingG2Message::GetClosure(HandSide handSide, ActuationPoint actuationPoint) {
+	
+	float closure = 0.0f;
+
+	switch (handSide) {
+	case HandSide::Left:
+		switch (actuationPoint) {
+		case ActuationPoint::Thumb:  closure = LeftThumbClosure;  break;
+		case ActuationPoint::Index:  closure = LeftIndexClosure;  break;
+		case ActuationPoint::Middle: closure = LeftMiddleClosure; break;
+		case ActuationPoint::Annular: closure = LeftAnnularClosure; break;
+		case ActuationPoint::Pinky:  closure = LeftPinkyClosure;  break;
+		case ActuationPoint::Palm:   closure = LeftPalmClosure;   break;
+		}
+		break;
+	case HandSide::Right:
+		switch (actuationPoint) {
+		case ActuationPoint::Thumb:  closure = RightThumbClosure;  break;
+		case ActuationPoint::Index:  closure = RightIndexClosure;  break;
+		case ActuationPoint::Middle: closure = RightMiddleClosure; break;
+		case ActuationPoint::Annular: closure = RightAnnularClosure; break;
+		case ActuationPoint::Pinky:  closure = RightPinkyClosure;  break;
+		case ActuationPoint::Palm:   closure = RightPalmClosure;   break;
+		}
+		break;
+	}
+
+	return closure;
+}
+
+float TrackingBendingG2Message::GetAbduction(HandSide handSide, ActuationPoint actuationPoint) {
+	
+	if (actuationPoint == ActuationPoint::Thumb)  
+	{
+		if (handSide == HandSide::Left) return LeftThumbAbduction;
+		else return RightThumbAbduction;
+	}
+	else 
+	{
+		return WeArtConstants::defaultAbduction;
+	}
+}
+
+nlohmann::json TrackingBendingG2Message::serializePayload()
+{
+	nlohmann::json j;
+	j["handSide"] = _handSide;
+	if(_handSide == HandSide::Left) 
+	{
+		j["thumb"] = {
+			{"closure", LeftThumbClosure},
+			{"abduction", LeftThumbAbduction}
+		};
+		j["index"] = {
+			{"closure", LeftIndexClosure},
+			{"abduction", 0.0}
+		};
+		j["middle"] = {
+			{"closure", LeftMiddleClosure},
+			{"abduction", 0.0}
+		};
+		j["annular"] = {
+			{"closure", LeftAnnularClosure},
+			{"abduction", 0.0}
+		};
+		j["pinky"] = {
+			{"closure", LeftPinkyClosure},
+			{"abduction", 0.0}
+		};
+		j["palm"] = {
+			{"closure", LeftPalmClosure},
+			{"abduction", 0.0}
+		};
+	}
+	else
+	{
+		j["thumb"] = {
+			{"closure", RightThumbClosure},
+			{"abduction", RightThumbAbduction}
+		};
+		j["index"] = {
+			{"closure", RightIndexClosure},
+			{"abduction", 0.0}
+		};
+		j["middle"] = {
+			{"closure", RightMiddleClosure},
+			{"abduction", 0.0}
+		};
+		j["annular"] = {
+			{"closure", RightAnnularClosure},
+			{"abduction", 0.0}
+		};
+		j["pinky"] = {
+			{"closure", RightPinkyClosure},
+			{"abduction", 0.0}
+		};
+		j["palm"] = {
+			{"closure", RightPalmClosure},
+			{"abduction", 0.0}
+		};
+	}
+
+	return j;
+}
+
+void TrackingBendingG2Message::deserializePayload(nlohmann::json payload)
+{
+	std::string hs = payload["handSide"].get<std::string>();
+	_handSide = StringToHandside(hs);
+
+	if(_handSide == HandSide::Left)
+	{
+		LeftThumbClosure   = payload["thumb"]["closure"];
+		LeftThumbAbduction = payload["thumb"]["abduction"];
+		LeftIndexClosure   = payload["index"]["closure"];
+		LeftMiddleClosure  = payload["middle"]["closure"];
+		LeftAnnularClosure = payload["annular"]["closure"];
+		LeftPinkyClosure   = payload["pinky"]["closure"];
+		LeftPalmClosure    = payload["palm"]["closure"];
+	}
+	else
+	{
+		RightThumbClosure   = payload["thumb"]["closure"];
+		RightThumbAbduction = payload["thumb"]["abduction"];
+		RightIndexClosure   = payload["index"]["closure"];
+		RightMiddleClosure  = payload["middle"]["closure"];
+		RightAnnularClosure = payload["annular"]["closure"];
+		RightPinkyClosure   = payload["pinky"]["closure"];
+		RightPalmClosure    = payload["palm"]["closure"];
+	}
+	
+}
+
 bool RawSensorsData::hasSensor(ActuationPoint ap)
 {
 	return sensors.find(ap) != sensors.end();
 }
 
 SensorData RawSensorsData::getSensor(ActuationPoint ap)
+{
+	return sensors[ap];
+}
+
+bool RawSensorsDataTDPro::hasSensor(ActuationPoint ap)
+{
+	return sensors.find(ap) != sensors.end();
+}
+
+SensorData RawSensorsDataTDPro::getSensor(ActuationPoint ap)
 {
 	return sensors[ap];
 }
@@ -477,7 +632,6 @@ AnalogSensorRawData AnalogSensorsData::getSensor(ActuationPoint ap)
 {
 	return sensors[ap];
 }
-
 
 nlohmann::json RawSensorsData::serializePayload()
 {
@@ -501,6 +655,80 @@ void RawSensorsData::deserializePayload(nlohmann::json payload)
 	if (payload["thumb"] != nullptr) sensors[ActuationPoint::Thumb] = payload["thumb"].template get<SensorData>();
 	if (payload["middle"] != nullptr) sensors[ActuationPoint::Middle] = payload["middle"].template get<SensorData>();
 	if (payload["palm"] != nullptr) sensors[ActuationPoint::Palm] = payload["palm"].template get<SensorData>();
+}
+
+nlohmann::json RawSensorsDataTDPro::serializePayload()
+{
+	nlohmann::json j;
+	j["handSide"] = hand;
+	for (const auto& s : sensors) {
+		std::string actuationPoint = ActuationPointToString(s.first);
+		std::transform(actuationPoint.begin(), actuationPoint.end(), actuationPoint.begin(),
+			[](unsigned char c) { return std::tolower(c); });
+
+		j[actuationPoint] = s.second;
+	}
+	return j;
+}
+
+void RawSensorsDataTDPro::deserializePayload(nlohmann::json payload)
+{
+    std::string hs = payload["handSide"].template get<std::string>();
+    hand = StringToHandside(hs);
+
+    if (payload["index"] != nullptr) {
+        SensorDataG2 sensorDataG2 = payload["index"].template get<SensorDataG2>();
+        SensorData sensorData;
+        sensorData.accelerometer = sensorDataG2.accelerometer;
+        sensorData.gyroscope = sensorDataG2.gyroscope;
+        sensorData.timeOfFlight = TofData{};
+        sensors[ActuationPoint::Index] = sensorData;
+    }
+
+    if (payload["thumb"] != nullptr) {
+        SensorDataG2 sensorDataG2 = payload["thumb"].template get<SensorDataG2>();
+        SensorData sensorData;
+        sensorData.accelerometer = sensorDataG2.accelerometer;
+        sensorData.gyroscope = sensorDataG2.gyroscope;
+        sensorData.timeOfFlight = TofData{};
+        sensors[ActuationPoint::Thumb] = sensorData;
+    }
+
+    if (payload["middle"] != nullptr) {
+        SensorDataG2 sensorDataG2 = payload["middle"].template get<SensorDataG2>();
+        SensorData sensorData;
+        sensorData.accelerometer = sensorDataG2.accelerometer;
+        sensorData.gyroscope = sensorDataG2.gyroscope;
+        sensorData.timeOfFlight = TofData{};
+        sensors[ActuationPoint::Middle] = sensorData;
+    }
+
+    if (payload["palm"] != nullptr) {
+        SensorDataG2 sensorDataG2 = payload["palm"].template get<SensorDataG2>();
+        SensorData sensorData;
+        sensorData.accelerometer = sensorDataG2.accelerometer;
+        sensorData.gyroscope = sensorDataG2.gyroscope;
+        sensorData.timeOfFlight = TofData{};
+        sensors[ActuationPoint::Palm] = sensorData;
+    }
+
+    if (payload["annular"] != nullptr) {
+        SensorDataG2 sensorDataG2 = payload["annular"].template get<SensorDataG2>();
+        SensorData sensorData;
+        sensorData.accelerometer = sensorDataG2.accelerometer;
+        sensorData.gyroscope = sensorDataG2.gyroscope;
+        sensorData.timeOfFlight = TofData{};
+        sensors[ActuationPoint::Annular] = sensorData;
+    }
+
+    if (payload["pinky"] != nullptr) {
+        SensorDataG2 sensorDataG2 = payload["pinky"].template get<SensorDataG2>();
+        SensorData sensorData;
+        sensorData.accelerometer = sensorDataG2.accelerometer;
+        sensorData.gyroscope = sensorDataG2.gyroscope;
+        sensorData.timeOfFlight = TofData{};
+        sensors[ActuationPoint::Pinky] = sensorData;
+    }
 }
 
 nlohmann::json AnalogSensorsData::serializePayload()
@@ -539,6 +767,18 @@ void MiddlewareStatusMessage::deserializePayload(nlohmann::json payload)
 	_data.timestamp = _timestamp;
 }
 
+nlohmann::json WeArtAppStatusMessage::serializePayload()
+{
+	nlohmann::json json = _data;
+	return json;
+}
+
+void WeArtAppStatusMessage::deserializePayload(nlohmann::json payload)
+{
+	_data = payload.template get<MiddlewareStatusData>();
+	_data.timestamp = _timestamp;
+}
+
 nlohmann::json DevicesStatusMessage::serializePayload()
 {
 	nlohmann::json json;
@@ -551,4 +791,18 @@ void DevicesStatusMessage::deserializePayload(nlohmann::json payload)
 	if (payload["devices"] == nullptr)
 		return;
 	_devices = payload["devices"].get<std::vector<ConnectedDeviceStatus>>();
+}
+
+nlohmann::json TDProStatusMessage::serializePayload()
+{
+	nlohmann::json json;
+	json["devices"] = _devices;
+	return json;
+}
+
+void TDProStatusMessage::deserializePayload(nlohmann::json payload)
+{
+	if (payload["devices"] == nullptr)
+		return;
+	_devices = payload["devices"].get<std::vector<ConnectedG2DeviceStatus>>();
 }

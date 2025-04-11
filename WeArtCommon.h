@@ -27,16 +27,19 @@ NLOHMANN_JSON_SERIALIZE_ENUM(HandSide, {
 
 
 enum class ActuationPoint {
-	//APnone	= 0
 	Thumb = 1 << 0,
 	Index = 1 << 1,
 	Middle = 1 << 2,
-	Palm = 1 << 3,
+	Annular = 1 << 3,
+	Pinky = 1 << 4,
+	Palm = 1 << 5
 };
 NLOHMANN_JSON_SERIALIZE_ENUM(ActuationPoint, {
 	{ActuationPoint::Thumb, "THUMB"},
 	{ActuationPoint::Index, "INDEX"},
 	{ActuationPoint::Middle, "MIDDLE"},
+	{ActuationPoint::Annular, "ANNULAR"},
+	{ActuationPoint::Pinky, "PINKY"},
 	{ActuationPoint::Palm, "PALM"},
 })
 
@@ -128,6 +131,12 @@ struct SensorData {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SensorData, accelerometer, gyroscope, timeOfFlight)
 
+struct SensorDataG2 {
+	AccelerometerData accelerometer;
+	GyroscopeData gyroscope;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SensorDataG2, accelerometer, gyroscope)
+
 struct AnalogSensorRawData {
 	float ntcTemperatureRaw;
 	float ntcTemperatureConverted;
@@ -149,6 +158,11 @@ struct MiddlewareStatusData {
 	int statusCode;
 	std::string errorDesc;
 	bool actuationsEnabled;
+	std::string connectionType;	// G2 ONLY
+	bool autoconnection;		// G2 ONLY
+	bool trackingPlayback;		// G2 ONLY
+	bool rawDataLog;			// G2 ONLY
+	bool sensorOnMask;			// G2 ONLY
 	std::vector<MiddlewareConnectedDevice> connectedDevices;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MiddlewareStatusData, status, version, statusCode, errorDesc, actuationsEnabled, connectedDevices);
@@ -165,6 +179,53 @@ struct ThimbleStatus {
 	std::string errorDesc;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ThimbleStatus, id, connected, statusCode, errorDesc);
+
+//! @brief Status of a single node connected to a device
+struct NodeStatus {
+	//! @brief Actuation Point to which the thimble is assigned
+	ActuationPoint id;
+	//! @brief Tells whether the thimble is connected to the device or not
+	bool connected;
+	//! @brief Whether the node IMU is in fault state or not
+	bool imuFault;
+	//! @brief Whether the node ADC is in fault state or not
+	bool adcFault;
+	//! @brief Whether the node TOF is in fault state or not
+	bool tofFault;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NodeStatus, id, connected, imuFault, adcFault, tofFault);
+
+//! @brief Connection status of the device
+struct ConnectionStatus {
+	//! Whether the bluetooth is on or not
+	bool bluetoothOn;
+	//! Whether the bluetooth is connected or not
+	bool bluetoothConnected;
+	//! Whether the wifi is on or not
+	bool wifiOn;
+	//! Whether the wifi is connected or not
+	bool wifiConnected;
+	//! Whether the usb is connected or not
+	bool usbConnected;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ConnectionStatus, bluetoothOn, bluetoothConnected, wifiOn, wifiConnected, usbConnected);
+
+//! @brief Status of the master
+struct MasterStatus {
+	//! @brief The battery level
+	int batteryLevel;
+	//! @brief Tells whether the device is under charge (true) or not (false)
+	bool charging;
+	//! @brief Tells whether the device has finished the charge or not
+	bool chargeCompleted;
+	//! @brief The connection status of the device
+	ConnectionStatus connection;
+	//! @brief Whether the node IMU is in fault state or not
+	bool imuFault;
+	//! @brief Whether the node ADC is in fault state or not
+	bool adcFault;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MasterStatus, batteryLevel, charging, chargeCompleted, connection, imuFault, adcFault);
 
 //! @brief Status of a connected TouchDIVER device
 struct ConnectedDeviceStatus {
@@ -184,6 +245,25 @@ struct ConnectedDeviceStatus {
 	std::vector<ThimbleStatus> thimbles;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ConnectedDeviceStatus, macAddress, handSide, batteryLevel, charging, thimbles);
+
+//! @brief Status of a connected TouchDIVER device
+struct ConnectedG2DeviceStatus {
+	//! @brief Device BLE mac address
+	std::string macAddress;
+
+	//! @brief Hand to which the device is assigned
+	HandSide handSide;
+
+	//! @brief 	RSSI signal strength in dBm (mean of last 3 samples)
+	double signalStrength;
+
+	//! @brief Master status
+	MasterStatus master;
+
+	//! @brief Status of the device thimbles
+	std::vector<NodeStatus> nodes;
+};
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ConnectedG2DeviceStatus, macAddress, handSide, signalStrength, master, nodes);
 
 // Constants shared by the WeArt components
 namespace WeArtConstants {

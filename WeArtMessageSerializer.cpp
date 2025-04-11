@@ -53,11 +53,15 @@ WeArtMessage* WeArtMessageSerializer::createMessage(std::string& id) {
 		CREATE_MESSAGE_ID(SetTextureMessage);
 		CREATE_MESSAGE_ID(StopTextureMessage);
 		CREATE_MESSAGE_ID(TrackingMessage);
+		CREATE_MESSAGE_ID(TrackingBendingG2Message);
 		CREATE_MESSAGE_ID(RawSensorsData);
+		CREATE_MESSAGE_ID(RawSensorsDataTDPro);
 		CREATE_MESSAGE_ID(GetMiddlewareStatus);
 		CREATE_MESSAGE_ID(MiddlewareStatusMessage);
+		CREATE_MESSAGE_ID(WeArtAppStatusMessage);
 		CREATE_MESSAGE_ID(GetDevicesStatusMessage);
 		CREATE_MESSAGE_ID(DevicesStatusMessage);
+		CREATE_MESSAGE_ID(TDProStatusMessage);
 		CREATE_MESSAGE_ID(AnalogSensorsData);
 		default: return nullptr;
 	}

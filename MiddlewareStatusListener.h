@@ -24,14 +24,35 @@ struct MiddlewareStatusUpdate {
 	//! @brief Tells if the middleware will propagate actuations to the connected devices
 	bool actuationsEnabled;
 
+	//! @brief Tells the connection type between the WeArtApp and the device. G2 ONLY
+	std::string connectionType;
+
+	//! @brief Tells if the WeArtApp will automatically connect to the device. G2 ONLY
+	bool autoconnection;
+
+	//! @brief ??? G2 ONLY
+	bool trackingPlayback;
+
+	//! @brief Tells if the WeArtApp will log raw data. G2 ONLY
+	bool rawDataLog;
+
+	//! @brief ???. G2 ONLY
+	bool sensorOnMask;
+
+	//! @brief Status and informations of the devices (TouchDIVERs) connected to the middleware (short info in middleware status)
+	std::vector<MiddlewareConnectedDevice> connectedDevices;
+
 	//! @brief Status and informations of the devices (TouchDIVERs) connected to the middleware
-	std::vector<ConnectedDeviceStatus> devices;
+	std::vector <ConnectedDeviceStatus> devices;
+
+	//! @brief Status and informations of the devices (TouchDIVERs PRO) connected to the middleware
+	std::vector <ConnectedG2DeviceStatus> G2Devices;
 };
 
 //! @brief Listens and notifies about middleware status changes
 class MiddlewareStatusListener : public WeArtMessageListener {
 public:
-	MiddlewareStatusListener() : WeArtMessageListener({ MiddlewareStatusMessage::ID, DevicesStatusMessage::ID }) {}
+	MiddlewareStatusListener() : WeArtMessageListener({ MiddlewareStatusMessage::ID, WeArtAppStatusMessage::ID, DevicesStatusMessage::ID, TDProStatusMessage::ID }) {}
 
 	//! @copydoc WeArtMessageListener::OnMessageReceived
 	virtual void OnMessageReceived(WeArtMessage* message) override;

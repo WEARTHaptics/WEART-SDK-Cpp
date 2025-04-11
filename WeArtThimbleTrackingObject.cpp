@@ -6,7 +6,7 @@
 #include "WeArtThimbleTrackingObject.h"
 
 WeArtThimbleTrackingObject::WeArtThimbleTrackingObject(HandSide side, ActuationPoint actuation)
-	: WeArtMessageListener({ TrackingMessage::ID }) {
+	: WeArtMessageListener({ TrackingMessage::ID, TrackingBendingG2Message::ID }) {
 	handSide = side;
 	actuationPoint = actuation;
 	_closure = WeArtConstants::defaultClosure;
@@ -18,5 +18,18 @@ void WeArtThimbleTrackingObject::OnMessageReceived(WeArtMessage* msg) {
 		TrackingMessage* trackingMsg = static_cast<TrackingMessage*>(msg);
 		_closure = trackingMsg->GetClosure(handSide, actuationPoint);
 		_abduction = trackingMsg->GetAbduction(handSide, actuationPoint);
+	}
+	else if (msg->getID() == TrackingBendingG2Message::ID) {
+		TrackingBendingG2Message* trackingMsg = static_cast<TrackingBendingG2Message*>(msg);
+		// Update tracking data only if the hand matches
+		if(trackingMsg->GetHandSide() == this->handSide)
+		{
+			_closure = trackingMsg->GetClosure(handSide, actuationPoint);
+			_abduction = trackingMsg->GetAbduction(handSide, actuationPoint);
+		}
+		else
+		{
+			// Do not update tracking data
+		}
 	}
 }
