@@ -104,7 +104,7 @@ enum class TextureType : uint8_t {
 	DoubleSidedTape = 21
 };
 
-
+//! @brief Accelerometer data
 struct AccelerometerData {
 	float x = 0.0f;
 	float y = 0.0f;
@@ -112,6 +112,7 @@ struct AccelerometerData {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AccelerometerData, x, y, z)
 
+//! @brief Gyroscope data
 struct GyroscopeData {
 	float x = 0.0f;
 	float y = 0.0f;
@@ -119,11 +120,13 @@ struct GyroscopeData {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GyroscopeData, x,y,z)
 
+//! @brief Data from theTime-of-Flight sensor
 struct TofData {
 	int distance = 0;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TofData, distance)
 
+//! @brief Sensor data from the TouchDIVER device
 struct SensorData {
 	AccelerometerData accelerometer;
 	GyroscopeData gyroscope;
@@ -131,12 +134,14 @@ struct SensorData {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SensorData, accelerometer, gyroscope, timeOfFlight)
 
+//! @brief Sensor data from the TouchDIVER Pro device
 struct SensorDataG2 {
 	AccelerometerData accelerometer;
 	GyroscopeData gyroscope;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SensorDataG2, accelerometer, gyroscope)
 
+//! @brief Analog sensor data from the TouchDIVER device
 struct AnalogSensorRawData {
 	float ntcTemperatureRaw;
 	float ntcTemperatureConverted;
@@ -145,25 +150,27 @@ struct AnalogSensorRawData {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnalogSensorRawData, ntcTemperatureRaw, ntcTemperatureConverted, forceSensingRaw, forceSensingConverted)
 
+//! @brief Status of a connected TouchDIVER device. This is a short info version of @ref ConnectedDeviceStatus or @ref ConnectedG2DeviceStatus
 struct MiddlewareConnectedDevice {
 	std::string macAddress;
 	HandSide handSide;
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MiddlewareConnectedDevice, macAddress, handSide)
 
+//! @brief Middleware status
 struct MiddlewareStatusData {
 	std::uint64_t timestamp;
-	MiddlewareStatus status;
-	std::string version;
-	int statusCode;
-	std::string errorDesc;
-	bool actuationsEnabled;
-	std::string connectionType;	// G2 ONLY
-	bool autoconnection;		// G2 ONLY
-	bool trackingPlayback;		// G2 ONLY
-	bool rawDataLog;			// G2 ONLY
-	bool sensorOnMask;			// G2 ONLY
-	std::vector<MiddlewareConnectedDevice> connectedDevices;
+	MiddlewareStatus status;	//!< Middleware status
+	std::string version;		//!< Middleware version
+	int statusCode;				//!< Middleware status code (error)
+	std::string errorDesc;		//!< Error description. This field is related to @ref statusCode
+	bool actuationsEnabled;		//!< Whether actuations are enabled or not
+	std::string connectionType;	//!< Connection type (e.g. "BLE", "USB") @note Only available for TouchDIVER Pro
+	bool autoconnection;		//!< Whether the autoconnection is enabled or not @note Only available for TouchDIVER Pro
+	bool trackingPlayback;		//! @note Only available for TouchDIVER Pro
+	bool rawDataLog;			//! @note Only available for TouchDIVER Pro
+	bool sensorOnMask;			//! @note Only available for TouchDIVER Pro
+	std::vector<MiddlewareConnectedDevice> connectedDevices; //!< Listh of connected devices with their short infos.
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MiddlewareStatusData, status, version, statusCode, errorDesc, actuationsEnabled, connectedDevices);
 
@@ -228,6 +235,7 @@ struct MasterStatus {
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MasterStatus, batteryLevel, charging, chargeCompleted, connection, imuFault, adcFault);
 
 //! @brief Status of a connected TouchDIVER device
+//! @note This is only available for TouchDIVER. For TouchDIVER Pro devices see @ref ConnectedG2DeviceStatus
 struct ConnectedDeviceStatus {
 	//! @brief Device BLE mac address
 	std::string macAddress;
@@ -246,7 +254,8 @@ struct ConnectedDeviceStatus {
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ConnectedDeviceStatus, macAddress, handSide, batteryLevel, charging, thimbles);
 
-//! @brief Status of a connected TouchDIVER device
+//! @brief Status of a connected TouchDIVER Pro device
+//! @note This is only available for TouchDIVER Pro. For TouchDIVER devices see @ref ConnectedDeviceStatus
 struct ConnectedG2DeviceStatus {
 	//! @brief Device BLE mac address
 	std::string macAddress;
@@ -270,7 +279,7 @@ namespace WeArtConstants {
 	const PCSTR DEFAULT_IP_ADDRESS = "127.0.0.1";
 	const PCSTR DEFAULT_TCP_PORT = "13031";
 
-	const std::string WEART_SDK_VERSION = "1.0.0";
+	const std::string WEART_SDK_VERSION = "2.0.0";
 	const std::string WEART_SDK_TYPE = "SdkLLCPP";
 
 	const float defaultTemperature = 0.5f;

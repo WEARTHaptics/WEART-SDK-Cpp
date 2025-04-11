@@ -9,7 +9,7 @@
 #include "WeArtMessages.h"
 #include <queue>
 
-
+//! @brief Analog sensor data
 class WeArtAnalogSensorData : public WeArtMessageListener
 {
 public:

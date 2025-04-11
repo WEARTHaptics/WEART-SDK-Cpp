@@ -2,12 +2,12 @@
 
 Welcome to the Weart Low-Level C++ SDK documentation.
 
-The SDK allows to connect to the Weart middleware and perform various actions with the TouchDIVER devices:
+The SDK allows to connect to the Weart middleware or WeArtApp and perform various actions with the TouchDIVER devices:
 * Start and Stop the middleware operations
 * Calibrate the device
 * Receive tracking data from the devices
 * Receive raw data from the thimble's motion sensors 
-* Receive analog raw data from the thimble's senosrs
+* Receive analog raw data from the thimble's senosrs (not available for TouchDIVER Pro) 
 * Send haptic effects to the devices
 
 # Architecture
@@ -221,7 +221,7 @@ It's possible to receive the raw data from the tracking sensors on each thimble 
 Each sensor has:
 * 3-axis accelerometer
 * 3-axis gyroscope
-* Time of Flight sensor
+* Time of Flight sensor (not available for TouchDIVER Pro)
 
 To read these values, create a WeArtTrackingRawData object and add it to the client.
 ~~~~~~~~~~~~~{.cpp}
@@ -239,7 +239,7 @@ The sample contains the accelerometer, gyroscope and time of flight data, in add
 	WeArtTrackingRawData::Sample sample = trackingRawSensorData->GetLatestSample();
 ~~~~~~~~~~~~~
 
-@note The Palm (control unit) doesn't contain a Time-Of-Flight sensor, so its value is always set to 0.
+@note The Palm (control unit) of the TouchDiver doesn't contain a Time-Of-Flight sensor, so its value is always set to 0. All thimbles in the TouchDIVER Pro do not contain a Time-Of-Flight sensor, so its value is always set to 0.
 
 In addition to getting the latest sample by polling the tracking object, it's possible to add a callback called whenever a new sensor data sample is
 received from the TouchDIVER.
@@ -253,9 +253,12 @@ received from the TouchDIVER.
 
 ## Analog Raw Sensors Data
 
-It's possible to receive the raw data from the sensors on each thimble (and the control unit), instead of the tracking data when this function is activated on the Middleware.
+It's possible to receive the raw data from the sensors on each thimble (and the control unit), instead of the tracking data when this function is activated on the Middleware. 
+
+@note Analog sensors are not available for the TouchDIVER Pro.
+
 Each sensor has:
-* NTC - Negative Temperature Coefficient (raw data and converted degree)
+* NTC - Negative Temperature Coefficient (raw data and converted Celsius degree)
 * FSR - force sensing resistor (raw adata and converted newton)
 
 To read these values, create a WeArtAnalogSensorData object and add it to the client.
@@ -293,11 +296,19 @@ The status callback will receive a struct with the MiddlewareStatusUpdate type, 
 * Middleware status (MiddlewareStatus)
 * Status code and description  
 * Whether actuations are enabled or not
+* Whether the tracking playback is enabled or not (only for the TouchDIVER Pro)
+* Whether the raw tracking data is enabled or not (only for the TouchDIVER Pro)
+* Whether the sensor on mask is enabled or not (only for the TouchDIVER Pro)
 * List of the connected devices. For each device:
 	* Mac Address
 	* Assigned HandSide
 	* Overall battery level
 	* Status of each thimble (actuation point, connected or not, status code etc..)
+
+@note There are three different 'devices status' in MiddlewareStatusUpdate:
+* connectedDevices: type is MiddlewareConnectedDevice and is valid for both the TouchDIVER and the TouchDIVER Pro. Contains only the list of connected devices with their MAC address and handside 
+* devices: type is ConnectedDeviceStatus and is only available for the TouchDIVER. Contains the list of connected devices with their MAC address, handside, battery level and status of each thimble (actuation point, connected or not, status code etc..)
+* G2Devices: type is ConnectedG2DeviceStatus and is only available for the TouchDIVER Pro. Contains the list of connected devices with their MAC address, handside, signal strenght, battery level, master status and status of each node (actuation point, connected or not, faults etc..)
 
 ~~~~~~~~~~~~~{.cpp}
 std::function<void(MiddlewareStatusUpdate)> callback = [](MiddlewareStatusUpdate data) {
@@ -325,10 +336,14 @@ The current status codes (along with their description) are:
 | 105 | SET_IMU_SAMPLE_RATE_ERROR | Error while setting IMU Sample Rate! Device Disconnected! |
 | 106 | RUNNING_SENSOR_ON_MASK | Inconsistency on Analog Sensors raw data! Please try again or Restart your device/s! |
 | 107 | RUNNING_DEVICE_CHARGING | Can't start while the devices are connected to the power supply |
+| 108 | BATTERY_REMOVED | Battery is removed, please insert a battery or device will shut down |
+| 109 | BATTERY_LOW_WARNING | Battery low, please connect the device to a power supply |
 | 200 | CONSECUTIVE_TRACKING_ERRORS | Too many consecutive running sensor errors, stopping session |
 | 201 | DONGLE_DISCONNECT_RUNNING | BLE Dongle disconnected while running, stopping session |
 | 202 | TD_DISCONNECT_RUNNING | TouchDIVER disconnected while running, stopping session |
 | 203 | DONGLE_CONNECTION_ERROR | Error on Dongle during connection phase! |
+| 204 | USB_CONNECTION_ERROR| Can not use the device through Bluetooth while connected to a USB port |
+| 205 | BLE_BAD_SIGNAL_ERROR | Bad BLE signal |
 | 300 | STOP_GENERIC_ERROR | Generic error occurred while stopping session |
 
 @note The description of each status code might change between different Middleware versions, use the status code to check instead of the description.

@@ -159,10 +159,14 @@ MainPage::MainPage()
 	AddSensor("LEFT", "INDEX");
 	AddSensor("LEFT", "MIDDLE");
 	AddSensor("LEFT", "THUMB");
+	AddSensor("LEFT", "ANNULAR");
+	AddSensor("LEFT", "PINKY");
 	AddSensor("LEFT", "PALM");
 	AddSensor("RIGHT", "INDEX");
 	AddSensor("RIGHT", "MIDDLE");
 	AddSensor("RIGHT", "THUMB");
+	AddSensor("RIGHT", "ANNULAR");
+	AddSensor("RIGHT", "PINKY");
 	AddSensor("RIGHT", "PALM");
 
 	...
@@ -205,11 +209,15 @@ void WEART_C___API_Integration::MainPage::RenderClosureAndAbductionValues() {
 	ValueThumbRightClosure->Text = thumbRightThimbleTracking->GetClosure().ToString();
 	ValueThumbRightAbduction->Text = thumbRightThimbleTracking->GetAbduction().ToString();
 	ValueMiddleRightClosure->Text = middleRightThimbleTracking->GetClosure().ToString();
+	ValueAnnularRightClosure->Text = annularRightThimbleTracking->GetClosure().ToString();
+	ValuePinkyRightClosure->Text = pinkyRightThimbleTracking->GetClosure().ToString();
 
 	ValueIndexLeftClosure->Text = indexLeftThimbleTracking->GetClosure().ToString();
 	ValueThumbLeftClosure->Text = thumbLeftThimbleTracking->GetClosure().ToString();
 	ValueThumbLeftAbduction->Text = thumbLeftThimbleTracking->GetAbduction().ToString();
 	ValueMiddleLeftClosure->Text = middleLeftThimbleTracking->GetClosure().ToString();
+	ValueAnnularLeftClosure->Text = annularleftThimbleTracking->GetClosure().ToString();
+	ValuePinkyLeftClosure->Text = pinkyRightThimbleTracking->GetClosure().ToString();
 }
 ~~~~~~~~~~~~~
 
@@ -230,7 +238,7 @@ MainPage::MainPage()
 	// create haptic object to manage actuation on Righ hand and Index Thimble
 	hapticObject = new WeArtHapticObject(weArtClient);
 	hapticObject->handSideFlag = HandSide::Right;
-	hapticObject->actuationPointFlag = ActuationPoint::Index;
+	hapticObject->actuationPointFlag = ActuationPoint::Index | ActuationPoint::Palm;
 
 	...
 }
@@ -270,7 +278,7 @@ In particular, it's possible to choose the hand and actuation point from which t
 * Timestamp of the last sample received
 * Accelerometer data (on the x,y,z axis)
 * Gyroscope data (on the x,y,z axis)
-* Time of Flight distance (in mm)
+* Time of Flight distance (in mm) (Not available on TouchDIVER Pro)
 
 To start receiving raw data, click on the "Start Raw Data" button, and to stop click on the "Stop Raw Data" button.
 
@@ -308,8 +316,10 @@ void MainPage::RenderTrackingRawSensorsData() {
 In the right section of the window, the application displays the anlog raw data of the different sensors aboard the TouchDIVER.
 In particular, it's possible to choose the hand and actuation point from which to visualize:
 * Timestamp of the last sample received
-* NTC - Negative Temperature Coefficient (raw data and converted degree)
+* NTC - Negative Temperature Coefficient (raw data and converted Celsius degree)
 * FSR - force sensing resistor (raw adata and converted newton)
+
+@note Analog sensors data are not available on TouchDIVER Pro.
 
 To start receiving analog sensor data, active this function on the Middleware and click on the "Start Raw Data" button, and to stop click on the "Stop Raw Data" button. In this modality the other tracking data will not received by the SDK.
 

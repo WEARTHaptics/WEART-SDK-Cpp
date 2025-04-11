@@ -24,28 +24,36 @@ struct MiddlewareStatusUpdate {
 	//! @brief Tells if the middleware will propagate actuations to the connected devices
 	bool actuationsEnabled;
 
-	//! @brief Tells the connection type between the WeArtApp and the device. G2 ONLY
+	//! @brief Tells the connection type between the WeArtApp and the device.
+	//! @note This is a TouchDIVER Pro only field.
 	std::string connectionType;
 
-	//! @brief Tells if the WeArtApp will automatically connect to the device. G2 ONLY
+	//! @brief Tells if the WeArtApp will automatically connect to the device.	
+	//! @note This is a TouchDIVER Pro only field.
 	bool autoconnection;
 
-	//! @brief ??? G2 ONLY
+	//! @brief Whether the tracking playback is enabled.
+	//! @note This is a TouchDIVER Pro only field.
 	bool trackingPlayback;
 
-	//! @brief Tells if the WeArtApp will log raw data. G2 ONLY
+	//! @brief Tells if the WeArtApp will log raw data.
+	//! @note This is a TouchDIVER Pro only field.
 	bool rawDataLog;
 
-	//! @brief ???. G2 ONLY
+	//! @brief Whether the sensor on mask is enabled.	
+	//! @note This is a TouchDIVER Pro only field.
 	bool sensorOnMask;
 
-	//! @brief Status and informations of the devices (TouchDIVERs) connected to the middleware (short info in middleware status)
+	//! @brief Status and informations of the devices (TouchDIVERs and TouchDIVERs Pro) connected to the middleware.
+	//! @note This field is available for both TouchDIVER and TouchDIVER Pro devices.
 	std::vector<MiddlewareConnectedDevice> connectedDevices;
 
-	//! @brief Status and informations of the devices (TouchDIVERs) connected to the middleware
+	//! @brief Status and informations of the devices (TouchDIVERs) connected to the middleware.
+	//! @note This field is only available for TouchDIVER devices.
 	std::vector <ConnectedDeviceStatus> devices;
 
-	//! @brief Status and informations of the devices (TouchDIVERs PRO) connected to the middleware
+	//! @brief Status and informations of the devices (TouchDIVERs PRO) connected to the middleware.
+	//! @note This field is only available for TouchDIVER Pro devices.
 	std::vector <ConnectedG2DeviceStatus> G2Devices;
 };
 
