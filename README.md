@@ -1,12 +1,14 @@
 # Weart Low-Level C++ SDK
 
-The Weart Low-Level C++ SDK  allows to connect to the Weart middleware and perform various actions with the TouchDIVER devices:
+Welcome to the Weart Low-Level C++ SDK documentation.
+
+The SDK allows to connect to the Weart middleware or WeArtApp and perform various actions with the TouchDIVER devices:
+
 * Start and Stop the middleware operations
 * Calibrate the device
 * Receive tracking data from the devices
 * Receive raw data from the thimble's motion sensors 
-* Receive analog raw data from the thimble's senosrs
-* Send haptic effects to the devices
+* Receive analog raw data from the thimble's senosrs (not available for TouchDIVER Pro) 
 
 ## Installation
 
@@ -25,4 +27,4 @@ An example source code application is available [here](https://github.com/WEARTH
 
 ## Copyright
 
-Copyright &copy; 2024 Weart S.r.l.
+Copyright &copy; 2025 Weart S.r.l.
