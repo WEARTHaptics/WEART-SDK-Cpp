@@ -164,6 +164,8 @@ struct MiddlewareStatusData {
 	std::string version;		//!< Middleware version
 	int statusCode;				//!< Middleware status code (error)
 	std::string errorDesc;		//!< Error description. This field is related to @ref statusCode
+	int warningCode;			//!< Middleware warning code @note Only available for TouchDIVER Pro
+	std::string warningDesc;	//!< Warning description. This field is related to @ref warningCode @note Only available for TouchDIVER Pro
 	bool actuationsEnabled;		//!< Whether actuations are enabled or not
 	std::string connectionType;	//!< Connection type (e.g. "BLE", "USB") @note Only available for TouchDIVER Pro
 	bool autoconnection;		//!< Whether the autoconnection is enabled or not @note Only available for TouchDIVER Pro
@@ -172,7 +174,7 @@ struct MiddlewareStatusData {
 	bool sensorOnMask;			//! @note Only available for TouchDIVER Pro
 	std::vector<MiddlewareConnectedDevice> connectedDevices; //!< Listh of connected devices with their short infos.
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MiddlewareStatusData, status, version, statusCode, errorDesc, actuationsEnabled, connectedDevices);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MiddlewareStatusData, status, version, statusCode, errorDesc, warningCode, warningDesc, actuationsEnabled, connectedDevices);
 
 //! @brief Status of a single thimble connected to a device
 struct ThimbleStatus {

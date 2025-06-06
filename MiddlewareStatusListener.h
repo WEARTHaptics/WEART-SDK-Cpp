@@ -21,6 +21,12 @@ struct MiddlewareStatusUpdate {
 	//! @brief Description of the latest status code received
 	std::string errorDesc;
 
+	//! @brief Latest warning code sent by the middleware (0 = OK)
+	int warningCode;
+
+	//! @brief Description of the latest warning code received
+	std::string warningDesc;
+
 	//! @brief Tells if the middleware will propagate actuations to the connected devices
 	bool actuationsEnabled;
 

@@ -39,6 +39,8 @@ void MiddlewareStatusListener::OnMessageReceived(WeArtMessage* message)
 				_data.version = newStatus.version;
 				_data.statusCode = newStatus.statusCode;
 				_data.errorDesc = newStatus.errorDesc;
+				_data.warningCode = newStatus.warningCode;
+				_data.warningDesc = newStatus.warningDesc;
 				_data.actuationsEnabled = newStatus.actuationsEnabled;
 				_data.connectionType = newStatus.connectionType;
 				_data.autoconnection = newStatus.autoconnection;

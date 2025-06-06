@@ -2,6 +2,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.0.1] - 2025-06-06
+
+### Added
+- Warning messages are now handled
+
+### Changed
+- Documentation
+- Changelog file
+
 ## [2.0.0]
 
 ### Added

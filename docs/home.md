@@ -295,6 +295,7 @@ The status callback will receive a struct with the MiddlewareStatusUpdate type, 
 * Middleware version
 * Middleware status (MiddlewareStatus)
 * Status code and description  
+* Warning code and description (only for the TouchDIVER Pro)
 * Whether actuations are enabled or not
 * Whether the tracking playback is enabled or not (only for the TouchDIVER Pro)
 * Whether the raw tracking data is enabled or not (only for the TouchDIVER Pro)
@@ -347,3 +348,15 @@ The current status codes (along with their description) are:
 | 300 | STOP_GENERIC_ERROR | Generic error occurred while stopping session |
 
 @note The description of each status code might change between different Middleware versions, use the status code to check instead of the description.
+
+### Warning Codes
+The MiddlewareListener object allows to get the middleware status, which includes the latest warning code sent by the middleware while performing its operations.
+
+The current warning codes (along with their description) are:
+
+| Warning Code |   | Description |
+|---|---|---|
+| 0 | OK | Ok |
+| 100 | GENERIC_WARNING | Check WeArtApp |
+| 101 | BATTERY_LOW | Device battery is low |
+| 102 | SIGNAL_WEAK | Connection signal is weak |
