@@ -281,7 +281,7 @@ namespace WeArtConstants {
 	const PCSTR DEFAULT_IP_ADDRESS = "127.0.0.1";
 	const PCSTR DEFAULT_TCP_PORT = "13031";
 
-	const std::string WEART_SDK_VERSION = "2.0.0";
+	const std::string WEART_SDK_VERSION = "2.0.1";
 	const std::string WEART_SDK_TYPE = "SdkLLCPP";
 
 	const float defaultTemperature = 0.5f;
