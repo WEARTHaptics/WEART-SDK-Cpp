@@ -268,20 +268,23 @@ struct ConnectedG2DeviceStatus {
 	//! @brief 	RSSI signal strength in dBm (mean of last 3 samples)
 	double signalStrength;
 
+	//! @brief Date and time of the last sensor calibration (ISO 8601 string)
+	std::string sensorsCalibDate;
+
 	//! @brief Master status
 	MasterStatus master;
 
 	//! @brief Status of the device thimbles
 	std::vector<NodeStatus> nodes;
 };
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ConnectedG2DeviceStatus, macAddress, handSide, signalStrength, master, nodes);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ConnectedG2DeviceStatus, macAddress, handSide, signalStrength, sensorsCalibDate, master, nodes);
 
 // Constants shared by the WeArt components
 namespace WeArtConstants {
 	const PCSTR DEFAULT_IP_ADDRESS = "127.0.0.1";
 	const PCSTR DEFAULT_TCP_PORT = "13031";
 
-	const std::string WEART_SDK_VERSION = "2.0.1";
+	const std::string WEART_SDK_VERSION = "2.0.2";
 	const std::string WEART_SDK_TYPE = "SdkLLCPP";
 
 	const float defaultTemperature = 0.5f;

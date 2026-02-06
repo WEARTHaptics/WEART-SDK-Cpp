@@ -314,7 +314,7 @@ The status callback will receive a struct with the MiddlewareStatusUpdate type, 
 @note There are three different 'devices status' in MiddlewareStatusUpdate:
 * connectedDevices: type is MiddlewareConnectedDevice and is valid for both the TouchDIVER and the TouchDIVER Pro. Contains only the list of connected devices with their MAC address and handside 
 * devices: type is ConnectedDeviceStatus and is only available for the TouchDIVER. Contains the list of connected devices with their MAC address, handside, battery level and status of each thimble (actuation point, connected or not, status code etc..)
-* G2Devices: type is ConnectedG2DeviceStatus and is only available for the TouchDIVER Pro. Contains the list of connected devices with their MAC address, handside, signal strenght, battery level, master status and status of each node (actuation point, connected or not, faults etc..)
+* G2Devices: type is ConnectedG2DeviceStatus and is only available for the TouchDIVER Pro. Contains the list of connected devices with their MAC address, handside, signal strenght, last sensors calibration date, battery level, master status and status of each node (actuation point, connected or not, faults etc..)
 
 ~~~~~~~~~~~~~{.cpp}
 std::function<void(MiddlewareStatusUpdate)> callback = [](MiddlewareStatusUpdate data) {
@@ -344,6 +344,7 @@ The current status codes (along with their description) are:
 | 107 | RUNNING_DEVICE_CHARGING | Can't start while the devices are connected to the power supply |
 | 108 | BATTERY_REMOVED | Battery is removed, please insert a battery or device will shut down |
 | 109 | BATTERY_LOW_WARNING | Battery low, please connect the device to a power supply |
+| 111 | BATTERY_FAULT_ERROR | Battery has a fault, please contact the support team |
 | 200 | CONSECUTIVE_TRACKING_ERRORS | Too many consecutive running sensor errors, stopping session |
 | 201 | DONGLE_DISCONNECT_RUNNING | BLE Dongle disconnected while running, stopping session |
 | 202 | TD_DISCONNECT_RUNNING | TouchDIVER disconnected while running, stopping session |

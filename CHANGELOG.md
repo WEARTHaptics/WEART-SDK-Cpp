@@ -2,6 +2,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.0.2] - 2026-02-06
+
+### Added
+- Last sensors calibration date
+
+### Changed
+- Documentation
+- Changelog file
+
 ## [2.0.1] - 2025-06-06
 
 ### Added
