@@ -27,4 +27,4 @@ An example source code application is available [here](https://github.com/WEARTH
 
 ## Copyright
 
-Copyright &copy; 2025 Weart S.r.l.
+Copyright &copy; 2026 Weart S.r.l.
